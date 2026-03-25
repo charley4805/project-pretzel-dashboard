@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+
 
 class OverviewMetrics(BaseModel):
     total_users: int
@@ -15,22 +16,41 @@ class OverviewMetrics(BaseModel):
     avg_api_latency_ms: int
     error_rate: float
     health_status: str
+    # project-pretzel specific
+    active_projects: int = 0
+    contracts_this_month: int = 0
 
-# Add remaining models for the routes as needed.
+
+class KnotMetrics(BaseModel):
+    """PretzelKnot contractor directory aggregate metrics."""
+    total_contractors: int
+    verified_contractors: int
+    active_listings: int
+    avg_rating: float
+    new_contractors_today: int
+    synced_projects: int
+
+
+# Stubs — expand as real DB queries are wired in
 class UsersMetrics(BaseModel):
     pass
+
 
 class UsageMetrics(BaseModel):
     pass
 
+
 class AIMetrics(BaseModel):
     pass
+
 
 class SearchMetrics(BaseModel):
     pass
 
+
 class ApiMetrics(BaseModel):
     pass
+
 
 class HealthMetrics(BaseModel):
     pass
