@@ -1,14 +1,20 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
-    return (
-        <main className="p-8">
-            <h1 className="text-3xl font-bold mb-4">Project Pretzel Dashboard</h1>
-            <p className="mb-4">
-                Go to <Link href="/admin/analytics" className="text-blue-600 underline">Admin Analytics</Link>
-            </p>
-        </main>
-    );
+  const router = useRouter();
+  useEffect(() => {
+    router.replace('/admin/analytics');
+  }, [router]);
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="flex items-center gap-3 text-slate-500">
+        <span className="text-2xl animate-bounce">🥨</span>
+        <span className="text-sm">Loading Command Center…</span>
+      </div>
+    </div>
+  );
 }
