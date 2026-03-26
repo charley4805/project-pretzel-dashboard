@@ -1,1 +1,1 @@
-from app.api.routes import admin_analytics, marketing, sales
+from . import admin_analytics, marketing, sales, traffic, gmail_inbox, crm, social
