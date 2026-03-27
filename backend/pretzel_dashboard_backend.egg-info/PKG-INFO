@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: pretzel-dashboard-backend
+Version: 2.0.0
+Summary: Internal dashboard API for the Pretzel ecosystem
+Author: Pretzel Team
+Requires-Dist: fastapi>=0.104.0
+Requires-Dist: uvicorn[standard]>=0.24.0
+Requires-Dist: sqlalchemy>=2.0.0
+Requires-Dist: asyncpg>=0.29.0
+Requires-Dist: alembic>=1.13.0
+Requires-Dist: pydantic>=2.5.0
+Requires-Dist: python-multipart>=0.0.6

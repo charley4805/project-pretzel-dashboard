@@ -1,0 +1,15 @@
+pyproject.toml
+./app/main.py
+./app/api/routes/__init__.py
+./app/api/routes/admin_analytics.py
+./app/api/routes/marketing.py
+./app/api/routes/sales.py
+./app/models/analytics_events.py
+./app/models/database.py
+./app/schemas/analytics.py
+pretzel_dashboard_backend.egg-info/PKG-INFO
+pretzel_dashboard_backend.egg-info/SOURCES.txt
+pretzel_dashboard_backend.egg-info/dependency_links.txt
+pretzel_dashboard_backend.egg-info/entry_points.txt
+pretzel_dashboard_backend.egg-info/requires.txt
+pretzel_dashboard_backend.egg-info/top_level.txt
