@@ -1,3 +1,1 @@
-from fastapi import APIRouter
-
-router = APIRouter()
+from . import admin_analytics, marketing, sales, traffic, gmail_inbox, crm, social

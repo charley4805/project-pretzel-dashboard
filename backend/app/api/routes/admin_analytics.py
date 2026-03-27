@@ -1,23 +1,27 @@
 from fastapi import APIRouter, Depends, Query
 from typing import Optional
-from app.schemas.analytics import OverviewMetrics, UsersMetrics, UsageMetrics, AIMetrics, SearchMetrics, ApiMetrics, HealthMetrics
+from app.schemas.analytics import OverviewMetrics, KnotMetrics
 import datetime
 from fastapi.responses import JSONResponse
 
 router = APIRouter()
 
-# Dependency mock for Database
+
 def get_db():
     pass
+
 
 @router.get("/overview", response_model=OverviewMetrics)
 def get_overview(
     start_date: Optional[str] = Query(None),
     end_date: Optional[str] = Query(None),
-    source_app: Optional[str] = Query("all")
+    source_app: Optional[str] = Query("all"),
 ):
-    """Returns top level KPIs for selected date range."""
-    # Production: Query `dashboard_daily_rollups` over the date range
+    """Top-level ecosystem KPIs.
+    Sources:
+      - project-pretzel: dashboard_daily_rollups, users, projects, contracts tables
+      - PretzelKnot: User, ContractorProfile tables (read-only replica or API call)
+    """
     return OverviewMetrics(
         total_users=15234,
         total_users_delta=2.4,
@@ -31,15 +35,60 @@ def get_overview(
         api_requests_today=124000,
         avg_api_latency_ms=120,
         error_rate=0.04,
-        health_status="optimal"
+        health_status="optimal",
+        active_projects=1840,
+        contracts_this_month=267,
     )
+
+
+@router.get("/knot-metrics", response_model=KnotMetrics)
+def get_knot_metrics():
+    """PretzelKnot contractor directory aggregate metrics.
+    Source: PretzelKnot PostgreSQL (read via cross-DB query or synced rollup table).
+      - total_contractors    -> COUNT(ContractorProfile)
+      - verified_contractors -> COUNT(ContractorProfile WHERE IsVerified = true)
+      - active_listings      -> COUNT(ContractorProfile WHERE IsPublic = true)
+      - avg_rating           -> AVG(ContractorProfile.AverageRating)
+      - new_contractors_today-> COUNT(User WHERE Role='Contractor' AND CreatedAt >= today)
+      - synced_projects      -> COUNT(SyncedProject)
+    """
+    return KnotMetrics(
+        total_contractors=3120,
+        verified_contractors=1480,
+        active_listings=2340,
+        avg_rating=4.7,
+        new_contractors_today=28,
+        synced_projects=890,
+    )
+
+
+@router.get("/knot-trade-breakdown")
+def get_knot_trade_breakdown():
+    """Contractor count by trade category.
+    Source: PretzelKnot ContractorProfile.TradeCategory — GROUP BY.
+    """
+    return {
+        "trades": [
+            {"trade": "Electrician", "count": 480},
+            {"trade": "Plumber", "count": 420},
+            {"trade": "General Contractor", "count": 380},
+            {"trade": "Roofer", "count": 310},
+            {"trade": "HVAC", "count": 290},
+            {"trade": "Painter", "count": 240},
+            {"trade": "Flooring", "count": 210},
+            {"trade": "Other", "count": 790},
+        ]
+    }
+
 
 @router.get("/users")
 def get_users_analytics(
     start_date: Optional[str] = Query(None),
-    end_date: Optional[str] = Query(None)
+    end_date: Optional[str] = Query(None),
 ):
-    """Returns growth, signups, profiles, activation, retention."""
+    """User growth, signups, activation funnel, retention.
+    Source: project-pretzel dashboard_daily_rollups + users table.
+    """
     return {
         "growth_chart": [
             {"date": "2026-03-10", "total": 14000, "new": 100},
@@ -55,16 +104,20 @@ def get_users_analytics(
             "signup": 15234,
             "onboarding": 12000,
             "profile_created": 4500,
-            "active": 3420
-        }
+            "active": 3420,
+        },
     }
+
 
 @router.get("/ai")
 def get_ai_analytics(
     start_date: Optional[str] = Query(None),
-    end_date: Optional[str] = Query(None)
+    end_date: Optional[str] = Query(None),
 ):
-    """Returns AI usage, unique AI users, trends, tokens, latency, failures"""
+    """AI usage, tokens, latency, model breakdown.
+    Source: project-pretzel analytics_events WHERE event_name LIKE 'ai_%'
+             + dashboard_daily_rollups.ai_requests_count.
+    """
     return {
         "daily_requests": [
             {"date": "2026-03-10", "requests": 34000, "unique_users": 1800},
@@ -81,43 +134,57 @@ def get_ai_analytics(
             {"model": "gpt-3.5-turbo", "pct": 10},
         ],
         "avg_latency_ms": 840,
-        "success_rate": 98.5
+        "success_rate": 98.5,
     }
+
 
 @router.get("/health")
 def get_health_analytics():
-    """Returns service health, DB connections, uptime"""
+    """Service health, DB connections, uptime.
+    Sources:
+      - project-pretzel: FastAPI /health endpoint, DB ping, Redis ping
+      - PretzelKnot: .NET /health endpoint
+    """
     return {
         "services": [
-            {"name": "Main API", "status": "healthy", "latency": 110, "uptime": 99.99},
-            {"name": "Database", "status": "healthy", "latency": 45, "uptime": 99.98},
+            {"name": "Main API (Pretzel.io)", "status": "healthy", "latency": 110, "uptime": 99.99},
+            {"name": "PostgreSQL (Pretzel)", "status": "healthy", "latency": 45, "uptime": 99.98},
             {"name": "Redis Cache", "status": "healthy", "latency": 5, "uptime": 100},
-            {"name": "Background Workers", "status": "warning", "latency": 0, "uptime": 99.10, "queue": 1500},
-            {"name": "Knot Service", "status": "healthy", "latency": 80, "uptime": 99.95},
+            {"name": "Celery Workers", "status": "warning", "latency": 0, "uptime": 99.10, "queue": 1500},
+            {"name": "PretzelKnot API (.NET)", "status": "healthy", "latency": 80, "uptime": 99.95},
+            {"name": "PostgreSQL (Knot)", "status": "healthy", "latency": 38, "uptime": 99.97},
         ]
     }
+
 
 @router.get("/live")
 def get_live_feed():
-    """Scrolling feed of recent events."""
-    import time
+    """Recent cross-platform events feed.
+    Source: project-pretzel analytics_events ORDER BY created_at DESC LIMIT 20.
+    """
     return {
         "events": [
-            {"id": "evt1", "time": "Just now", "type": "signup", "message": "New user signed up from web", "severity": "info"},
-            {"id": "evt2", "time": "2m ago", "type": "ai", "message": "AI Request spike observed on /generate_contract", "severity": "warning"},
-            {"id": "evt3", "time": "15m ago", "type": "search", "message": "Zero results for 'quantum entanglement'", "severity": "info"},
-            {"id": "evt4", "time": "1h ago", "type": "error", "message": "Database connection degraded momentarily", "severity": "error"},
-            {"id": "evt5", "time": "1h 10m ago", "type": "profile", "message": "User completed full profile setup", "severity": "success"},
+            {"id": "evt1", "time": "Just now", "type": "signup", "message": "New user signed up from web", "severity": "info", "source": "pretzel"},
+            {"id": "evt2", "time": "2m ago", "type": "ai", "message": "AI Request spike on /generate_contract", "severity": "warning", "source": "pretzel"},
+            {"id": "evt3", "time": "8m ago", "type": "knot", "message": "New contractor registered: Apex Electric LLC", "severity": "success", "source": "knot"},
+            {"id": "evt4", "time": "15m ago", "type": "search", "message": "Zero results for 'quantum entanglement'", "severity": "info", "source": "knot"},
+            {"id": "evt5", "time": "1h ago", "type": "error", "message": "DB connection degraded momentarily", "severity": "error", "source": "pretzel"},
+            {"id": "evt6", "time": "1h 10m ago", "type": "billing", "message": "Pro subscription activated — Summit Builds", "severity": "success", "source": "knot"},
         ]
     }
 
+
 @router.get("/founder-insights")
 def get_founder_insights():
+    """AI-curated executive summary bullets.
+    Production: LLM call summarizing last 24h of analytics_events + rollup data.
+    """
     return {
         "insights": [
-            "User signups are up 12% vs prior week.",
-            "AI usage surged by 4,000 requests over the last 3 hours.",
-            "The /api/ai/chat endpoint is currently showing elevated latency.",
-            "Main Landing page is converting at 4.2% today, slightly above average."
+            "User signups up 12% vs prior week — organic search driving most growth.",
+            "AI usage surged 4,000 requests over the last 3 hours.",
+            "PretzelKnot added 28 new verified contractors today, highest this month.",
+            "Contract pipeline is $9.05M across 1,057 active contracts.",
+            "Pro tier churn dropped 0.2% — retention improving after onboarding update.",
         ]
     }
