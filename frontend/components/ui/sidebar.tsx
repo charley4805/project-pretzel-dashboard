@@ -2,12 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, TrendingUp, DollarSign, Activity } from 'lucide-react';
+import { BarChart3, TrendingUp, DollarSign, Activity, BarChart2, Mail, Share2 } from 'lucide-react';
 
 const navItems = [
-  { label: 'Analytics',  href: '/admin/analytics', icon: BarChart3,   dot: 'bg-amber-500' },
-  { label: 'Marketing',  href: '/admin/marketing', icon: TrendingUp,  dot: 'bg-purple-500' },
-  { label: 'Sales',      href: '/admin/sales',     icon: DollarSign,  dot: 'bg-emerald-500' },
+  { label: 'Analytics', href: '/admin/analytics', icon: BarChart3  },
+  { label: 'Marketing', href: '/admin/marketing', icon: TrendingUp },
+  { label: 'Sales',     href: '/admin/sales',     icon: DollarSign },
+  { label: 'Traffic',   href: '/admin/traffic',   icon: BarChart2  },
+  { label: 'Inbox',     href: '/admin/inbox',     icon: Mail       },
+  { label: 'Social',    href: '/admin/social',    icon: Share2     },
 ];
 
 export function Sidebar() {
@@ -15,7 +18,6 @@ export function Sidebar() {
 
   return (
     <aside className="w-56 min-h-screen bg-[#0d0d0d] border-r border-slate-800/70 flex flex-col shrink-0">
-      {/* Brand */}
       <div className="px-5 py-5 border-b border-slate-800/70">
         <div className="flex items-center gap-2.5">
           <span className="text-2xl">🥨</span>
@@ -26,9 +28,8 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map(({ label, href, icon: Icon, dot }) => {
+        {navItems.map(({ label, href, icon: Icon }) => {
           const isActive = pathname.startsWith(href);
           return (
             <Link
@@ -42,15 +43,12 @@ export function Sidebar() {
             >
               <Icon size={15} className={isActive ? 'text-amber-400' : 'text-slate-500'} />
               {label}
-              {isActive && (
-                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-amber-400" />
-              )}
+              {isActive && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-amber-400" />}
             </Link>
           );
         })}
       </nav>
 
-      {/* Data Source Indicators */}
       <div className="px-4 pb-5 space-y-2 border-t border-slate-800/70 pt-4">
         <p className="text-[9px] uppercase tracking-widest text-slate-600 font-semibold mb-2">Live Sources</p>
         <div className="flex items-center gap-2">
