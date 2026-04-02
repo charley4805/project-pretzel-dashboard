@@ -5,7 +5,7 @@ The dashboard backend shares the same PostgreSQL database as project-pretzel.
 These are lightweight mirrors — only the columns needed for analytics queries.
 No writes are ever made to these tables from the dashboard.
 """
-from sqlalchemy import Column, String, Boolean, Integer, DateTime, Numeric, Uuid
+from sqlalchemy import Column, String, Boolean, DateTime, Numeric, Uuid
 from app.models.database import Base
 
 
