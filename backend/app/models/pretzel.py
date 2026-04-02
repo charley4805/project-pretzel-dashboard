@@ -7,11 +7,10 @@ No writes are ever made to these tables from the dashboard.
 """
 import uuid
 from sqlalchemy import (
-    Column, String, Boolean, Integer, DateTime, Numeric,
-    Text, Date, Float, ForeignKey, text,
+    Column, String, Boolean, DateTime, Numeric,
 )
-from sqlalchemy.dialects.postgresql import UUID as PGUUID, JSONB
-from app.models.database import Base
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
+from .database import Base
 
 
 class PretzelUser(Base):
