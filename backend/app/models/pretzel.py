@@ -2,21 +2,17 @@
 Read-only SQLAlchemy models for project-pretzel tables.
 
 The dashboard backend shares the same PostgreSQL database as project-pretzel.
-These are lightweight mirrors — only the columns we need for analytics.
+These are lightweight mirrors — only the columns needed for analytics queries.
 No writes are ever made to these tables from the dashboard.
 """
-import uuid
-from sqlalchemy import (
-    Column, String, Boolean, DateTime, Numeric,
-)
-from sqlalchemy.dialects.postgresql import UUID as PGUUID
-from .database import Base
+from sqlalchemy import Column, String, Boolean, Integer, DateTime, Numeric, Uuid
+from app.models.database import Base
 
 
 class PretzelUser(Base):
     __tablename__ = "users"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True)
+    id = Column(Uuid, primary_key=True)
     email = Column(String(255))
     full_name = Column(String(255))
     is_active = Column(Boolean)
@@ -28,7 +24,7 @@ class PretzelUser(Base):
 class PretzelProject(Base):
     __tablename__ = "projects"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True)
+    id = Column(Uuid, primary_key=True)
     status = Column(String(50))
     is_active = Column(Boolean)
     archived_at = Column(DateTime(timezone=True))
@@ -38,8 +34,8 @@ class PretzelProject(Base):
 class PretzelContract(Base):
     __tablename__ = "contracts"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True)
-    status = Column(String(50))          # draft | sent | active | signed | completed | cancelled
+    id = Column(Uuid, primary_key=True)
+    status = Column(String(50))
     total_amount = Column(Numeric(12, 2))
     created_at = Column(DateTime(timezone=True))
     activated_at = Column(DateTime(timezone=True))
@@ -49,10 +45,10 @@ class PretzelContract(Base):
 class PretzelContractPaymentEvent(Base):
     __tablename__ = "contract_payment_events"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True)
-    contract_id = Column(PGUUID(as_uuid=True))
-    event_type = Column(String(64))      # funding_succeeded | payout_sent | refund_created …
-    status = Column(String(32))          # pending | succeeded | failed | reversed
+    id = Column(Uuid, primary_key=True)
+    contract_id = Column(Uuid)
+    event_type = Column(String(64))
+    status = Column(String(32))
     amount = Column(Numeric(12, 2))
     currency = Column(String(3))
     created_at = Column(DateTime(timezone=True))
@@ -61,19 +57,19 @@ class PretzelContractPaymentEvent(Base):
 class PretzelAIRunLog(Base):
     __tablename__ = "ai_run_logs"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True)
-    user_id = Column(PGUUID(as_uuid=True))
-    project_id = Column(PGUUID(as_uuid=True))
+    id = Column(Uuid, primary_key=True)
+    user_id = Column(Uuid)
+    project_id = Column(Uuid)
     created_at = Column(DateTime(timezone=True))
 
 
 class PretzelUserSubscription(Base):
     __tablename__ = "user_subscriptions"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True)
-    user_id = Column(PGUUID(as_uuid=True))
+    id = Column(Uuid, primary_key=True)
+    user_id = Column(Uuid)
     tier = Column(String(32))
-    status = Column(String(32))           # active | trialing | canceled | past_due | expired | paused
+    status = Column(String(32))
     subscription_scope = Column(String(16))
     trial_used = Column(Boolean)
     cancel_at_period_end = Column(Boolean)
