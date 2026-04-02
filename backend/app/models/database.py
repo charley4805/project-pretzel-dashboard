@@ -1,6 +1,15 @@
 import os
+from pathlib import Path
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
+
+# Load .env from the project root (two levels up from this file)
+try:
+    from dotenv import load_dotenv
+    _env_path = Path(__file__).resolve().parents[4] / ".env"
+    load_dotenv(_env_path)
+except ImportError:
+    pass  # python-dotenv not installed; rely on env vars being set in the shell
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/pretzel")
 
