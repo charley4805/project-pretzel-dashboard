@@ -24,8 +24,13 @@ if DATABASE_URL.startswith("postgresql://"):
         1
     )
 
-# Strip sslmode from URL because asyncpg handles SSL via connect_args
-_url = DATABASE_URL.replace("?sslmode=require", "").replace("&sslmode=require", "")
+# Normalize URL: enforce asyncpg driver and strip sslmode (psycopg2-only param)
+_url = DATABASE_URL
+for prefix in ("postgresql://", "postgres://"):
+    if _url.startswith(prefix):
+        _url = "postgresql+asyncpg://" + _url[len(prefix):]
+        break
+_url = _url.replace("?sslmode=require", "").replace("&sslmode=require", "")
 
 _is_supabase = "supabase.co" in DATABASE_URL
 
