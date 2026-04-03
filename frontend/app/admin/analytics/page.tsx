@@ -8,38 +8,23 @@ import { LiveFeed } from '@/components/analytics/analytics-live-feed';
 import { GrowthChart } from '@/components/analytics/analytics-growth-chart';
 import {
   Activity, Users, Search, Brain, Clock,
-  Wrench, Star, Building2, CheckCircle, RefreshCw,
+  Wrench, Star, Building2, CheckCircle, RefreshCw, WifiOff,
 } from 'lucide-react';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api';
 
-const FALLBACK_OVERVIEW = {
-  total_users: 15234, total_users_delta: 2.4,
-  new_users_today: 145, new_users_delta: 12.1,
-  daily_active: 3420, daily_active_delta: -1.2,
-  profiles_created: 4500,
-  total_searches_today: 8900,
-  ai_requests_today: 45300,
-  api_requests_today: 124000,
-  avg_api_latency_ms: 120,
-  error_rate: 0.04,
-  health_status: 'optimal',
-  active_projects: 1840,
-  contracts_this_month: 267,
-};
-
-const FALLBACK_KNOT = {
-  total_contractors: 3120,
-  verified_contractors: 1480,
-  active_listings: 2340,
-  avg_rating: 4.7,
-  new_contractors_today: 28,
-  synced_projects: 890,
-};
+function Disconnected({ label = 'Disconnected' }: { label?: string }) {
+  return (
+    <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/40 px-4 py-3 text-sm text-slate-500">
+      <WifiOff size={14} className="text-red-500/60 shrink-0" />
+      {label}
+    </div>
+  );
+}
 
 export default function AnalyticsDashboard() {
-  const [overview, setOverview] = useState<any>(FALLBACK_OVERVIEW);
-  const [knot, setKnot] = useState<any>(FALLBACK_KNOT);
+  const [overview, setOverview] = useState<any>(null);
+  const [knot, setKnot] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [source, setSource] = useState('all');
   const [range, setRange] = useState('today');
@@ -55,8 +40,8 @@ export default function AnalyticsDashboard() {
       setOverview(ovData);
       setKnot(knotData);
     } catch {
-      setOverview(FALLBACK_OVERVIEW);
-      setKnot(FALLBACK_KNOT);
+      setOverview(null);
+      setKnot(null);
     } finally {
       setLoading(false);
     }
@@ -121,12 +106,16 @@ export default function AnalyticsDashboard() {
             <p className="text-[11px] text-amber-500/80 uppercase tracking-widest font-semibold mb-3 flex items-center gap-1.5">
               🥨 Pretzel.io — Platform
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <AnalyticsKpiCard title="Total Users" value={overview.total_users} delta={overview.total_users_delta} icon={<Users size={17} className="text-amber-400" />} loading={loading} />
-              <AnalyticsKpiCard title="Active Today (DAU)" value={overview.daily_active} delta={overview.daily_active_delta} icon={<Activity size={17} className="text-emerald-400" />} loading={loading} />
-              <AnalyticsKpiCard title="Active Projects" value={overview.active_projects} icon={<Building2 size={17} className="text-blue-400" />} loading={loading} />
-              <AnalyticsKpiCard title="Contracts (MTD)" value={overview.contracts_this_month} icon={<CheckCircle size={17} className="text-purple-400" />} loading={loading} />
-            </div>
+            {!overview ? (
+              <Disconnected label="Pretzel.io data unavailable" />
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <AnalyticsKpiCard title="Total Users" value={overview.total_users} delta={overview.total_users_delta} icon={<Users size={17} className="text-amber-400" />} loading={loading} />
+                <AnalyticsKpiCard title="Active Today (DAU)" value={overview.daily_active} delta={overview.daily_active_delta} icon={<Activity size={17} className="text-emerald-400" />} loading={loading} />
+                <AnalyticsKpiCard title="Active Projects" value={overview.active_projects} icon={<Building2 size={17} className="text-blue-400" />} loading={loading} />
+                <AnalyticsKpiCard title="Contracts (MTD)" value={overview.contracts_this_month} icon={<CheckCircle size={17} className="text-purple-400" />} loading={loading} />
+              </div>
+            )}
           </section>
 
           {/* PRETZELKNOT KPIs */}
@@ -134,23 +123,31 @@ export default function AnalyticsDashboard() {
             <p className="text-[11px] text-blue-400/80 uppercase tracking-widest font-semibold mb-3">
               🔵 PretzelKnot — Contractor Directory
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <AnalyticsKpiCard title="Total Contractors" value={knot.total_contractors} icon={<Wrench size={17} className="text-blue-400" />} loading={loading} />
-              <AnalyticsKpiCard title="Verified Profiles" value={knot.verified_contractors} icon={<CheckCircle size={17} className="text-emerald-400" />} loading={loading} />
-              <AnalyticsKpiCard title="New Today" value={knot.new_contractors_today} icon={<Users size={17} className="text-amber-400" />} loading={loading} />
-              <AnalyticsKpiCard title="Avg Rating" value={knot.avg_rating} icon={<Star size={17} className="text-yellow-400" />} loading={loading} isDecimal />
-            </div>
+            {!knot ? (
+              <Disconnected label="PretzelKnot data unavailable" />
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <AnalyticsKpiCard title="Total Contractors" value={knot.total_contractors} icon={<Wrench size={17} className="text-blue-400" />} loading={loading} />
+                <AnalyticsKpiCard title="Verified Profiles" value={knot.verified_contractors} icon={<CheckCircle size={17} className="text-emerald-400" />} loading={loading} />
+                <AnalyticsKpiCard title="New Today" value={knot.new_contractors_today} icon={<Users size={17} className="text-amber-400" />} loading={loading} />
+                <AnalyticsKpiCard title="Avg Rating" value={knot.avg_rating} icon={<Star size={17} className="text-yellow-400" />} loading={loading} isDecimal />
+              </div>
+            )}
           </section>
 
           {/* PLATFORM SIGNALS */}
           <section>
             <p className="text-[11px] text-slate-500 uppercase tracking-widest font-semibold mb-3">Platform Signals</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <AnalyticsKpiCard title="AI Requests" value={overview.ai_requests_today} icon={<Brain size={17} className="text-purple-400" />} loading={loading} />
-              <AnalyticsKpiCard title="Search Volume" value={overview.total_searches_today} icon={<Search size={17} className="text-orange-400" />} loading={loading} />
-              <AnalyticsKpiCard title="API Requests" value={overview.api_requests_today} icon={<Activity size={17} className="text-slate-400" />} loading={loading} />
-              <AnalyticsKpiCard title="Avg Latency" value={overview.avg_api_latency_ms} icon={<Clock size={17} className="text-teal-400" />} loading={loading} suffix="ms" />
-            </div>
+            {!overview ? (
+              <Disconnected label="Platform signals unavailable" />
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <AnalyticsKpiCard title="AI Requests" value={overview.ai_requests_today} icon={<Brain size={17} className="text-purple-400" />} loading={loading} />
+                <AnalyticsKpiCard title="Search Volume" value={overview.total_searches_today} icon={<Search size={17} className="text-orange-400" />} loading={loading} />
+                <AnalyticsKpiCard title="API Requests" value={overview.api_requests_today} icon={<Activity size={17} className="text-slate-400" />} loading={loading} />
+                <AnalyticsKpiCard title="Avg Latency" value={overview.avg_api_latency_ms} icon={<Clock size={17} className="text-teal-400" />} loading={loading} suffix="ms" />
+              </div>
+            )}
           </section>
 
           {/* CHARTS */}
