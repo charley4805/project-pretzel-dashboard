@@ -1,45 +1,52 @@
 import os
+import logging
 from pathlib import Path
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Load .env from the project root
+logger = logging.getLogger(__name__)
+
+# Load .env — database.py -> models/ -> app/ -> backend/ -> project-pretzel-dashboard/
+_env_path = Path(__file__).resolve().parents[3] / ".env"
+
 try:
     from dotenv import load_dotenv
-    _env_path = Path(__file__).resolve().parents[3] / ".env"
-    load_dotenv(_env_path)
+    loaded = load_dotenv(_env_path)
+    if loaded:
+        logger.info(f"Loaded .env from {_env_path}")
+    else:
+        logger.warning(f".env not found at {_env_path} — falling back to shell environment")
 except ImportError:
-    pass
+    logger.warning("python-dotenv not installed; relying on shell environment variables")
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is not set")
+    raise ValueError(f"DATABASE_URL is not set. Looked for .env at: {_env_path}")
 
-# 🔥 FORCE async driver
-if DATABASE_URL.startswith("postgresql://"):
-    DATABASE_URL = DATABASE_URL.replace(
-        "postgresql://",
-        "postgresql+asyncpg://",
-        1
-    )
-
-# Normalize URL: enforce asyncpg driver and strip sslmode (psycopg2-only param)
-_url = DATABASE_URL
-for prefix in ("postgresql://", "postgres://"):
-    if _url.startswith(prefix):
-        _url = "postgresql+asyncpg://" + _url[len(prefix):]
+# Enforce asyncpg driver regardless of what format is in .env
+for _prefix in ("postgresql://", "postgres://"):
+    if DATABASE_URL.startswith(_prefix):
+        DATABASE_URL = "postgresql+asyncpg://" + DATABASE_URL[len(_prefix):]
         break
-_url = _url.replace("?sslmode=require", "").replace("&sslmode=require", "")
+
+# Strip sslmode — psycopg2-only param, handled via connect_args below
+_url = DATABASE_URL.replace("?sslmode=require", "").replace("&sslmode=require", "")
 
 _is_supabase = "supabase.co" in DATABASE_URL
 
-# Supabase / pgBouncer-safe settings
-_connect_args = {"ssl": "require", "statement_cache_size": 0} if _is_supabase else {}
+# Log host without password
+try:
+    from urllib.parse import urlparse
+    _p = urlparse(_url)
+    logger.info(f"DB host: {_p.hostname}:{_p.port}{_p.path}")
+except Exception:
+    pass
 
-print("FINAL DATABASE URL:", DATABASE_URL)
-print("ENV PATH:", _env_path)
-print("RAW DATABASE_URL FROM ENV:", os.getenv("DATABASE_URL"))
+# asyncpg connect_args for Supabase:
+#   ssl="require"          — string form required (bool doesn't work reliably)
+#   statement_cache_size=0 — required for pgBouncer / Supabase session pooler
+_connect_args = {"ssl": "require", "statement_cache_size": 0} if _is_supabase else {}
 
 engine = create_async_engine(
     _url,
@@ -50,9 +57,7 @@ engine = create_async_engine(
 )
 
 AsyncSessionLocal = sessionmaker(
-    engine,
-    class_=AsyncSession,
-    expire_on_commit=False,
+    engine, class_=AsyncSession, expire_on_commit=False,
 )
 
 Base = declarative_base()
