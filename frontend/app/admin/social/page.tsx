@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { WifiOff } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
@@ -10,12 +11,14 @@ interface Post {
   url: string; author: string;
 }
 
-const FALLBACK_FEED: Post[] = [
-  { id: 't1', platform: 'twitter',  text: 'Just shipped a major update to PretzelKnot — contractors can now sync certifications directly from state licensing boards. Huge time saver. #ContractorTech', created_at: '2026-03-25T18:30:00Z', likes: 47,  retweets: 12, replies: 8,  url: '#', author: '@projectpretzel' },
-  { id: 'l1', platform: 'linkedin', text: 'Excited to share that Project Pretzel has officially launched enterprise contractor management for teams. Multi-contractor dashboards, billing consolidation, and role-based access — all in one place.', created_at: '2026-03-25T09:00:00Z', likes: 87,  comments: 14, shares: 9,  url: '#', author: 'Project Pretzel' },
-  { id: 't2', platform: 'twitter',  text: "The contractor economy is $1.4 trillion and growing. We're building the infrastructure for it.", created_at: '2026-03-24T14:15:00Z', likes: 93,  retweets: 28, replies: 14, url: '#', author: '@projectpretzel' },
-  { id: 'l2', platform: 'linkedin', text: "We asked 200 homeowners what their #1 frustration with hiring a contractor was. The answer was unanimous: trust. That is why PretzelKnot puts verified reviews and licensing front and center.", created_at: '2026-03-22T11:30:00Z', likes: 112, comments: 31, shares: 18, url: '#', author: 'Project Pretzel' },
-];
+function Disconnected({ label = 'Disconnected — data unavailable' }: { label?: string }) {
+  return (
+    <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/40 px-4 py-3 text-sm text-slate-500">
+      <WifiOff size={14} className="text-red-500/60 shrink-0" />
+      {label}
+    </div>
+  );
+}
 
 function fmtDate(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -60,14 +63,17 @@ function PostCard({ post }: { post: Post }) {
 }
 
 export default function SocialPage() {
-  const [feed,   setFeed]   = useState<Post[]>(FALLBACK_FEED);
+  const [feed,   setFeed]   = useState<Post[] | null>(null);
   const [filter, setFilter] = useState<'all' | 'twitter' | 'linkedin'>('all');
 
   useEffect(() => {
-    fetch(`${API}/api/admin/social/feed`).then(r => r.json()).then(setFeed).catch(() => {});
+    fetch(`${API}/api/admin/social/feed`)
+      .then(r => r.json())
+      .then(data => setFeed(Array.isArray(data) ? data : null))
+      .catch(() => setFeed(null));
   }, []);
 
-  const filtered = filter === 'all' ? feed : feed.filter(p => p.platform === filter);
+  const filtered = feed === null ? [] : (filter === 'all' ? feed : feed.filter(p => p.platform === filter));
 
   return (
     <div className="p-6 space-y-6 text-white min-h-screen">
@@ -76,25 +82,31 @@ export default function SocialPage() {
         <p className="text-sm text-slate-500 mt-0.5">Latest posts from @projectpretzel on X and LinkedIn</p>
       </div>
 
-      <div className="flex gap-2">
-        {([
-          { key: 'all',      label: `All (${feed.length})` },
-          { key: 'twitter',  label: `X / Twitter (${feed.filter(p => p.platform === 'twitter').length})` },
-          { key: 'linkedin', label: `LinkedIn (${feed.filter(p => p.platform === 'linkedin').length})` },
-        ] as const).map(({ key, label }) => (
-          <button key={key} onClick={() => setFilter(key)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
-              filter === key ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : 'border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600'
-            }`}>
-            {label}
-          </button>
-        ))}
-      </div>
+      {feed === null ? (
+        <Disconnected label="Social feed unavailable — check Twitter and LinkedIn credentials" />
+      ) : (
+        <>
+          <div className="flex gap-2">
+            {([
+              { key: 'all',      label: `All (${feed.length})` },
+              { key: 'twitter',  label: `X / Twitter (${feed.filter(p => p.platform === 'twitter').length})` },
+              { key: 'linkedin', label: `LinkedIn (${feed.filter(p => p.platform === 'linkedin').length})` },
+            ] as const).map(({ key, label }) => (
+              <button key={key} onClick={() => setFilter(key)}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+                  filter === key ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' : 'border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600'
+                }`}>
+                {label}
+              </button>
+            ))}
+          </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filtered.map(post => <PostCard key={post.id} post={post} />)}
-      </div>
-      {filtered.length === 0 && <p className="text-center py-12 text-slate-600 text-sm">No posts to display</p>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filtered.map(post => <PostCard key={post.id} post={post} />)}
+          </div>
+          {filtered.length === 0 && <p className="text-center py-12 text-slate-600 text-sm">No posts to display</p>}
+        </>
+      )}
     </div>
   );
 }
