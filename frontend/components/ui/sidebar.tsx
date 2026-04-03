@@ -5,12 +5,12 @@ import { usePathname } from 'next/navigation';
 import { BarChart3, TrendingUp, DollarSign, Activity, BarChart2, Mail, Share2 } from 'lucide-react';
 
 const navItems = [
-  { label: 'Analytics', href: '/admin/analytics', icon: BarChart3  },
+  { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Marketing', href: '/admin/marketing', icon: TrendingUp },
-  { label: 'Sales',     href: '/admin/sales',     icon: DollarSign },
-  { label: 'Traffic',   href: '/admin/traffic',   icon: BarChart2  },
-  { label: 'Inbox',     href: '/admin/inbox',     icon: Mail       },
-  { label: 'Social',    href: '/admin/social',    icon: Share2     },
+  { label: 'Sales', href: '/admin/sales', icon: DollarSign },
+  { label: 'Traffic', href: '/admin/traffic', icon: BarChart2 },
+  { label: 'Inbox', href: '/admin/inbox', icon: Mail },
+  { label: 'Social', href: '/admin/social', icon: Share2 },
 ];
 
 export function Sidebar() {
@@ -20,7 +20,11 @@ export function Sidebar() {
     <aside className="w-56 min-h-screen bg-[#0d0d0d] border-r border-slate-800/70 flex flex-col shrink-0">
       <div className="px-5 py-5 border-b border-slate-800/70">
         <div className="flex items-center gap-2.5">
-          <span className="text-2xl">🥨</span>
+          <img
+            src="/Pretzel_transparent.png"
+            alt="Project Pretzel"
+            className="w-8 h-8 object-contain"
+          />
           <div>
             <p className="text-sm font-semibold text-white tracking-tight leading-tight">Project Pretzel</p>
             <p className="text-[10px] text-amber-500/80 tracking-widest uppercase font-medium">Command Center</p>
@@ -35,11 +39,10 @@ export function Sidebar() {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium ${
-                isActive
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium ${isActive
                   ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent'
-              }`}
+                }`}
             >
               <Icon size={15} className={isActive ? 'text-amber-400' : 'text-slate-500'} />
               {label}
