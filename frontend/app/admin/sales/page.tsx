@@ -12,7 +12,7 @@ import {
   ResponsiveContainer, CartesianGrid, Cell,
 } from 'recharts';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 const TIER_COLORS: Record<string, string> = {
   Solo: '#f59e0b',
@@ -39,11 +39,11 @@ export default function SalesCommandCenter() {
     setLoading(true);
     try {
       const [ovRes, revRes, subsRes, txRes, pipeRes] = await Promise.all([
-        fetch(`${API_BASE}/admin/sales/overview`),
-        fetch(`${API_BASE}/admin/sales/revenue`),
-        fetch(`${API_BASE}/admin/sales/subscriptions`),
-        fetch(`${API_BASE}/admin/sales/transactions`),
-        fetch(`${API_BASE}/admin/sales/pipeline`),
+        fetch(`${API_BASE}/api/admin/sales/overview`),
+        fetch(`${API_BASE}/api/admin/sales/revenue`),
+        fetch(`${API_BASE}/api/admin/sales/subscriptions`),
+        fetch(`${API_BASE}/api/admin/sales/transactions`),
+        fetch(`${API_BASE}/api/admin/sales/pipeline`),
       ]);
       const [ov, rev, subs, tx, pipe] = await Promise.all([
         ovRes.json(), revRes.json(), subsRes.json(), txRes.json(), pipeRes.json(),
