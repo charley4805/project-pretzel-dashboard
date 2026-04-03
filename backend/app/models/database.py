@@ -13,8 +13,13 @@ except ImportError:
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/pretzel")
 
-# Strip sslmode query param — not valid for asyncpg, handled via connect_args below
-_url = DATABASE_URL.replace("?sslmode=require", "").replace("&sslmode=require", "")
+# Normalize URL: enforce asyncpg driver and strip sslmode (psycopg2-only param)
+_url = DATABASE_URL
+for prefix in ("postgresql://", "postgres://"):
+    if _url.startswith(prefix):
+        _url = "postgresql+asyncpg://" + _url[len(prefix):]
+        break
+_url = _url.replace("?sslmode=require", "").replace("&sslmode=require", "")
 
 _is_supabase = "supabase.com" in DATABASE_URL
 
