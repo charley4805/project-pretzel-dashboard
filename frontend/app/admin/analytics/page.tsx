@@ -11,7 +11,7 @@ import {
   Wrench, Star, Building2, CheckCircle, RefreshCw, WifiOff,
 } from 'lucide-react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 function Disconnected({ label = 'Disconnected' }: { label?: string }) {
   return (
@@ -33,8 +33,8 @@ export default function AnalyticsDashboard() {
     setLoading(true);
     try {
       const [ovRes, knotRes] = await Promise.all([
-        fetch(`${API_BASE}/admin/analytics/overview?source_app=${source}`),
-        fetch(`${API_BASE}/admin/analytics/knot-metrics`),
+        fetch(`${API_BASE}/api/admin/analytics/overview?source_app=${source}`),
+        fetch(`${API_BASE}/api/admin/analytics/knot-metrics`),
       ]);
       const [ovData, knotData] = await Promise.all([ovRes.json(), knotRes.json()]);
       setOverview(ovData);

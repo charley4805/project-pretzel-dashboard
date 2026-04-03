@@ -9,7 +9,7 @@ import {
   ResponsiveContainer, PieChart, Pie, Cell,
 } from 'recharts';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 function Disconnected({ label = 'Disconnected — data unavailable' }: { label?: string }) {
   return (
@@ -28,12 +28,12 @@ export default function MarketingCommandCenter() {
     setLoading(true);
     try {
       const [ovRes, funnelRes, acqRes, trendsRes, searchRes, campRes] = await Promise.all([
-        fetch(`${API_BASE}/admin/marketing/overview`),
-        fetch(`${API_BASE}/admin/marketing/funnel`),
-        fetch(`${API_BASE}/admin/marketing/acquisition`),
-        fetch(`${API_BASE}/admin/marketing/trends`),
-        fetch(`${API_BASE}/admin/marketing/search-terms`),
-        fetch(`${API_BASE}/admin/marketing/campaigns`),
+        fetch(`${API_BASE}/api/admin/marketing/overview`),
+        fetch(`${API_BASE}/api/admin/marketing/funnel`),
+        fetch(`${API_BASE}/api/admin/marketing/acquisition`),
+        fetch(`${API_BASE}/api/admin/marketing/trends`),
+        fetch(`${API_BASE}/api/admin/marketing/search-terms`),
+        fetch(`${API_BASE}/api/admin/marketing/campaigns`),
       ]);
       const [ov, funnel, acq, trends, search, camp] = await Promise.all([
         ovRes.json(), funnelRes.json(), acqRes.json(),
