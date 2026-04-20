@@ -91,6 +91,14 @@ async def social_linkedin():
 
 @router.get("/feed")
 async def social_feed():
+    twitter_ok = bool(os.getenv("TWITTER_BEARER_TOKEN"))
+    linkedin_ok = bool(os.getenv("LINKEDIN_ACCESS_TOKEN") and os.getenv("LINKEDIN_PERSON_URN"))
+    if not twitter_ok and not linkedin_ok:
+        return {
+            "posts": [],
+            "connected": False,
+            "note": "Configure TWITTER_BEARER_TOKEN and LINKEDIN_ACCESS_TOKEN / LINKEDIN_PERSON_URN",
+        }
     twitter: List[Dict[str, Any]] = []
     linkedin: List[Dict[str, Any]] = []
     try:
@@ -103,4 +111,4 @@ async def social_feed():
         pass
     combined = twitter + linkedin
     combined.sort(key=lambda x: x.get("created_at") or "", reverse=True)
-    return combined
+    return {"posts": combined, "connected": True}
