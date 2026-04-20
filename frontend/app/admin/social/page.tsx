@@ -69,14 +69,24 @@ export default function SocialPage() {
   useEffect(() => {
     fetch(`${API}/api/admin/social/feed`)
       .then(r => r.json())
-      .then(data => setFeed(Array.isArray(data) ? data : null))
+      .then(data => {
+        if (data && data.connected === false) {
+          setFeed(null);
+        } else if (data && Array.isArray(data.posts)) {
+          setFeed(data.posts);
+        } else if (Array.isArray(data)) {
+          setFeed(data);
+        } else {
+          setFeed(null);
+        }
+      })
       .catch(() => setFeed(null));
   }, []);
 
   const filtered = feed === null ? [] : (filter === 'all' ? feed : feed.filter(p => p.platform === filter));
 
   return (
-    <div className="p-6 space-y-6 text-white min-h-screen">
+    <div className="p-4 md:p-6 space-y-6 text-white min-h-screen">
       <div>
         <h1 className="text-xl font-semibold tracking-tight">Social Feed</h1>
         <p className="text-sm text-slate-500 mt-0.5">Latest posts from @projectpretzel on X and LinkedIn</p>

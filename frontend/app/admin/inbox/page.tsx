@@ -65,7 +65,7 @@ export default function InboxPage() {
   }, []);
 
   return (
-    <div className="p-6 space-y-6 text-white min-h-screen">
+    <div className="p-4 md:p-6 space-y-6 text-white min-h-screen">
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Inbox</h1>
@@ -84,7 +84,7 @@ export default function InboxPage() {
             <p className="text-xs text-slate-600 mt-1">{stats.note}</p>
           )}
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           {[
             { label: 'Unread',  value: stats?.total_unread  ?? '—', color: 'text-amber-400'   },
             { label: 'Support', value: stats?.support_unread ?? '—', color: 'text-blue-400'    },
@@ -107,8 +107,8 @@ export default function InboxPage() {
               <span className="ml-auto text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-full">{stats.support_unread} unread</span>
             )}
           </div>
-          {support === null ? (
-            <Disconnected label="Support inbox unavailable" />
+          {support === null || stats?.connected === false ? (
+            <Disconnected label="Support inbox unavailable — configure Gmail credentials" />
           ) : support.length === 0 ? (
             <p className="text-sm text-slate-600 text-center py-6">No support emails</p>
           ) : (
@@ -124,8 +124,8 @@ export default function InboxPage() {
               <span className="ml-auto text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">{stats.sales_unread} unread</span>
             )}
           </div>
-          {sales === null ? (
-            <Disconnected label="Sales inbox unavailable" />
+          {sales === null || stats?.connected === false ? (
+            <Disconnected label="Sales inbox unavailable — configure Gmail credentials" />
           ) : sales.length === 0 ? (
             <p className="text-sm text-slate-600 text-center py-6">No sales emails</p>
           ) : (
