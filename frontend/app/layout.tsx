@@ -1,9 +1,10 @@
 import './globals.css'
 import type { Metadata } from 'next'
+import { Sidebar } from '@/components/ui/sidebar'
 
 export const metadata: Metadata = {
-  title: 'Project Pretzel Dashboard',
-  description: 'Internal Dashboard for Project Pretzel ecosystem',
+  title: 'Project Pretzel — Command Center',
+  description: 'Internal dashboard for the Pretzel ecosystem',
 }
 
 export default function RootLayout({
@@ -13,7 +14,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-[#0a0a0a] text-slate-100">{children}</body>
+      <body className="bg-[#0a0a0a] text-slate-100">
+        <Sidebar />
+        <main className="md:pl-56 min-h-screen overflow-y-auto">
+          {/* Spacer for the mobile hamburger button */}
+          <div className="h-14 md:h-0" />
+          {children}
+        </main>
+      </body>
     </html>
   )
 }
