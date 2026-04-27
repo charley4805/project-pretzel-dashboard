@@ -3,8 +3,15 @@ from sqlalchemy import select, func, text
 from app.models.database import AsyncSessionLocal
 from app.models.analytics_events import AnalyticsEvent
 import datetime
+import os
+import httpx
 
 router = APIRouter()
+
+
+def _knot_headers() -> dict:
+    secret = os.getenv("KNOT_ANALYTICS_SECRET", "")
+    return {"X-Dashboard-Secret": secret} if secret else {}
 
 
 @router.get("/overview")
@@ -35,15 +42,37 @@ async def traffic_overview():
             )
             active_now = active_q.scalar() or 0
 
-            return {
-                "page_views_today": page_views_today,
-                "unique_visitors_today": unique_visitors_today,
-                "active_now": active_now,
-                "bounce_rate": None,
-                "avg_session_duration_sec": None,
-                "top_referrer": None,
-                "disconnected": False,
-            }
+        knot_url = os.getenv("KNOT_API_URL", "")
+        knot: dict = {}
+        knot_connected = False
+        if knot_url:
+            try:
+                async with httpx.AsyncClient(timeout=5) as client:
+                    r = await client.get(
+                        f"{knot_url}/api/analytics/overview",
+                        headers=_knot_headers(),
+                    )
+                    if r.status_code == 200:
+                        knot = r.json()
+                        knot_connected = True
+            except Exception:
+                pass
+
+        return {
+            "page_views_today": page_views_today + knot.get("page_views_today", 0),
+            "unique_visitors_today": unique_visitors_today + knot.get("unique_visitors_today", 0),
+            "active_now": active_now + knot.get("active_now", 0),
+            "bounce_rate": None,
+            "avg_session_duration_sec": None,
+            "top_referrer": None,
+            "disconnected": False,
+            "pretzel_page_views_today": page_views_today,
+            "pretzel_unique_visitors_today": unique_visitors_today,
+            "knot_page_views_today": knot.get("page_views_today", 0),
+            "knot_unique_visitors_today": knot.get("unique_visitors_today", 0),
+            "knot_active_now": knot.get("active_now", 0),
+            "knot_connected": knot_connected,
+        }
     except Exception:
         return {"disconnected": True}
 
@@ -66,14 +95,39 @@ async def traffic_daily_trend():
                 .group_by("date")
                 .order_by("date")
             )
-            return [
-                {
-                    "date": str(r.date)[:10],
-                    "page_views": r.page_views,
-                    "unique_visitors": r.unique_visitors,
-                }
+            pretzel_by_date = {
+                str(r.date)[:10]: {"page_views": r.page_views, "unique_visitors": r.unique_visitors}
                 for r in rows.fetchall()
-            ]
+            }
+
+        knot_url = os.getenv("KNOT_API_URL", "")
+        knot_by_date: dict = {}
+        if knot_url:
+            try:
+                async with httpx.AsyncClient(timeout=5) as client:
+                    r = await client.get(
+                        f"{knot_url}/api/analytics/daily-trend",
+                        headers=_knot_headers(),
+                    )
+                    if r.status_code == 200:
+                        for row in r.json():
+                            knot_by_date[row["date"]] = row
+            except Exception:
+                pass
+
+        all_dates = sorted(set(list(pretzel_by_date.keys()) + list(knot_by_date.keys())))
+        merged = []
+        for date in all_dates:
+            p = pretzel_by_date.get(date, {})
+            k = knot_by_date.get(date, {})
+            merged.append({
+                "date": date,
+                "page_views": p.get("page_views", 0) + k.get("page_views", 0),
+                "unique_visitors": p.get("unique_visitors", 0) + k.get("unique_visitors", 0),
+                "knot_page_views": k.get("page_views", 0),
+                "knot_unique_visitors": k.get("unique_visitors", 0),
+            })
+        return merged
     except Exception:
         return []
 
@@ -97,10 +151,49 @@ async def traffic_top_pages():
                 .order_by(func.count().desc())
                 .limit(10)
             )
-            return [
-                {"path": r.page_path, "views": r.views, "unique": r.unique, "avg_time_sec": 0}
+            pretzel_pages = {
+                r.page_path: {"path": r.page_path, "views": r.views, "unique": r.unique, "avg_time_sec": 0}
                 for r in rows.fetchall()
-            ]
+            }
+
+        knot_url = os.getenv("KNOT_API_URL", "")
+        knot_pages: dict = {}
+        if knot_url:
+            try:
+                async with httpx.AsyncClient(timeout=5) as client:
+                    r = await client.get(
+                        f"{knot_url}/api/analytics/top-pages",
+                        headers=_knot_headers(),
+                    )
+                    if r.status_code == 200:
+                        knot_pages = {row["path"]: row for row in r.json()}
+            except Exception:
+                pass
+
+        combined: dict = {}
+        for path, p in pretzel_pages.items():
+            if path in knot_pages:
+                k = knot_pages.pop(path)
+                combined[path] = {
+                    "path": path,
+                    "views": p["views"] + k["views"],
+                    "unique": p["unique"] + k["unique"],
+                    "avg_time_sec": 0,
+                    "source": "both",
+                }
+            else:
+                combined[path] = {**p, "source": "pretzel"}
+
+        for path, k in knot_pages.items():
+            combined[path] = {
+                "path": path,
+                "views": k["views"],
+                "unique": k["unique"],
+                "avg_time_sec": 0,
+                "source": "knot",
+            }
+
+        return sorted(combined.values(), key=lambda x: -x["views"])[:10]
     except Exception:
         return []
 
