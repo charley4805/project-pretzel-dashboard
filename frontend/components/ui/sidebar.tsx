@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, TrendingUp, DollarSign, Activity, BarChart2, Mail, Share2, Menu, X, Bot, Headphones, MessageSquare, Target, Settings } from 'lucide-react';
+import { BarChart3, TrendingUp, DollarSign, Activity, BarChart2, Mail, Share2, Menu, X, Bot, Headphones, MessageSquare, Target, Settings, BookOpen } from 'lucide-react';
 
 const navItemsMain = [
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
@@ -20,6 +20,7 @@ const navItemsAgents = [
   { label: '   Social', href: '/admin/agents/social', icon: MessageSquare },
   { label: '   Leads', href: '/admin/agents/leads', icon: Target },
   { label: '   Settings', href: '/admin/agents/settings', icon: Settings },
+  { label: '   Vault', href: '/admin/agents/vault', icon: BookOpen },
 ];
 
 export function Sidebar() {
