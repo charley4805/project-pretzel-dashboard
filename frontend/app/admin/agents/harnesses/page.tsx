@@ -10,9 +10,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const stepConfig: Record<string, { color: string; bg: string; icon: typeof Bot }> = {
   agent: { color: '#3b82f6', bg: 'rgba(59,130,246,0.12)', icon: Bot },
-  decision: { color: '#FFC857', bg: 'rgba(255,200,87,0.12)', icon: Diamond },
+  decision: { color: '#fbbf24', bg: 'rgba(255,200,87,0.12)', icon: Diamond },
   action: { color: '#10b981', bg: 'rgba(16,185,129,0.12)', icon: Zap },
-  human: { color: '#FC814A', bg: 'rgba(252,129,74,0.12)', icon: User },
+  human: { color: '#fb923c', bg: 'rgba(252,129,74,0.12)', icon: User },
   delay: { color: '#8b5cf6', bg: 'rgba(139,92,246,0.12)', icon: Clock },
 }
 
@@ -127,10 +127,10 @@ export default function AgentHarnesses() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-3">
         {[
-          { label: 'Active Harnesses', value: activeCount, icon: Workflow, color: '#177E89' },
+          { label: 'Active Harnesses', value: activeCount, icon: Workflow, color: '#34d399' },
           { label: 'Success Rate', value: `${avgSuccess}%`, icon: CheckCircle, color: '#10b981' },
-          { label: 'Avg Completion', value: '4m 12s', icon: Clock, color: '#FFC857' },
-          { label: 'Failed Runs', value: '1', icon: XCircle, color: '#FC814A' },
+          { label: 'Avg Completion', value: '4m 12s', icon: Clock, color: '#fbbf24' },
+          { label: 'Failed Runs', value: '1', icon: XCircle, color: '#fb923c' },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -140,7 +140,7 @@ export default function AgentHarnesses() {
             className="metric-card"
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[11px] font-medium" style={{ color: '#64748b' }}>{stat.label}</span>
+              <span className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>{stat.label}</span>
               <stat.icon size={16} style={{ color: stat.color }} />
             </div>
             <div className="text-xl font-bold text-white">{stat.value}</div>
@@ -174,17 +174,17 @@ export default function AgentHarnesses() {
                     <div className="w-2 h-2 rounded-full shrink-0" style={{ background: isActive ? '#177E89' : '#FFC857', boxShadow: isActive ? '0 0 5px rgba(23,126,137,0.5)' : '0 0 5px rgba(255,200,87,0.4)' }} />
                     <div>
                       <h4 className="text-sm font-semibold text-white">{h.name}</h4>
-                      <p className="text-[11px]" style={{ color: '#64748b' }}>{h.description}</p>
+                      <p className="text-[11px]" style={{ color: '#94a3b8' }}>{h.description}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex gap-1">
                       {h.triggers.map((t, i) => (
-                        <span key={i} className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{ background: 'rgba(255,255,255,0.06)', color: '#64748b', border: '1px solid rgba(255,255,255,0.08)' }}>{t}</span>
+                        <span key={i} className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{ background: 'rgba(255,255,255,0.06)', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)' }}>{t}</span>
                       ))}
                     </div>
                     <span className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>{h.successRate}% success</span>
-                    <span className="text-[11px]" style={{ color: '#64748b' }}>Last: {h.lastRun}</span>
+                    <span className="text-[11px]" style={{ color: '#94a3b8' }}>Last: {h.lastRun}</span>
                     <button onClick={(e) => { e.stopPropagation(); toggleHarness(h.id) }} className="text-[10px] font-semibold px-2 py-1 rounded" style={{ background: isActive ? 'rgba(23,126,137,0.15)' : 'rgba(255,200,87,0.1)', color: isActive ? '#177E89' : '#FFC857', border: isActive ? '1px solid rgba(23,126,137,0.25)' : '1px solid rgba(255,200,87,0.2)' }}>{isActive ? 'Pause' : 'Resume'}</button>
                     <button onClick={(e) => e.stopPropagation()} className="text-xs px-2 py-1 rounded" style={{ background: '#177E89', color: 'white' }}><Play size={10} className="inline" /></button>
                   </div>
@@ -228,7 +228,7 @@ export default function AgentHarnesses() {
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr style={{ borderBottom: '1px solid #452103', color: '#64748b' }}>
+              <tr style={{ borderBottom: '1px solid #452103', color: '#94a3b8' }}>
                 <th className="pb-2 font-medium text-left">Harness</th>
                 <th className="pb-2 font-medium text-left">Started</th>
                 <th className="pb-2 font-medium text-left">Duration</th>
@@ -239,10 +239,10 @@ export default function AgentHarnesses() {
             </thead>
             <tbody>
               {executionHistory.map((run) => (
-                <tr key={run.id} className="hover:bg-[#1c2658]/[0.02] transition-colors" style={{ borderBottom: '1px solid #452103' }}>
+                <tr key={run.id} className="hover:bg-slate-900/40/[0.02] transition-colors" style={{ borderBottom: '1px solid #452103' }}>
                   <td className="py-2 text-white">{run.harness}</td>
-                  <td className="py-2" style={{ color: '#64748b' }}>{run.started}</td>
-                  <td className="py-2" style={{ color: '#64748b' }}>{run.duration}</td>
+                  <td className="py-2" style={{ color: '#94a3b8' }}>{run.started}</td>
+                  <td className="py-2" style={{ color: '#94a3b8' }}>{run.duration}</td>
                   <td className="py-2">
                     <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold" style={{ background: run.status === 'success' ? 'rgba(23,126,137,0.15)' : run.status === 'running' ? 'rgba(59,130,246,0.15)' : 'rgba(252,129,74,0.15)', color: run.status === 'success' ? '#177E89' : run.status === 'running' ? '#3b82f6' : '#FC814A', border: run.status === 'success' ? '1px solid rgba(23,126,137,0.25)' : run.status === 'running' ? '1px solid rgba(59,130,246,0.25)' : '1px solid rgba(252,129,74,0.25)' }}>
                       {run.status === 'success' && <CheckCircle size={9} />}
@@ -251,9 +251,9 @@ export default function AgentHarnesses() {
                       {run.status.toUpperCase()}
                     </span>
                   </td>
-                  <td className="py-2" style={{ color: '#64748b' }}>{run.steps}</td>
+                  <td className="py-2" style={{ color: '#94a3b8' }}>{run.steps}</td>
                   <td className="py-2">
-                    <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{ background: 'rgba(255,255,255,0.06)', color: '#64748b', border: '1px solid rgba(255,255,255,0.08)' }}>{run.trigger}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{ background: 'rgba(255,255,255,0.06)', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)' }}>{run.trigger}</span>
                   </td>
                 </tr>
               ))}
@@ -270,19 +270,19 @@ export default function AgentHarnesses() {
               <h3 className="text-base font-bold text-white mb-3">Create New Harness</h3>
               <div className="space-y-2.5">
                 <div>
-                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Harness Name</label>
+                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Harness Name</label>
                   <input value={newHarness.name} onChange={(e) => setNewHarness({ ...newHarness, name: e.target.value })} placeholder="e.g., Auto-Response Pipeline" className="input-dark" />
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Description</label>
+                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Description</label>
                   <textarea value={newHarness.description} onChange={(e) => setNewHarness({ ...newHarness, description: e.target.value })} placeholder="What does this harness orchestrate?" rows={2} className="textarea-dark" />
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Trigger Event</label>
+                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Trigger Event</label>
                   <input value={newHarness.trigger} onChange={(e) => setNewHarness({ ...newHarness, trigger: e.target.value })} placeholder="e.g., support.ticket.created" className="input-dark" />
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Workflow Steps</label>
+                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Workflow Steps</label>
                   <div className="flex items-center gap-2 mb-2">
                     <input value={newStepName} onChange={(e) => setNewStepName(e.target.value)} placeholder="Step name..." className="input-dark flex-1" />
                     <select value={newStepType} onChange={(e) => setNewStepType(e.target.value)} className="select-dark w-28"><option value="agent">Agent</option><option value="decision">Decision</option><option value="action">Action</option><option value="human">Human</option><option value="delay">Delay</option></select>
@@ -293,12 +293,12 @@ export default function AgentHarnesses() {
                       const config = stepConfig[step.type] || stepConfig.agent
                       const StepIcon = config.icon
                       return (
-                        <div key={idx} className="flex items-center gap-2 p-2 rounded-md" style={{ background: '#0c1130', border: '1px solid #452103' }}>
-                          <span className="text-[10px] font-medium w-5" style={{ color: '#64748b' }}>{idx + 1}</span>
+                        <div key={idx} className="flex items-center gap-2 p-2 rounded-md" style={{ background: '#0c1130', border: '1px solid #334155' }}>
+                          <span className="text-[10px] font-medium w-5" style={{ color: '#94a3b8' }}>{idx + 1}</span>
                           <div className="p-1 rounded" style={{ background: config.bg, color: config.color }}><StepIcon size={12} /></div>
                           <span className="text-xs text-white flex-1">{step.name}</span>
-                          <span className="text-[10px]" style={{ color: '#64748b' }}>{step.type}</span>
-                          <button onClick={() => removeStep(idx)} className="text-[#64748b] hover:text-[#FC814A] transition-colors"><Trash2 size={12} /></button>
+                          <span className="text-[10px]" style={{ color: '#94a3b8' }}>{step.type}</span>
+                          <button onClick={() => removeStep(idx)} className="text-slate-400 hover:text-orange-400 transition-colors"><Trash2 size={12} /></button>
                         </div>
                       )
                     })}

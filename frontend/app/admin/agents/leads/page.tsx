@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   DragDropContext,
@@ -49,6 +49,7 @@ import {
   Area,
   ResponsiveContainer,
 } from 'recharts';
+import { fetchLeadsPipeline } from '@/lib/api';
 
 // ───────────────────────────────────────────
 // TYPES
@@ -117,15 +118,15 @@ interface OutreachEntry {
 // ───────────────────────────────────────────
 
 const STAGE_CONFIG: Record<PipelineStage, { label: string; color: string; bg: string; border: string }> = {
-  discovered: { label: 'DISCOVERED', color: '#64748b', bg: '#141B41', border: '#452103' },
-  qualified: { label: 'QUALIFIED', color: '#0ea5e9', bg: '#f0f9ff', border: '#bae6fd' },
-  contacted: { label: 'CONTACTED', color: '#FFC857', bg: '#fffbeb', border: 'rgba(255,200,87,0.15)' },
-  responded: { label: 'RESPONDED', color: '#177E89', bg: '#f5f3ff', border: '#ddd6fe' },
+  discovered: { label: 'DISCOVERED', color: '#94a3b8', bg: '#141B41', border: '#452103' },
+  qualified: { label: 'QUALIFIED', color: '#38bdf8', bg: '#f0f9ff', border: '#bae6fd' },
+  contacted: { label: 'CONTACTED', color: '#fbbf24', bg: '#fffbeb', border: 'rgba(255,200,87,0.15)' },
+  responded: { label: 'RESPONDED', color: '#34d399', bg: '#f5f3ff', border: '#ddd6fe' },
   meeting_scheduled: { label: 'MEETING SCHEDULED', color: '#ec4899', bg: '#fdf2f8', border: '#fbcfe8' },
-  converted: { label: 'CONVERTED', color: '#177E89', bg: 'rgba(23,126,137,0.1)', border: '#a7f3d0' },
+  converted: { label: 'CONVERTED', color: '#34d399', bg: 'rgba(23,126,137,0.1)', border: '#a7f3d0' },
 };
 
-const initialLeads: LeadCard[] = [
+const defaultLeads: LeadCard[] = [
   // DISCOVERED
   { id: 'l1', name: 'Alex Thornton', handle: '@alex_t', company: 'TechStart Inc', role: 'Founder', source: 'Reddit r/SaaS', sourcePlatform: 'reddit', painPoint: 'Support team overwhelmed, looking for automation', score: 85, stage: 'discovered', agentId: 'lg-1', agentName: 'Scout', dateDiscovered: '2h ago', industry: 'SaaS', companySize: '10-50', location: 'San Francisco, CA', problemFit: 90, intentSignals: 75, profileFit: 88, accessibility: 82, notes: 'Found asking about alternatives to Zendesk. Mentioned their team is growing fast (20→50 people). Budget seems healthy — they have 3 tools already.', outreachHistory: [{ id: 'oh1', day: 'Day 1', action: 'Initial DM sent via Twitter', time: '3d ago', status: 'completed' }] },
   { id: 'l2', name: 'Priya Sharma', handle: 'priya@startup.io', company: 'StartupIO', role: 'CTO', source: 'IndieHackers', sourcePlatform: 'indiehackers', painPoint: 'Need better lead tracking from community', score: 72, stage: 'discovered', agentId: 'lg-2', agentName: 'Hunter', dateDiscovered: '3h ago', industry: 'B2B SaaS', companySize: '10-50', location: 'Bangalore, India', problemFit: 78, intentSignals: 65, profileFit: 80, accessibility: 70 },
@@ -317,7 +318,7 @@ function KanbanBoard({ leads, onCardClick }: { leads: LeadCard[]; onCardClick: (
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             onClick={() => onCardClick(lead)}
-                            className="bg-[#1c2658] rounded-lg border border-slate-200 p-3.5 cursor-grab active:cursor-grabbing hover:shadow-md hover:bg-[#0c1130] transition-all duration-200 group"
+                            className="bg-slate-900/40 rounded-lg border border-slate-800 p-3.5 cursor-grab active:cursor-grabbing hover:shadow-md hover:bg-slate-800/50 transition-all duration-200 group"
                             style={{
                               ...provided.draggableProps.style,
                               transform: snapshot.isDragging
@@ -335,10 +336,10 @@ function KanbanBoard({ leads, onCardClick }: { leads: LeadCard[]; onCardClick: (
                             <div className="flex items-start justify-between mb-1.5">
                               <div className="flex items-center gap-1.5 min-w-0">
                                 {getSourceIcon(lead.source)}
-                                <span className="text-[13px] font-semibold text-slate-800 truncate">{lead.name}</span>
+                                <span className="text-[13px] font-semibold text-slate-200 truncate">{lead.name}</span>
                               </div>
                               <div
-                                className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border-2 bg-[#1c2658]"
+                                className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border-2 bg-slate-900/40"
                                 style={{ borderColor: getScoreColor(lead.score), color: getScoreColor(lead.score) }}
                               >
                                 {lead.score}
@@ -353,12 +354,12 @@ function KanbanBoard({ leads, onCardClick }: { leads: LeadCard[]; onCardClick: (
                               </Badge>
                             </div>
                             {/* Pain Point */}
-                            <p className="text-xs text-slate-600 line-clamp-1 mb-2.5 leading-relaxed">{lead.painPoint}</p>
+                            <p className="text-xs text-slate-400 line-clamp-1 mb-2.5 leading-relaxed">{lead.painPoint}</p>
                             {/* Bottom Row */}
-                            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                            <div className="flex items-center justify-between pt-2 border-t border-slate-800">
                               <span className="text-[11px] text-slate-400">{lead.dateDiscovered}</span>
                               <div className="flex items-center gap-1.5">
-                                <div className="w-5 h-5 rounded-full bg-[#177E89] flex items-center justify-center">
+                                <div className="w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center">
                                   <Target size={10} className="text-white" />
                                 </div>
                                 <span className="text-[10px] text-slate-500 font-medium">{lead.agentName}</span>
@@ -412,13 +413,13 @@ function ScanTargetsTab() {
     <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">Active Scan Targets</h2>
+        <h2 className="text-lg font-semibold text-slate-100">Active Scan Targets</h2>
         <div className="flex gap-2">
-          <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border border-slate-200 text-slate-700 hover:bg-[#0c1130] transition-colors">
+          <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border border-slate-800 text-slate-300 hover:bg-slate-800/50 transition-colors">
             <Play size={14} />
             Run All Scans
           </button>
-          <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-[#177E89] text-white hover:bg-[#1a919d] transition-colors">
+          <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-emerald-600 text-white hover:bg-[#1a919d] transition-colors">
             <Plus size={14} />
             Add Target
           </button>
@@ -433,16 +434,16 @@ function ScanTargetsTab() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: idx * 0.05, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="bg-[#1c2658] rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow duration-200"
+            className="bg-slate-900/40 rounded-xl border border-slate-800 p-5 shadow-sm hover:shadow-md transition-shadow duration-200"
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#0c1130] flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-slate-800/50 flex items-center justify-center">
                   {getPlatformIcon(target.platform)}
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold text-slate-900">{target.name}</h3>
+                  <h3 className="text-base font-semibold text-slate-100">{target.name}</h3>
                   <p className="text-[13px] text-slate-500">{target.url}</p>
                 </div>
               </div>
@@ -461,15 +462,15 @@ function ScanTargetsTab() {
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div>
                 <p className="text-[11px] text-slate-400 uppercase tracking-wide mb-0.5">Scan Frequency</p>
-                <p className="text-[13px] text-slate-700 font-medium">{target.frequency}</p>
+                <p className="text-[13px] text-slate-300 font-medium">{target.frequency}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-400 uppercase tracking-wide mb-0.5">Keywords</p>
-                <p className="text-[13px] text-slate-600 truncate">{target.keywords}</p>
+                <p className="text-[13px] text-slate-400 truncate">{target.keywords}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-400 uppercase tracking-wide mb-0.5">Last Scan</p>
-                <p className="text-[13px] text-slate-700">{target.lastScan}</p>
+                <p className="text-[13px] text-slate-300">{target.lastScan}</p>
               </div>
               <div>
                 <p className="text-[11px] text-slate-400 uppercase tracking-wide mb-0.5">Leads Today</p>
@@ -481,16 +482,16 @@ function ScanTargetsTab() {
             <MiniSparkline data={target.sparkline} color={target.active ? '#177E89' : '#94a3b8'} />
 
             {/* Footer */}
-            <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+            <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-800">
               <div className="flex gap-1">
-                <button className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-slate-600 hover:bg-[#0c1130] transition-colors">
+                <button className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:bg-slate-800/50 transition-colors">
                   <Pencil size={12} /> Edit
                 </button>
-                <button className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-slate-600 hover:bg-[#0c1130] transition-colors">
+                <button className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:bg-slate-800/50 transition-colors">
                   <Play size={12} /> Run Now
                 </button>
               </div>
-              <button className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-red-500 hover:bg-red-50 transition-colors">
+              <button className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium text-red-500 hover:bg-red-500/10 transition-colors">
                 <Trash2 size={12} />
               </button>
             </div>
@@ -519,10 +520,10 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
   const scoreOffset = circumference - (lead.score / 100) * circumference;
 
   const breakdowns = [
-    { label: 'Problem Fit', value: lead.problemFit || 0, color: '#177E89' },
-    { label: 'Intent Signals', value: lead.intentSignals || 0, color: '#0ea5e9' },
-    { label: 'Profile Fit', value: lead.profileFit || 0, color: '#177E89' },
-    { label: 'Accessibility', value: lead.accessibility || 0, color: '#FFC857' },
+    { label: 'Problem Fit', value: lead.problemFit || 0, color: '#34d399' },
+    { label: 'Intent Signals', value: lead.intentSignals || 0, color: '#38bdf8' },
+    { label: 'Profile Fit', value: lead.profileFit || 0, color: '#34d399' },
+    { label: 'Accessibility', value: lead.accessibility || 0, color: '#fbbf24' },
   ];
 
   const timeline: SidebarTimelineEntry[] = lead.outreachHistory || [
@@ -546,12 +547,12 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="fixed right-0 top-16 bottom-0 w-[420px] bg-[#1c2658] shadow-2xl z-50 overflow-y-auto border-l border-slate-200"
+        className="fixed right-0 top-16 bottom-0 w-[420px] bg-slate-900/40 shadow-2xl z-50 overflow-y-auto border-l border-slate-800"
       >
         {/* Header */}
-        <div className="sticky top-0 bg-[#1c2658] border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
-          <h2 className="text-lg font-semibold text-slate-900">Lead Profile</h2>
-          <button onClick={onClose} className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:bg-[#0c1130] transition-colors">
+        <div className="sticky top-0 bg-slate-900/40 border-b border-slate-800 px-6 py-4 flex items-center justify-between z-10">
+          <h2 className="text-lg font-semibold text-slate-100">Lead Profile</h2>
+          <button onClick={onClose} className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-800/50 transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -564,13 +565,13 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
             transition={{ delay: 0.1 }}
           >
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-lg font-bold shrink-0">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center text-white text-lg font-bold shrink-0">
                 {getInitials(lead.name)}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-semibold text-slate-900">{lead.name}</h3>
+                <h3 className="text-lg font-semibold text-slate-100">{lead.name}</h3>
                 <p className="text-[13px] text-slate-500">{lead.handle}</p>
-                <p className="text-[13px] text-slate-600 mt-0.5">{lead.role} at <span className="font-medium">{lead.company}</span></p>
+                <p className="text-[13px] text-slate-400 mt-0.5">{lead.role} at <span className="font-medium">{lead.company}</span></p>
               </div>
             </div>
             <div className="flex items-center gap-2 mt-3">
@@ -588,23 +589,23 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
             transition={{ delay: 0.15 }}
             className="grid grid-cols-2 gap-3"
           >
-            <div className="bg-[#0c1130] rounded-lg p-3">
+            <div className="bg-slate-800/50 rounded-lg p-3">
               <p className="text-[11px] text-slate-400 uppercase tracking-wide">Industry</p>
-              <p className="text-[13px] text-slate-700 font-medium">{lead.industry || 'N/A'}</p>
+              <p className="text-[13px] text-slate-300 font-medium">{lead.industry || 'N/A'}</p>
             </div>
-            <div className="bg-[#0c1130] rounded-lg p-3">
+            <div className="bg-slate-800/50 rounded-lg p-3">
               <p className="text-[11px] text-slate-400 uppercase tracking-wide">Company Size</p>
-              <p className="text-[13px] text-slate-700 font-medium">{lead.companySize || 'N/A'}</p>
+              <p className="text-[13px] text-slate-300 font-medium">{lead.companySize || 'N/A'}</p>
             </div>
-            <div className="bg-[#0c1130] rounded-lg p-3">
+            <div className="bg-slate-800/50 rounded-lg p-3">
               <p className="text-[11px] text-slate-400 uppercase tracking-wide">Location</p>
-              <p className="text-[13px] text-slate-700 font-medium">{lead.location || 'N/A'}</p>
+              <p className="text-[13px] text-slate-300 font-medium">{lead.location || 'N/A'}</p>
             </div>
-            <div className="bg-[#0c1130] rounded-lg p-3">
+            <div className="bg-slate-800/50 rounded-lg p-3">
               <p className="text-[11px] text-slate-400 uppercase tracking-wide">Source</p>
               <div className="flex items-center gap-1">
                 {getSourceIcon(lead.source)}
-                <p className="text-[13px] text-slate-700 font-medium">{lead.source}</p>
+                <p className="text-[13px] text-slate-300 font-medium">{lead.source}</p>
               </div>
             </div>
           </motion.div>
@@ -629,11 +630,11 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-bold text-slate-900">{lead.score}</span>
+                <span className="text-2xl font-bold text-slate-100">{lead.score}</span>
                 <span className="text-[10px] text-slate-400">/ 100</span>
               </div>
             </div>
-            <p className="text-sm font-semibold text-slate-700 mt-2">Qualification Score</p>
+            <p className="text-sm font-semibold text-slate-300 mt-2">Qualification Score</p>
           </motion.div>
 
           {/* Breakdown */}
@@ -643,7 +644,7 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
             transition={{ delay: 0.25 }}
             className="space-y-3"
           >
-            <h4 className="text-sm font-semibold text-slate-900">Score Breakdown</h4>
+            <h4 className="text-sm font-semibold text-slate-100">Score Breakdown</h4>
             {breakdowns.map((item, idx) => (
               <motion.div
                 key={item.label}
@@ -652,10 +653,10 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
                 transition={{ delay: 0.35 + idx * 0.08 }}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-slate-600">{item.label}</span>
-                  <span className="text-xs font-semibold text-slate-700">{item.value}%</span>
+                  <span className="text-xs text-slate-400">{item.label}</span>
+                  <span className="text-xs font-semibold text-slate-300">{item.value}%</span>
                 </div>
-                <div className="h-2 bg-[#0c1130] rounded-full overflow-hidden">
+                <div className="h-2 bg-slate-800/50 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full rounded-full"
                     style={{ backgroundColor: item.color }}
@@ -674,10 +675,10 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <h4 className="text-sm font-semibold text-slate-900 mb-2">Pain Points</h4>
+            <h4 className="text-sm font-semibold text-slate-100 mb-2">Pain Points</h4>
             <div className="flex flex-wrap gap-1.5">
               {['Customer support scaling', 'Manual processes', 'High costs', 'Tool fragmentation'].map(tag => (
-                <span key={tag} className="text-[10px] font-medium px-2 py-1 rounded-md bg-red-50 text-red-700 border border-red-100">
+                <span key={tag} className="text-[10px] font-medium px-2 py-1 rounded-md bg-red-500/10 text-red-400 border border-red-100">
                   {tag}
                 </span>
               ))}
@@ -690,10 +691,10 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
           >
-            <h4 className="text-sm font-semibold text-slate-900 mb-2">Intent Signals</h4>
+            <h4 className="text-sm font-semibold text-slate-100 mb-2">Intent Signals</h4>
             <div className="flex flex-wrap gap-1.5">
               {['Asked for pricing', 'Mentioned competitor', 'Used comparison language', 'Budget mentioned'].map(tag => (
-                <span key={tag} className="text-[10px] font-medium px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100">
+                <span key={tag} className="text-[10px] font-medium px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-100">
                   {tag}
                 </span>
               ))}
@@ -706,9 +707,9 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <h4 className="text-sm font-semibold text-slate-900 mb-2">Notes</h4>
+            <h4 className="text-sm font-semibold text-slate-100 mb-2">Notes</h4>
             <textarea
-              className="w-full min-h-[100px] p-3 rounded-lg border border-slate-200 text-[13px] text-slate-700 bg-[#0c1130] focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-500 resize-none"
+              className="w-full min-h-[100px] p-3 rounded-lg border border-slate-800 text-[13px] text-slate-300 bg-slate-800/50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 resize-none"
               defaultValue={lead.notes || `${lead.painPoint}. Found via ${lead.source}. Score driven by strong problem-solution fit.`}
             />
             <div className="flex items-center gap-1 mt-1.5">
@@ -723,12 +724,12 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45 }}
           >
-            <h4 className="text-sm font-semibold text-slate-900 mb-3">Outreach History</h4>
+            <h4 className="text-sm font-semibold text-slate-100 mb-3">Outreach History</h4>
             <div className="space-y-0">
               {timeline.map((entry, idx) => (
                 <div key={entry.id} className="flex gap-3 relative">
                   {idx < timeline.length - 1 && (
-                    <div className="absolute left-[7px] top-6 bottom-0 w-px bg-[#141B41]" />
+                    <div className="absolute left-[7px] top-6 bottom-0 w-px bg-[#0a0a0a]" />
                   )}
                   <div className="mt-0.5">
                     {entry.status === 'completed' ? (
@@ -739,7 +740,7 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
                   </div>
                   <div className="pb-4">
                     <p className="text-[12px] text-slate-500 font-medium">{entry.day}: {entry.time}</p>
-                    <p className="text-[13px] text-slate-700">{entry.action}</p>
+                    <p className="text-[13px] text-slate-300">{entry.action}</p>
                   </div>
                 </div>
               ))}
@@ -752,26 +753,26 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <h4 className="text-sm font-semibold text-slate-900 mb-2">Discovery Context</h4>
-            <div className="bg-[#0c1130] rounded-lg p-3">
+            <h4 className="text-sm font-semibold text-slate-100 mb-2">Discovery Context</h4>
+            <div className="bg-slate-800/50 rounded-lg p-3">
               <p className="text-[12px] text-slate-500 mb-1">Original post on {lead.source}</p>
-              <p className="text-[13px] text-slate-700 italic">&ldquo;{lead.painPoint}&rdquo;</p>
-              <a href="#" className="text-[12px] text-sky-600 hover:text-sky-700 mt-2 inline-flex items-center gap-0.5">
+              <p className="text-[13px] text-slate-300 italic">&ldquo;{lead.painPoint}&rdquo;</p>
+              <a href="#" className="text-[12px] text-sky-600 hover:text-sky-400 mt-2 inline-flex items-center gap-0.5">
                 View original post <ExternalLink size={10} />
               </a>
             </div>
           </motion.div>
 
           {/* Actions Footer */}
-          <div className="sticky bottom-0 bg-[#1c2658] border-t border-slate-200 pt-4 pb-2 space-y-2">
-            <button className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-[#177E89] text-white hover:bg-[#1a919d] transition-colors">
+          <div className="sticky bottom-0 bg-slate-900/40 border-t border-slate-800 pt-4 pb-2 space-y-2">
+            <button className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-emerald-600 text-white hover:bg-[#1a919d] transition-colors">
               <ChevronRight size={16} /> Move to Next Stage
             </button>
             <div className="flex gap-2">
-              <button className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-slate-200 text-slate-700 hover:bg-[#0c1130] transition-colors">
+              <button className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-slate-800 text-slate-300 hover:bg-slate-800/50 transition-colors">
                 <Send size={12} /> Send Message
               </button>
-              <button className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-red-600 hover:bg-red-50 transition-colors">
+              <button className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-red-600 hover:bg-red-500/10 transition-colors">
                 <AlertCircle size={12} /> Disqualify
               </button>
             </div>
@@ -789,26 +790,26 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
 function OutreachLogTab() {
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'Sent': return { bg: 'bg-[#0c1130]', text: 'text-slate-700', border: 'border-slate-300' };
-      case 'Delivered': return { bg: 'bg-sky-50', text: 'text-sky-700', border: 'border-sky-300' };
-      case 'Read': return { bg: 'bg-violet-50', text: 'text-violet-700', border: 'border-violet-300' };
-      case 'Replied': return { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-300' };
-      case 'Bounced': return { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-300' };
-      default: return { bg: 'bg-[#0c1130]', text: 'text-slate-700', border: 'border-slate-300' };
+      case 'Sent': return { bg: 'bg-slate-800/50', text: 'text-slate-300', border: 'border-slate-300' };
+      case 'Delivered': return { bg: 'bg-sky-500/10', text: 'text-sky-400', border: 'border-sky-300' };
+      case 'Read': return { bg: 'bg-violet-500/10', text: 'text-violet-400', border: 'border-violet-300' };
+      case 'Replied': return { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-300' };
+      case 'Bounced': return { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-300' };
+      default: return { bg: 'bg-slate-800/50', text: 'text-slate-300', border: 'border-slate-300' };
     }
   };
 
   const getResponseBadge = (response: string) => {
     switch (response) {
-      case 'Positive': return 'bg-emerald-100 text-emerald-700 border-emerald-300';
-      case 'Neutral': return 'bg-amber-100 text-amber-700 border-amber-300';
-      case 'Negative': return 'bg-red-100 text-red-700 border-red-300';
-      default: return 'bg-[#0c1130] text-slate-600 border-slate-300';
+      case 'Positive': return 'bg-emerald-100 text-emerald-400 border-emerald-300';
+      case 'Neutral': return 'bg-amber-100 text-amber-400 border-amber-300';
+      case 'Negative': return 'bg-red-100 text-red-400 border-red-300';
+      default: return 'bg-slate-800/50 text-slate-400 border-slate-300';
     }
   };
 
   const getRowStyle = (entry: OutreachEntry) => {
-    if (entry.stage === 'converted') return 'bg-emerald-50/50';
+    if (entry.stage === 'converted') return 'bg-emerald-500/10/50';
     if (entry.response === 'None' && entry.status !== 'Bounced') return 'border-l-[3px] border-l-amber-400';
     return '';
   };
@@ -828,9 +829,9 @@ function OutreachLogTab() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: idx * 0.05 }}
-            className="bg-[#1c2658] rounded-xl border border-slate-200 p-4"
+            className="bg-slate-900/40 rounded-xl border border-slate-800 p-4"
           >
-            <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
+            <p className="text-2xl font-bold text-slate-100">{stat.value}</p>
             <p className="text-[11px] text-slate-500 uppercase tracking-wide mt-0.5">{stat.label}</p>
             <p className={`text-[11px] font-medium mt-1 ${stat.trendColor}`}>{stat.trend}</p>
           </motion.div>
@@ -842,15 +843,15 @@ function OutreachLogTab() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.2 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 shadow-sm overflow-hidden"
       >
-        <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
-          <h3 className="text-base font-semibold text-slate-900">Outreach Log</h3>
+        <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+          <h3 className="text-base font-semibold text-slate-100">Outreach Log</h3>
           <div className="flex gap-2">
-            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-200 text-slate-700 hover:bg-[#0c1130] transition-colors">
+            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-800 text-slate-300 hover:bg-slate-800/50 transition-colors">
               <Filter size={12} /> Filter
             </button>
-            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-200 text-slate-700 hover:bg-[#0c1130] transition-colors">
+            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-800 text-slate-300 hover:bg-slate-800/50 transition-colors">
               <Download size={12} /> Export
             </button>
           </div>
@@ -859,7 +860,7 @@ function OutreachLogTab() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#0c1130]">
+              <tr className="bg-slate-800/50">
                 <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Lead</th>
                 <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Source</th>
                 <th className="text-left px-4 py-2.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Message</th>
@@ -878,15 +879,15 @@ function OutreachLogTab() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: idx * 0.02 }}
-                    className={`border-b border-slate-100 hover:bg-[#0c1130] transition-colors ${getRowStyle(entry)}`}
+                    className={`border-b border-slate-800 hover:bg-slate-800/50 transition-colors ${getRowStyle(entry)}`}
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold">
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center text-white text-[10px] font-bold">
                           {getInitials(entry.leadName)}
                         </div>
                         <div>
-                          <p className="text-[13px] font-medium text-slate-800">{entry.leadName}</p>
+                          <p className="text-[13px] font-medium text-slate-200">{entry.leadName}</p>
                           <p className="text-[11px] text-slate-500">{entry.leadHandle}</p>
                         </div>
                       </div>
@@ -894,14 +895,14 @@ function OutreachLogTab() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5">
                         {getSourceIcon(entry.source)}
-                        <span className="text-[12px] text-slate-600">{entry.source}</span>
+                        <span className="text-[12px] text-slate-400">{entry.source}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-[12px] text-slate-600 truncate max-w-[200px]">{entry.messagePreview}</p>
+                      <p className="text-[12px] text-slate-400 truncate max-w-[200px]">{entry.messagePreview}</p>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-[12px] text-slate-600">{entry.channel}</span>
+                      <span className="text-[12px] text-slate-400">{entry.channel}</span>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold border ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border}`}>
@@ -915,11 +916,11 @@ function OutreachLogTab() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1">
-                        <button className="p-1 rounded hover:bg-[#0c1130] text-slate-500 transition-colors">
+                        <button className="p-1 rounded hover:bg-slate-800/50 text-slate-500 transition-colors">
                           <Eye size={14} />
                         </button>
                         {entry.response === 'None' && entry.status !== 'Bounced' && (
-                          <button className="p-1 rounded hover:bg-[#0c1130] text-slate-500 transition-colors">
+                          <button className="p-1 rounded hover:bg-slate-800/50 text-slate-500 transition-colors">
                             <RotateCcw size={14} />
                           </button>
                         )}
@@ -942,10 +943,10 @@ function OutreachLogTab() {
 
 function KpiPills() {
   const pills = [
-    { icon: Search, value: 378, label: 'scanned', color: '#64748b' },
-    { icon: Target, value: 47, label: 'qualified', color: '#0ea5e9' },
-    { icon: Send, value: 12, label: 'contacted', color: '#FFC857' },
-    { icon: CheckCircle, value: 3, label: 'converted', color: '#177E89' },
+    { icon: Search, value: 378, label: 'scanned', color: '#94a3b8' },
+    { icon: Target, value: 47, label: 'qualified', color: '#38bdf8' },
+    { icon: Send, value: 12, label: 'contacted', color: '#fbbf24' },
+    { icon: CheckCircle, value: 3, label: 'converted', color: '#34d399' },
   ];
 
   return (
@@ -956,10 +957,10 @@ function KpiPills() {
           initial={{ opacity: 0, x: 8 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: idx * 0.04 }}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0c1130]"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-800/50"
         >
           <pill.icon size={14} style={{ color: pill.color }} />
-          <span className="text-sm font-bold text-slate-800">{pill.value}</span>
+          <span className="text-sm font-bold text-slate-200">{pill.value}</span>
           <span className="text-xs text-slate-500">{pill.label}</span>
         </motion.div>
       ))}
@@ -974,13 +975,17 @@ function KpiPills() {
 export default function LeadGen() {
   const [activeTab, setActiveTab] = useState('pipeline');
   const [selectedLead, setSelectedLead] = useState<LeadCard | null>(null);
+  const [leads, setLeads] = useState<LeadCard[]>(defaultLeads);
+  useEffect(() => {
+    fetchLeadsPipeline().then(data => setLeads(data)).catch(() => {});
+  }, []);
 
   return (
     <div className="p-8">
       {/* Page Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#141B41] tracking-tight">Lead Generation</h1>
+          <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Lead Generation</h1>
           <p className="mt-1 text-[13px] text-slate-500">5 agents scanning · 8 active targets · Last scan: 2m ago</p>
         </div>
         <KpiPills />
@@ -989,14 +994,14 @@ export default function LeadGen() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <div className="flex items-center justify-between">
-          <TabsList className="bg-[#0c1130] p-1">
-            <TabsTrigger value="pipeline" className="data-[state=active]:bg-[#1c2658] data-[state=active]:text-[#177E89] text-slate-600 text-sm gap-1.5">
+          <TabsList className="bg-slate-800/50 p-1">
+            <TabsTrigger value="pipeline" className="data-[state=active]:bg-slate-900/40 data-[state=active]:text-emerald-400 text-slate-400 text-sm gap-1.5">
               <Layout size={16} /> Pipeline
             </TabsTrigger>
-            <TabsTrigger value="scantargets" className="data-[state=active]:bg-[#1c2658] data-[state=active]:text-[#177E89] text-slate-600 text-sm gap-1.5">
+            <TabsTrigger value="scantargets" className="data-[state=active]:bg-slate-900/40 data-[state=active]:text-emerald-400 text-slate-400 text-sm gap-1.5">
               <ScanLine size={16} /> Scan Targets
             </TabsTrigger>
-            <TabsTrigger value="outreach" className="data-[state=active]:bg-[#1c2658] data-[state=active]:text-[#177E89] text-slate-600 text-sm gap-1.5">
+            <TabsTrigger value="outreach" className="data-[state=active]:bg-slate-900/40 data-[state=active]:text-emerald-400 text-slate-400 text-sm gap-1.5">
               <Mail size={16} /> Outreach Log
             </TabsTrigger>
           </TabsList>
@@ -1012,13 +1017,13 @@ export default function LeadGen() {
                 <input
                   type="text"
                   placeholder="Search leads..."
-                  className="pl-8 pr-3 py-1.5 h-8 rounded-lg border border-slate-200 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-400 w-48"
+                  className="pl-8 pr-3 py-1.5 h-8 rounded-lg border border-slate-800 text-sm text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 w-48"
                 />
               </div>
-              <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#177E89] text-white hover:bg-[#1a919d] transition-colors h-8">
+              <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-600 text-white hover:bg-[#1a919d] transition-colors h-8">
                 <Plus size={12} /> Add Target
               </button>
-              <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-200 text-slate-700 hover:bg-[#0c1130] transition-colors h-8">
+              <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-800 text-slate-300 hover:bg-slate-800/50 transition-colors h-8">
                 <Download size={12} /> Export
               </button>
             </motion.div>
@@ -1026,7 +1031,7 @@ export default function LeadGen() {
         </div>
 
         <TabsContent value="pipeline" className="mt-0">
-          <KanbanBoard leads={initialLeads} onCardClick={setSelectedLead} />
+          <KanbanBoard leads={leads} onCardClick={setSelectedLead} />
         </TabsContent>
 
         <TabsContent value="scantargets" className="mt-0">

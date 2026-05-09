@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Zap, MessageCircle, Clock, ThumbsUp,
@@ -15,10 +15,11 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import {
-  activities, performanceData, sparklineData,
+  activities as mockActivities, performanceData, sparklineData,
   hourlyBreakdown, agentGroupSparklines,
   type AgentType,
 } from '@/lib/mockData';
+import { fetchAgentsOverview } from '@/lib/api';
 
 /* ─── Animation Variants ─── */
 const cardStagger = {
@@ -81,19 +82,19 @@ const quickActions = [
 
 /* ─── System Health ─── */
 const healthServices = [
-  { name: 'API Gateway', status: 'Online', icon: Server, color: '#177E89' },
-  { name: 'Message Queue', status: 'Online', icon: Layers, color: '#177E89' },
-  { name: 'LLM Provider', status: 'Online', icon: Brain, color: '#177E89' },
-  { name: 'Database', status: 'Degraded', icon: Database, color: '#FFC857' },
-  { name: 'WebSocket', status: 'Online', icon: Radio, color: '#177E89' },
-  { name: 'Search Index', status: 'Online', icon: Search, color: '#177E89' },
+  { name: 'API Gateway', status: 'Online', icon: Server, color: '#34d399' },
+  { name: 'Message Queue', status: 'Online', icon: Layers, color: '#34d399' },
+  { name: 'LLM Provider', status: 'Online', icon: Brain, color: '#34d399' },
+  { name: 'Database', status: 'Degraded', icon: Database, color: '#fbbf24' },
+  { name: 'WebSocket', status: 'Online', icon: Radio, color: '#34d399' },
+  { name: 'Search Index', status: 'Online', icon: Search, color: '#34d399' },
 ];
 
 const resources = [
-  { label: 'CPU', value: 42, color: '#177E89' },
-  { label: 'Memory', value: 67, color: '#FFC857' },
-  { label: 'Disk', value: 23, color: '#177E89' },
-  { label: 'Network', value: 78, color: '#FFC857' },
+  { label: 'CPU', value: 42, color: '#34d399' },
+  { label: 'Memory', value: 67, color: '#fbbf24' },
+  { label: 'Disk', value: 23, color: '#34d399' },
+  { label: 'Network', value: 78, color: '#fbbf24' },
 ];
 
 /* ─── Activity Feed Filter ─── */
@@ -114,10 +115,17 @@ const agentTypeIconColors: Record<AgentType, string> = {
 export default function Overview() {
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>('all');
   const [expandedBreakdown, setExpandedBreakdown] = useState<string | null>('support');
+  const [recentActivity, setRecentActivity] = useState(mockActivities);
+
+  useEffect(() => {
+    fetchAgentsOverview()
+      .then(data => setRecentActivity(data.recent_activity ?? mockActivities))
+      .catch(() => setRecentActivity(mockActivities));
+  }, []);
 
   const filteredActivities = activityFilter === 'all'
-    ? activities
-    : activities.filter(a => a.agentType === activityFilter);
+    ? recentActivity
+    : recentActivity.filter(a => a.agentType === activityFilter);
 
   return (
     <div className="p-8">
@@ -135,7 +143,7 @@ export default function Overview() {
           <motion.div
             key={kpi.label}
             variants={cardFadeUp}
-            className="bg-[#1c2658] rounded-xl shadow-card p-5 cursor-pointer hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
+            className="bg-slate-900/40 rounded-xl shadow-card p-5 cursor-pointer hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
           >
             <div className="flex items-start justify-between mb-3">
               <div
@@ -155,7 +163,7 @@ export default function Overview() {
                 </span>
               </div>
             </div>
-            <div className="text-[32px] font-bold text-[#141B41] leading-tight tracking-tight">{kpi.value}</div>
+            <div className="text-[32px] font-bold text-slate-100 leading-tight tracking-tight">{kpi.value}</div>
             <div className="text-xs font-medium text-slate-500 uppercase tracking-wider mt-0.5">{kpi.label}</div>
             <div className="mt-3 h-10">
               <ResponsiveContainer width="100%" height="100%">
@@ -192,20 +200,20 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="bg-[#1c2658] rounded-xl shadow-card p-5"
+            className="bg-slate-900/40 rounded-xl shadow-card p-5"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-semibold text-[#141B41]">Agent Fleet Status</h2>
+                <h2 className="text-base font-semibold text-slate-100">Agent Fleet Status</h2>
                 <span className="flex items-center gap-1.5 ml-2">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500/100" />
                   </span>
                   <span className="text-xs text-slate-500">Live</span>
                 </span>
               </div>
-              <button className="p-1.5 rounded-lg hover:bg-[#0c1130] text-slate-400 hover:text-slate-600 transition-colors">
+              <button className="p-1.5 rounded-lg hover:bg-slate-800/50 text-slate-400 hover:text-slate-400 transition-colors">
                 <RefreshCw size={16} />
               </button>
             </div>
@@ -216,12 +224,12 @@ export default function Overview() {
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.25 + gi * 0.08, type: 'spring', stiffness: 300, damping: 25 }}
-                  className="rounded-lg border border-slate-100 p-4 hover:bg-[#f5f3ff] transition-colors duration-150 cursor-pointer group"
+                  className="rounded-lg border border-slate-800 p-4 hover:bg-slate-800/50 transition-colors duration-150 cursor-pointer group"
                 >
                   <div className="flex items-center gap-2 mb-3">
                     <group.icon size={22} style={{ color: group.iconColor }} />
-                    <span className="text-sm font-semibold text-[#141B41]">{group.label}</span>
-                    <span className="ml-auto text-xs font-semibold bg-[#0c1130] text-slate-600 px-2 py-0.5 rounded-md">
+                    <span className="text-sm font-semibold text-slate-100">{group.label}</span>
+                    <span className="ml-auto text-xs font-semibold bg-slate-800/50 text-slate-400 px-2 py-0.5 rounded-md">
                       {group.total}
                     </span>
                   </div>
@@ -238,30 +246,30 @@ export default function Overview() {
                       ))}
                     </div>
                     {group.total > group.avatarIndices.length && (
-                      <div className="w-7 h-7 rounded-full bg-[#0c1130] border-2 border-white flex items-center justify-center text-[10px] font-semibold text-slate-500 ml-[-4px]">
+                      <div className="w-7 h-7 rounded-full bg-slate-800/50 border-2 border-white flex items-center justify-center text-[10px] font-semibold text-slate-500 ml-[-4px]">
                         +{group.total - group.avatarIndices.length}
                       </div>
                     )}
                   </div>
                   {/* Status bar */}
-                  <div className="h-1 rounded-full bg-[#0c1130] overflow-hidden flex mb-2">
+                  <div className="h-1 rounded-full bg-slate-800/50 overflow-hidden flex mb-2">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${(group.active / group.total) * 100}%` }}
                       transition={{ delay: 0.4 + gi * 0.1, duration: 0.6, ease: 'easeOut' }}
-                      className="h-full bg-emerald-500"
+                      className="h-full bg-emerald-500/100"
                     />
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${(group.warning / group.total) * 100}%` }}
                       transition={{ delay: 0.5 + gi * 0.1, duration: 0.6, ease: 'easeOut' }}
-                      className="h-full bg-amber-500"
+                      className="h-full bg-amber-500/100"
                     />
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${(group.error / group.total) * 100}%` }}
                       transition={{ delay: 0.6 + gi * 0.1, duration: 0.6, ease: 'easeOut' }}
-                      className="h-full bg-red-500"
+                      className="h-full bg-red-500/100"
                     />
                   </div>
                   {/* Stats */}
@@ -302,12 +310,12 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="bg-[#1c2658] rounded-xl shadow-card p-5"
+            className="bg-slate-900/40 rounded-xl shadow-card p-5"
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold text-[#141B41]">Performance Trends</h2>
+              <h2 className="text-base font-semibold text-slate-100">Performance Trends</h2>
               <div className="flex items-center gap-3">
-                <button className="flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-[#0c1130] hover:bg-[#0c1130] px-3 py-1.5 rounded-lg transition-colors">
+                <button className="flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-slate-800/50 hover:bg-slate-800/50 px-3 py-1.5 rounded-lg transition-colors">
                   Last 7 days
                   <ChevronDown size={14} />
                 </button>
@@ -321,8 +329,8 @@ export default function Overview() {
                   <YAxis yAxisId="left" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                   <YAxis yAxisId="right" orientation="right" domain={[0, 300]} tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                   <Tooltip
-                    contentStyle={{ background: 'white', borderRadius: 8, border: '1px solid #452103', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', fontSize: 12 }}
-                    labelStyle={{ color: '#64748b', fontSize: 12 }}
+                    contentStyle={{ background: '#0f172a', borderRadius: 8, border: '1px solid #334155', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', fontSize: 12 }}
+                    labelStyle={{ color: '#94a3b8', fontSize: 12 }}
                   />
                   <Line yAxisId="left" type="monotone" dataKey="conversations" name="Conversations" stroke="#177E89" strokeWidth={2} dot={false} animationDuration={800} />
                   <Line yAxisId="left" type="monotone" dataKey="resolved" name="Resolved" stroke="#0ea5e9" strokeWidth={2} dot={false} animationDuration={800} />
@@ -334,10 +342,10 @@ export default function Overview() {
             {/* Legend */}
             <div className="flex flex-wrap gap-4 mt-3">
               {[
-                { label: 'Conversations', color: '#177E89', style: 'solid' },
-                { label: 'Resolved', color: '#0ea5e9', style: 'solid' },
-                { label: 'Response Time', color: '#177E89', style: 'dashed' },
-                { label: 'Escalation Rate', color: '#FFC857', style: 'dotted' },
+                { label: 'Conversations', color: '#34d399', style: 'solid' },
+                { label: 'Resolved', color: '#38bdf8', style: 'solid' },
+                { label: 'Response Time', color: '#34d399', style: 'dashed' },
+                { label: 'Escalation Rate', color: '#fbbf24', style: 'dotted' },
               ].map(item => (
                 <div key={item.label} className="flex items-center gap-1.5 text-xs text-slate-500">
                   <span className="w-3 h-0.5 rounded" style={{ backgroundColor: item.color, borderTop: item.style !== 'solid' ? `2px ${item.style} ${item.color}` : undefined, background: item.style !== 'solid' ? 'transparent' : item.color }} />
@@ -364,15 +372,15 @@ export default function Overview() {
                 <motion.div
                   key={section.type}
                   variants={cardFadeUp}
-                  className="bg-[#1c2658] rounded-xl shadow-card overflow-hidden"
+                  className="bg-slate-900/40 rounded-xl shadow-card overflow-hidden"
                 >
                   <button
                     onClick={() => setExpandedBreakdown(isExpanded ? null : section.type)}
-                    className="w-full flex items-center justify-between p-5 hover:bg-[#0c1130]/50 transition-colors"
+                    className="w-full flex items-center justify-between p-5 hover:bg-slate-800/50/50 transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <section.icon size={20} style={{ color: section.iconColor }} />
-                      <span className="text-sm font-semibold text-[#141B41]">{section.label}</span>
+                      <span className="text-sm font-semibold text-slate-100">{section.label}</span>
                     </div>
                     <motion.div
                       animate={{ rotate: isExpanded ? 90 : 0 }}
@@ -395,7 +403,7 @@ export default function Overview() {
                           <BarChart data={section.data.map((v, i) => ({ v, h: `${i + 8}am` }))}>
                             <XAxis dataKey="h" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} interval={1} />
                             <Tooltip
-                              contentStyle={{ borderRadius: 6, border: '1px solid #452103', fontSize: 12 }}
+                              contentStyle={{ borderRadius: 6, border: '1px solid #334155', fontSize: 12 }}
                               cursor={{ fill: 'transparent' }}
                             />
                             <Bar dataKey="v" fill={section.iconColor} radius={[3, 3, 0, 0]} animationDuration={500} />
@@ -405,7 +413,7 @@ export default function Overview() {
                       {/* Metrics */}
                       <div className="flex gap-6 mt-3 mb-3">
                         {Object.values(section.metrics).map(m => (
-                          <span key={m} className="text-xs font-semibold text-slate-600">{m}</span>
+                          <span key={m} className="text-xs font-semibold text-slate-400">{m}</span>
                         ))}
                       </div>
                       {/* Recent actions */}
@@ -414,7 +422,7 @@ export default function Overview() {
                           <li key={a} className="text-xs text-slate-500">{a}</li>
                         ))}
                       </ul>
-                      <button className="mt-3 text-xs font-medium text-[#177E89] hover:text-[#1a919d] flex items-center gap-1">
+                      <button className="mt-3 text-xs font-medium text-emerald-400 hover:text-emerald-400 flex items-center gap-1">
                         View Details <ChevronRight size={12} />
                       </button>
                     </motion.div>
@@ -433,15 +441,15 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="bg-[#1c2658] rounded-xl shadow-card p-5"
+            className="bg-slate-900/40 rounded-xl shadow-card p-5"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-semibold text-[#141B41]">Activity Feed</h2>
+                <h2 className="text-base font-semibold text-slate-100">Activity Feed</h2>
                 <span className="flex items-center gap-1.5 ml-1">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500/100" />
                   </span>
                   <span className="text-xs text-slate-500">Live</span>
                 </span>
@@ -449,7 +457,7 @@ export default function Overview() {
               <select
                 value={activityFilter}
                 onChange={e => setActivityFilter(e.target.value as ActivityFilter)}
-                className="text-xs bg-[#0c1130] border border-slate-200 rounded-lg px-2 py-1 text-slate-600 outline-none focus:ring-2 focus:ring-[#177E89]/20"
+                className="text-xs bg-slate-800/50 border border-slate-800 rounded-lg px-2 py-1 text-slate-400 outline-none focus:ring-2 focus:ring-emerald-500/20"
               >
                 <option value="all">All</option>
                 <option value="support">Support</option>
@@ -468,7 +476,7 @@ export default function Overview() {
                 <motion.div
                   key={act.id}
                   variants={itemFade}
-                  className="flex gap-3 py-2.5 border-l-2 border-slate-200 ml-3 pl-4 relative"
+                  className="flex gap-3 py-2.5 border-l-2 border-slate-800 ml-3 pl-4 relative"
                 >
                   {/* Timeline dot */}
                   <div
@@ -478,7 +486,7 @@ export default function Overview() {
                     <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: agentTypeIconColors[act.agentType] }} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#141B41] leading-snug">
+                    <p className="text-sm font-medium text-slate-100 leading-snug">
                       <span className="font-semibold">{act.agentName}</span> — {act.action}
                     </p>
                     <p className="text-[13px] text-slate-500 mt-0.5 leading-snug">{act.detail}</p>
@@ -507,9 +515,9 @@ export default function Overview() {
             variants={cardStagger}
             initial="hidden"
             animate="show"
-            className="bg-[#1c2658] rounded-xl shadow-card p-5"
+            className="bg-slate-900/40 rounded-xl shadow-card p-5"
           >
-            <h2 className="text-base font-semibold text-[#141B41] mb-4">Quick Actions</h2>
+            <h2 className="text-base font-semibold text-slate-100 mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 gap-3">
               {quickActions.map((action) => (
                 <motion.button
@@ -518,12 +526,12 @@ export default function Overview() {
                     hidden: { opacity: 0, scale: 0.95 },
                     show: { opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 25 } },
                   }}
-                  whileHover={{ y: -1, backgroundColor: '#f5f3ff' }}
+                  whileHover={{ y: -1, backgroundColor: '#1e293b' }}
                   whileTap={{ scale: 0.97 }}
-                  className="flex flex-col items-center justify-center gap-2 bg-[#0c1130] rounded-xl p-4 min-h-[80px] transition-colors duration-150"
+                  className="flex flex-col items-center justify-center gap-2 bg-slate-800/50 rounded-xl p-4 min-h-[80px] transition-colors duration-150"
                 >
-                  <action.icon size={24} className="text-[#177E89]" />
-                  <span className="text-[13px] font-medium text-[#141B41]">{action.label}</span>
+                  <action.icon size={24} className="text-emerald-400" />
+                  <span className="text-[13px] font-medium text-slate-100">{action.label}</span>
                   <span className="text-[11px] text-slate-500 text-center leading-tight">{action.desc}</span>
                 </motion.button>
               ))}
@@ -535,11 +543,11 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="bg-[#1c2658] rounded-xl shadow-card p-5"
+            className="bg-slate-900/40 rounded-xl shadow-card p-5"
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold text-[#141B41]">System Health</h2>
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700">99.97%</span>
+              <h2 className="text-base font-semibold text-slate-100">System Health</h2>
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-400">99.97%</span>
             </div>
             {/* Services */}
             <div className="space-y-2.5">
@@ -552,7 +560,7 @@ export default function Overview() {
                   className="flex items-center gap-3"
                 >
                   <svc.icon size={16} className="text-slate-400" />
-                  <span className="text-[13px] font-medium text-slate-700 flex-1">{svc.name}</span>
+                  <span className="text-[13px] font-medium text-slate-300 flex-1">{svc.name}</span>
                   <span className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: svc.color }} />
                     <span className="text-xs text-slate-500">{svc.status}</span>
@@ -561,14 +569,14 @@ export default function Overview() {
               ))}
             </div>
             {/* Resources */}
-            <div className="mt-5 pt-4 border-t border-slate-100 space-y-3">
+            <div className="mt-5 pt-4 border-t border-slate-800 space-y-3">
               {resources.map((res, ri) => (
                 <div key={res.label}>
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-slate-500">{res.label}</span>
-                    <span className="font-semibold text-slate-700">{res.value}%</span>
+                    <span className="font-semibold text-slate-300">{res.value}%</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-[#141B41] overflow-hidden">
+                  <div className="h-1.5 rounded-full bg-[#0a0a0a] overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${res.value}%` }}

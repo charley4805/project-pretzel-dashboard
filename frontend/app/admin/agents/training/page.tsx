@@ -54,10 +54,10 @@ const feedbackItems = [
 
 function getAgentColor(type: string) {
   switch (type) {
-    case 'support': return 'text-blue-400 bg-blue-500/10 border-blue-500/20'
-    case 'social': return 'text-violet-400 bg-violet-500/10 border-violet-500/20'
-    case 'leads': return 'text-amber-400 bg-amber-500/10 border-amber-500/20'
-    default: return 'text-slate-400 bg-slate-500/10 border-slate-500/20'
+    case 'support': return 'text-blue-400 bg-blue-500/100/10 border-blue-500/20'
+    case 'social': return 'text-violet-400 bg-violet-500/100/10 border-violet-500/20'
+    case 'leads': return 'text-amber-400 bg-amber-500/100/10 border-amber-500/20'
+    default: return 'text-slate-400 bg-slate-800/500/10 border-slate-500/20'
   }
 }
 
@@ -103,8 +103,8 @@ export default function AgentTraining() {
               <span className="status-dot status-dot-online" />
             </div>
             <h3 className="text-sm font-semibold text-white">{agent.name}</h3>
-            <p className="text-[11px] mt-0.5" style={{ color: '#64748b' }}>{agent.model} · temp {agent.temperature}</p>
-            <div className="flex items-center gap-3 mt-2 text-[11px]" style={{ color: '#64748b' }}>
+            <p className="text-[11px] mt-0.5" style={{ color: '#94a3b8' }}>{agent.model} · temp {agent.temperature}</p>
+            <div className="flex items-center gap-3 mt-2 text-[11px]" style={{ color: '#94a3b8' }}>
               <span>{agent.trainingExamples} examples</span>
               <span>{agent.accuracy}% accuracy</span>
             </div>
@@ -115,8 +115,8 @@ export default function AgentTraining() {
       {/* Stats Row */}
       <div className="grid grid-cols-4 gap-3">
         {[
-          { label: 'Training Examples', value: selectedAgent.trainingExamples, icon: BookOpen, color: '#FFC857' },
-          { label: 'Accuracy Rate', value: `${selectedAgent.accuracy}%`, icon: TrendingUp, color: '#177E89' },
+          { label: 'Training Examples', value: selectedAgent.trainingExamples, icon: BookOpen, color: '#fbbf24' },
+          { label: 'Accuracy Rate', value: `${selectedAgent.accuracy}%`, icon: TrendingUp, color: '#34d399' },
           { label: 'Last Trained', value: selectedAgent.lastTrained, icon: Clock, color: '#3b82f6' },
           { label: 'Active Guardrails', value: selectedAgent.guardrailsActive, icon: Shield, color: '#8b5cf6' },
         ].map((stat, i) => (
@@ -128,7 +128,7 @@ export default function AgentTraining() {
             className="metric-card"
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[11px] font-medium" style={{ color: '#64748b' }}>{stat.label}</span>
+              <span className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>{stat.label}</span>
               <stat.icon size={16} style={{ color: stat.color }} />
             </div>
             <div className="text-xl font-bold text-white">{stat.value}</div>
@@ -158,11 +158,11 @@ export default function AgentTraining() {
               <motion.div key="examples" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>User Question</label>
+                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>User Question</label>
                     <input value={newQ} onChange={(e) => setNewQ(e.target.value)} placeholder="Enter a typical user question..." className="input-dark" />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Ideal Answer</label>
+                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Ideal Answer</label>
                     <input value={newA} onChange={(e) => setNewA(e.target.value)} placeholder="Enter the ideal agent response..." className="input-dark" />
                   </div>
                 </div>
@@ -170,12 +170,12 @@ export default function AgentTraining() {
 
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {examples.filter(e => e.agent === selectedAgent.type || selectedAgent.type === 'all').map((ex) => (
-                    <div key={ex.id} className="flex items-start gap-2 p-2.5 rounded-md" style={{ background: '#0c1130', border: '1px solid #452103' }}>
+                    <div key={ex.id} className="flex items-start gap-2 p-2.5 rounded-md" style={{ background: '#0c1130', border: '1px solid #334155' }}>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-white font-medium truncate">Q: {ex.question}</p>
                         <p className="text-xs mt-0.5" style={{ color: '#94a3b8' }}>A: {ex.answer}</p>
                       </div>
-                      <button onClick={() => removeExample(ex.id)} className="text-[#64748b] hover:text-[#FC814A] transition-colors"><Trash2 size={13} /></button>
+                      <button onClick={() => removeExample(ex.id)} className="text-slate-400 hover:text-orange-400 transition-colors"><Trash2 size={13} /></button>
                     </div>
                   ))}
                 </div>
@@ -185,23 +185,23 @@ export default function AgentTraining() {
             {activeTab === 'feedback' && (
               <motion.div key="feedback" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="space-y-2">
                 {feedbackItems.map((item) => (
-                  <div key={item.id} className="p-3 rounded-md" style={{ background: '#0c1130', border: '1px solid #452103' }}>
+                  <div key={item.id} className="p-3 rounded-md" style={{ background: '#0c1130', border: '1px solid #334155' }}>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>{item.agent}</span>
                       <div className="flex items-center gap-2">
                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${item.status === 'applied' ? 'badge-teal' : 'badge-golden'}`}>
                           {item.status === 'applied' ? 'Applied' : 'Pending'}
                         </span>
-                        <span className="text-[10px]" style={{ color: '#64748b' }}>{item.confidence}% confidence</span>
+                        <span className="text-[10px]" style={{ color: '#94a3b8' }}>{item.confidence}% confidence</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <p className="text-[10px] font-semibold mb-0.5" style={{ color: '#FC814A' }}>Agent Response</p>
+                        <p className="text-[10px] font-semibold mb-0.5" style={{ color: '#fb923c' }}>Agent Response</p>
                         <p className="text-xs" style={{ color: '#94a3b8' }}>{item.response}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-semibold mb-0.5" style={{ color: '#177E89' }}>Human Correction</p>
+                        <p className="text-[10px] font-semibold mb-0.5" style={{ color: '#34d399' }}>Human Correction</p>
                         <p className="text-xs text-white">{item.correction}</p>
                       </div>
                     </div>
@@ -214,27 +214,27 @@ export default function AgentTraining() {
               <motion.div key="fine-tune" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="space-y-3">
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Model</label>
+                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Model</label>
                     <select className="input-dark"><option>gpt-4o</option><option>claude-sonnet</option><option>gpt-4o-mini</option></select>
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Temperature: {temp}</label>
+                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Temperature: {temp}</label>
                     <input type="range" min="0" max="2" step="0.1" value={temp} onChange={(e) => setTemp(parseFloat(e.target.value))} className="w-full" style={{ accentColor: '#177E89' }} />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Max Tokens: {maxTokens}</label>
+                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Max Tokens: {maxTokens}</label>
                     <input type="range" min="512" max="8192" step="256" value={maxTokens} onChange={(e) => setMaxTokens(parseInt(e.target.value))} className="w-full" style={{ accentColor: '#177E89' }} />
                   </div>
                 </div>
-                <div className="p-3 rounded-md" style={{ background: '#0c1130', border: '1px solid #452103' }}>
+                <div className="p-3 rounded-md" style={{ background: '#0c1130', border: '1px solid #334155' }}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-white font-medium">Training Dataset</span>
-                    <span className="text-[11px]" style={{ color: '#64748b' }}>{selectedAgent.trainingExamples} examples</span>
+                    <span className="text-[11px]" style={{ color: '#94a3b8' }}>{selectedAgent.trainingExamples} examples</span>
                   </div>
                   <div className="w-full rounded-full h-1.5 mb-2" style={{ background: 'rgba(255,255,255,0.06)' }}>
                     <div className="h-1.5 rounded-full" style={{ width: '72%', background: '#177E89' }} />
                   </div>
-                  <p className="text-[11px]" style={{ color: '#64748b' }}>Dataset size is optimal for fine-tuning (recommended: 50-200 examples)</p>
+                  <p className="text-[11px]" style={{ color: '#94a3b8' }}>Dataset size is optimal for fine-tuning (recommended: 50-200 examples)</p>
                 </div>
                 <button className="btn-primary text-xs"><Zap size={12} /> Run Fine-tuning Job</button>
               </motion.div>
@@ -258,7 +258,7 @@ export default function AgentTraining() {
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(69,33,3,0.5)" />
               <XAxis dataKey="day" stroke="#64748b" fontSize={11} />
               <YAxis domain={[70, 100]} stroke="#64748b" fontSize={11} />
-              <Tooltip contentStyle={{ background: '#141B41', border: '1px solid #452103', borderRadius: 6, fontSize: 12, color: '#fff' }} itemStyle={{ fontSize: 12 }} />
+              <Tooltip contentStyle={{ background: '#141B41', border: '1px solid #334155', borderRadius: 6, fontSize: 12, color: '#fff' }} itemStyle={{ fontSize: 12 }} />
               <Area type="monotone" dataKey="support" stroke="#177E89" fill="url(#sup)" strokeWidth={2} name="Support" />
               <Area type="monotone" dataKey="social" stroke="#FFC857" fill="url(#soc)" strokeWidth={2} name="Social" />
               <Area type="monotone" dataKey="leads" stroke="#FC814A" fill="url(#ld)" strokeWidth={2} name="Leads" />
@@ -276,10 +276,10 @@ export default function AgentTraining() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-white font-medium">{session.type}</span>
-                    <span className="text-[10px]" style={{ color: '#64748b' }}>{session.time}</span>
+                    <span className="text-[10px]" style={{ color: '#94a3b8' }}>{session.time}</span>
                   </div>
                   <p className="text-[11px] mt-0.5" style={{ color: '#94a3b8' }}>{session.description}</p>
-                  <p className="text-[10px] mt-0.5" style={{ color: '#64748b' }}>{session.agent}</p>
+                  <p className="text-[10px] mt-0.5" style={{ color: '#94a3b8' }}>{session.agent}</p>
                 </div>
               </div>
             ))}

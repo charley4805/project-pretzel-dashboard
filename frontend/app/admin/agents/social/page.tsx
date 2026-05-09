@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   CalendarDays, MessageCircle, Megaphone, BarChart3,
@@ -26,6 +26,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { fetchSocialCampaigns } from '@/lib/api';
 
 // ─── Types ───────────────────────────────────────────────
 type Platform = 'twitter' | 'linkedin' | 'instagram' | 'facebook';
@@ -79,36 +80,36 @@ interface EngagementItem {
 
 // ─── Constants ───────────────────────────────────────────
 const PLATFORM_CONFIG: Record<Platform, { label: string; color: string; bg: string; icon: typeof Twitter }> = {
-  twitter: { label: 'Twitter/X', color: 'text-sky-500', bg: 'bg-sky-50', icon: Twitter },
-  linkedin: { label: 'LinkedIn', color: 'text-blue-700', bg: 'bg-blue-50', icon: Linkedin },
-  instagram: { label: 'Instagram', color: 'text-pink-500', bg: 'bg-pink-50', icon: Instagram },
-  facebook: { label: 'Facebook', color: 'text-indigo-600', bg: 'bg-indigo-50', icon: Facebook },
+  twitter: { label: 'Twitter/X', color: 'text-sky-500', bg: 'bg-sky-500/10', icon: Twitter },
+  linkedin: { label: 'LinkedIn', color: 'text-blue-400', bg: 'bg-blue-500/10', icon: Linkedin },
+  instagram: { label: 'Instagram', color: 'text-pink-500', bg: 'bg-pink-500/10', icon: Instagram },
+  facebook: { label: 'Facebook', color: 'text-indigo-600', bg: 'bg-indigo-500/10', icon: Facebook },
 };
 
 const TYPE_CONFIG: Record<PostType, { label: string; color: string; bg: string }> = {
-  educational: { label: 'Educational', color: 'text-blue-700', bg: 'bg-blue-100' },
-  promotional: { label: 'Promotional', color: 'text-purple-700', bg: 'bg-purple-100' },
-  engagement: { label: 'Engagement', color: 'text-emerald-700', bg: 'bg-emerald-100' },
+  educational: { label: 'Educational', color: 'text-blue-400', bg: 'bg-blue-100' },
+  promotional: { label: 'Promotional', color: 'text-purple-400', bg: 'bg-purple-100' },
+  engagement: { label: 'Engagement', color: 'text-emerald-400', bg: 'bg-emerald-100' },
 };
 
 const STATUS_CONFIG: Record<PostStatus, { label: string; color: string; bg: string }> = {
-  scheduled: { label: 'Scheduled', color: 'text-sky-700', bg: 'bg-sky-100' },
-  published: { label: 'Published', color: 'text-emerald-700', bg: 'bg-emerald-100' },
-  draft: { label: 'Draft', color: 'text-amber-700', bg: 'bg-amber-100' },
-  publishing: { label: 'Publishing', color: 'text-violet-700', bg: 'bg-violet-100' },
+  scheduled: { label: 'Scheduled', color: 'text-sky-400', bg: 'bg-sky-100' },
+  published: { label: 'Published', color: 'text-emerald-400', bg: 'bg-emerald-100' },
+  draft: { label: 'Draft', color: 'text-amber-400', bg: 'bg-amber-100' },
+  publishing: { label: 'Publishing', color: 'text-violet-400', bg: 'bg-violet-100' },
 };
 
 const ENGAGEMENT_TYPE_CONFIG: Record<EngagementType, { label: string; color: string; bg: string }> = {
-  comment: { label: 'Comment', color: 'text-blue-700', bg: 'bg-blue-100' },
-  share: { label: 'Share', color: 'text-violet-700', bg: 'bg-violet-100' },
-  like: { label: 'Like', color: 'text-pink-700', bg: 'bg-pink-100' },
-  dm: { label: 'DM', color: 'text-emerald-700', bg: 'bg-emerald-100' },
+  comment: { label: 'Comment', color: 'text-blue-400', bg: 'bg-blue-100' },
+  share: { label: 'Share', color: 'text-violet-400', bg: 'bg-violet-100' },
+  like: { label: 'Like', color: 'text-pink-400', bg: 'bg-pink-100' },
+  dm: { label: 'DM', color: 'text-emerald-400', bg: 'bg-emerald-100' },
 };
 
 const SENTIMENT_CONFIG: Record<EngagementSentiment, { color: string; bg: string }> = {
-  positive: { color: 'text-emerald-700', bg: 'bg-emerald-100' },
-  neutral: { color: 'text-slate-600', bg: 'bg-[#0c1130]' },
-  negative: { color: 'text-red-700', bg: 'bg-red-100' },
+  positive: { color: 'text-emerald-400', bg: 'bg-emerald-100' },
+  neutral: { color: 'text-slate-400', bg: 'bg-slate-800/50' },
+  negative: { color: 'text-red-400', bg: 'bg-red-100' },
 };
 
 // ─── Mock Data ───────────────────────────────────────────
@@ -172,7 +173,7 @@ const LIST_POSTS = CALENDAR_POSTS.map(p => ({
   shares: p.status === 'published' || p.status === 'publishing' ? Math.floor(Math.random() * 150) : 0,
 }));
 
-const CAMPAIGNS: Campaign[] = [
+const defaultCampaigns: Campaign[] = [
   {
     id: 'camp1', name: 'Q1 Product Launch', status: 'active',
     description: 'Multi-platform campaign announcing our new AI agent features and enterprise capabilities',
@@ -206,84 +207,84 @@ const CAMPAIGNS: Campaign[] = [
 const ENGAGEMENT_FEED: EngagementItem[] = [
   {
     id: 'e1', platform: 'twitter', userName: 'Sarah Chen', userHandle: '@sarah_startups',
-    avatarColor: 'bg-emerald-500', actionType: 'comment',
+    avatarColor: 'bg-emerald-500/100', actionType: 'comment',
     content: 'This is exactly what we needed! Just signed up for your Pro plan. The API docs are incredible',
     contextPost: '10 tips for SaaS growth in 2026', timeAgo: '2m ago',
     sentiment: 'positive', likes: 24, replies: 3,
   },
   {
     id: 'e2', platform: 'linkedin', userName: 'Michael Rodriguez', userHandle: 'michael-rodriguez',
-    avatarColor: 'bg-blue-500', actionType: 'comment',
+    avatarColor: 'bg-blue-500/100', actionType: 'comment',
     content: 'Great insights on scaling. We have seen similar results with our AI agents. Would love to connect and share notes.',
     contextPost: 'How we scaled to 10K users', timeAgo: '5m ago',
     sentiment: 'positive', likes: 15, replies: 2,
   },
   {
     id: 'e3', platform: 'instagram', userName: 'Design Studio', userHandle: '@designstudio.co',
-    avatarColor: 'bg-pink-500', actionType: 'comment',
+    avatarColor: 'bg-pink-500/100', actionType: 'comment',
     content: 'Can you guys integrate with Figma? Our team would love this feature!',
     contextPost: 'Feature spotlight: Dark mode', timeAgo: '8m ago',
     sentiment: 'neutral', likes: 8, replies: 1,
   },
   {
     id: 'e4', platform: 'twitter', userName: 'Alex Dev', userHandle: '@frustrated_dev',
-    avatarColor: 'bg-red-500', actionType: 'comment',
+    avatarColor: 'bg-red-500/100', actionType: 'comment',
     content: 'Your support bot is useless. I have been trying to get help for 2 hours and keep getting canned responses.',
     contextPost: 'Thread: Why we chose Rust', timeAgo: '12m ago',
     sentiment: 'negative', likes: 3, replies: 7, flagged: true,
   },
   {
     id: 'e5', platform: 'linkedin', userName: 'Jennifer Walsh', userHandle: 'jennifer-walsh',
-    avatarColor: 'bg-violet-500', actionType: 'share',
+    avatarColor: 'bg-violet-500/100', actionType: 'share',
     content: 'Just implemented your solution and our response time dropped by 60%. Amazing ROI so far.',
     contextPost: 'Case study: 300% ROI with automation', timeAgo: '15m ago',
     sentiment: 'positive', likes: 42, replies: 8,
   },
   {
     id: 'e6', platform: 'twitter', userName: 'Tech Daily', userHandle: '@techinfluencer',
-    avatarColor: 'bg-sky-500', actionType: 'comment',
+    avatarColor: 'bg-sky-500/100', actionType: 'comment',
     content: 'Has anyone else noticed their engagement rates dropping since the algorithm change? Looking for alternatives.',
     contextPost: 'Industry report: AI adoption 2026', timeAgo: '18m ago',
     sentiment: 'neutral', likes: 156, replies: 34, flagged: true,
   },
   {
     id: 'e7', platform: 'instagram', userName: 'Small Biz Owner', userHandle: '@smallbiz_owner',
-    avatarColor: 'bg-amber-500', actionType: 'like',
+    avatarColor: 'bg-amber-500/100', actionType: 'like',
     content: 'Love the behind the scenes content! Makes your brand feel so authentic. More of this please!',
     contextPost: 'Behind the scenes: Our dev team', timeAgo: '22m ago',
     sentiment: 'positive', likes: 31, replies: 4,
   },
   {
     id: 'e8', platform: 'linkedin', userName: 'David Chen', userHandle: 'david-chen',
-    avatarColor: 'bg-indigo-500', actionType: 'dm',
+    avatarColor: 'bg-indigo-500/100', actionType: 'dm',
     content: 'We are evaluating AI support solutions. How does your pricing compare to Intercom and Zendesk?',
     contextPost: 'Direct message', timeAgo: '25m ago',
     sentiment: 'neutral', likes: 0, replies: 0, flagged: true,
   },
   {
     id: 'e9', platform: 'twitter', userName: 'Growth Hacker', userHandle: '@growthhacker',
-    avatarColor: 'bg-teal-500', actionType: 'share',
+    avatarColor: 'bg-teal-500/100', actionType: 'share',
     content: 'This thread is gold. Bookmarking for later. Every founder should read this.',
     contextPost: '10 tips for SaaS growth in 2026', timeAgo: '30m ago',
     sentiment: 'positive', likes: 67, replies: 12,
   },
   {
     id: 'e10', platform: 'facebook', userName: 'Marketing Pro', userHandle: 'marketing-pro',
-    avatarColor: 'bg-purple-500', actionType: 'comment',
+    avatarColor: 'bg-purple-500/100', actionType: 'comment',
     content: 'We have been using your platform for 6 months now. The new features are game changers!',
     contextPost: 'Feature spotlight: Dark mode', timeAgo: '35m ago',
     sentiment: 'positive', likes: 19, replies: 2,
   },
   {
     id: 'e11', platform: 'instagram', userName: 'Startup Life', userHandle: '@startuplife',
-    avatarColor: 'bg-orange-500', actionType: 'comment',
+    avatarColor: 'bg-orange-500/100', actionType: 'comment',
     content: 'The dark mode looks amazing! When is it rolling out to all users?',
     contextPost: 'Feature spotlight: Dark mode', timeAgo: '42m ago',
     sentiment: 'neutral', likes: 14, replies: 6,
   },
   {
     id: 'e12', platform: 'twitter', userName: 'DevOps Weekly', userHandle: '@devopsweekly',
-    avatarColor: 'bg-cyan-500', actionType: 'share',
+    avatarColor: 'bg-cyan-500/100', actionType: 'share',
     content: 'Solid technical breakdown. The webhook architecture is particularly well designed.',
     contextPost: 'Thread: Why we chose Rust', timeAgo: '48m ago',
     sentiment: 'positive', likes: 89, replies: 15,
@@ -322,7 +323,7 @@ const postsPerformanceData = [
 ];
 
 const platformBreakdownData = [
-  { name: 'Twitter', value: 42, color: '#0ea5e9' },
+  { name: 'Twitter', value: 42, color: '#38bdf8' },
   { name: 'LinkedIn', value: 31, color: '#1d4ed8' },
   { name: 'Instagram', value: 19, color: '#ec4899' },
   { name: 'Facebook', value: 8, color: '#4f46e5' },
@@ -362,7 +363,7 @@ function PlatformIcon({ platform, size = 16 }: { platform: Platform; size?: numb
 }
 
 function StatusBadge({ status }: { status: PostStatus | CampaignStatus }) {
-  const config = STATUS_CONFIG[status as PostStatus] || { label: status, color: 'text-slate-600', bg: 'bg-[#0c1130]' };
+  const config = STATUS_CONFIG[status as PostStatus] || { label: status, color: 'text-slate-400', bg: 'bg-slate-800/50' };
   return (
     <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold', config.bg, config.color)}>
       {config.label}
@@ -417,7 +418,7 @@ function PostComposerModal({
         <div className="space-y-5 py-4">
           {/* Platform Selector */}
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Platforms</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Platforms</label>
             <div className="flex gap-2">
               {(Object.entries(PLATFORM_CONFIG) as [Platform, typeof PLATFORM_CONFIG.twitter][]).map(([key, config]) => {
                 const selected = selectedPlatforms.includes(key);
@@ -442,7 +443,7 @@ function PostComposerModal({
 
           {/* Type Selector */}
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Post Type</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Post Type</label>
             <div className="flex gap-2">
               {(Object.entries(TYPE_CONFIG) as [PostType, typeof TYPE_CONFIG.educational][]).map(([key, config]) => (
                 <button
@@ -450,7 +451,7 @@ function PostComposerModal({
                   onClick={() => setPostType(key)}
                   className={cn(
                     'px-3 py-1.5 rounded-md text-xs font-medium transition-all',
-                    postType === key ? cn(config.bg, config.color, 'ring-1 ring-offset-1') : 'bg-[#0c1130] text-slate-500 hover:bg-[#141B41]'
+                    postType === key ? cn(config.bg, config.color, 'ring-1 ring-offset-1') : 'bg-slate-800/50 text-slate-500 hover:bg-[#0a0a0a]'
                   )}
                 >
                   {config.label}
@@ -461,7 +462,7 @@ function PostComposerModal({
 
           {/* Content Textarea */}
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Content</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Content</label>
             <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -482,7 +483,7 @@ function PostComposerModal({
           {/* Schedule */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[13px] font-medium text-slate-700 mb-2 block">Date</label>
+              <label className="text-[13px] font-medium text-slate-300 mb-2 block">Date</label>
               <Select defaultValue={editPost ? format(editPost.scheduledDate, 'yyyy-MM-dd') : format(today, 'yyyy-MM-dd')}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -500,7 +501,7 @@ function PostComposerModal({
               </Select>
             </div>
             <div>
-              <label className="text-[13px] font-medium text-slate-700 mb-2 block">Time</label>
+              <label className="text-[13px] font-medium text-slate-300 mb-2 block">Time</label>
               <Select defaultValue={editPost?.time || '9:00 AM'}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -520,8 +521,8 @@ function PostComposerModal({
 
           {/* Media Upload */}
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Media</label>
-            <div className="border-2 border-dashed border-slate-300 rounded-lg h-20 flex items-center justify-center gap-2 text-slate-500 cursor-pointer hover:border-slate-400 hover:bg-[#0c1130] transition-colors">
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Media</label>
+            <div className="border-2 border-dashed border-slate-300 rounded-lg h-20 flex items-center justify-center gap-2 text-slate-500 cursor-pointer hover:border-slate-400 hover:bg-slate-800/50 transition-colors">
               <Image size={20} />
               <span className="text-xs">Drag images/videos here or click to upload</span>
             </div>
@@ -529,16 +530,16 @@ function PostComposerModal({
 
           {/* Preview */}
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Preview</label>
-            <div className="bg-[#1c2658] border border-slate-200 rounded-lg p-4">
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Preview</label>
+            <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center text-white text-xs font-bold">N</div>
+                <div className="w-8 h-8 rounded-full bg-violet-500/100 flex items-center justify-center text-white text-xs font-bold">N</div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">NexusAI</p>
+                  <p className="text-sm font-semibold text-slate-100">NexusAI</p>
                   <p className="text-xs text-slate-400">@nexusai · Just now</p>
                 </div>
               </div>
-              <p className="text-sm text-slate-700 whitespace-pre-wrap">
+              <p className="text-sm text-slate-300 whitespace-pre-wrap">
                 {content || <span className="text-slate-400 italic">Your post content will appear here...</span>}
               </p>
               <div className="flex items-center gap-4 mt-3 text-slate-400">
@@ -581,7 +582,7 @@ function ContentCalendarTab() {
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="bg-[#1c2658] rounded-xl border shadow-card overflow-hidden"
+        className="bg-slate-900/40 rounded-xl border shadow-card overflow-hidden"
       >
         <div className="grid grid-cols-7 divide-x divide-slate-200">
           {weekDays.map((day, idx) => {
@@ -593,24 +594,24 @@ function ContentCalendarTab() {
                 variants={staggerItem}
                 className={cn(
                   'min-h-[420px] flex flex-col',
-                  isToday && 'bg-violet-50/40'
+                  isToday && 'bg-violet-500/10/40'
                 )}
               >
                 {/* Day Header */}
                 <div className={cn(
-                  'px-3 py-3 border-b border-slate-200',
+                  'px-3 py-3 border-b border-slate-800',
                   isToday && 'border-l-2 border-l-violet-400 border-l-solid'
                 )}>
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-medium text-slate-500 uppercase">{format(day, 'EEE')}</span>
                     <span className={cn(
                       'text-xs font-bold px-1.5 py-0.5 rounded-full',
-                      dayPosts.length > 0 ? 'bg-slate-600 text-white' : 'bg-[#141B41] text-slate-500'
+                      dayPosts.length > 0 ? 'bg-slate-600 text-white' : 'bg-[#0a0a0a] text-slate-500'
                     )}>
                       {dayPosts.length}
                     </span>
                   </div>
-                  <p className={cn('text-base font-bold mt-0.5', isToday ? 'text-violet-600' : 'text-slate-900')}>
+                  <p className={cn('text-base font-bold mt-0.5', isToday ? 'text-violet-600' : 'text-slate-100')}>
                     {format(day, 'd')}
                   </p>
                 </div>
@@ -629,7 +630,7 @@ function ContentCalendarTab() {
                         transition={{ delay: pIdx * 0.02, duration: 0.25 }}
                         whileHover={{ y: -1, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
                         onClick={() => handleEditPost(post)}
-                        className="bg-[#1c2658] border border-slate-200 rounded-lg p-2 cursor-pointer hover:border-slate-300 transition-all"
+                        className="bg-slate-900/40 border border-slate-800 rounded-lg p-2 cursor-pointer hover:border-slate-300 transition-all"
                       >
                         <div className="flex items-center gap-1.5 mb-1">
                           <Clock size={10} className="text-slate-400" />
@@ -639,7 +640,7 @@ function ContentCalendarTab() {
                             {statusCfg.label}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-700 truncate leading-tight">{post.title}</p>
+                        <p className="text-xs text-slate-300 truncate leading-tight">{post.title}</p>
                         {(post.status === 'published' || post.status === 'publishing') && (
                           <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-400">
                             <span className="flex items-center gap-0.5"><Heart size={8} /> {post.likes}</span>
@@ -666,11 +667,11 @@ function ContentCalendarTab() {
           variants={staggerContainer}
           initial="initial"
           animate="animate"
-          className="col-span-3 bg-[#1c2658] rounded-xl border shadow-card p-5"
+          className="col-span-3 bg-slate-900/40 rounded-xl border shadow-card p-5"
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-semibold text-slate-900">Upcoming Posts</h3>
-            <button className="text-xs text-violet-600 hover:text-violet-700 font-medium flex items-center gap-0.5">
+            <h3 className="text-base font-semibold text-slate-100">Upcoming Posts</h3>
+            <button className="text-xs text-violet-600 hover:text-violet-400 font-medium flex items-center gap-0.5">
               View All <ChevronRight size={14} />
             </button>
           </div>
@@ -689,17 +690,17 @@ function ContentCalendarTab() {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.03 }}
-                  className="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-[#0c1130] transition-colors border-b border-slate-100 last:border-0"
+                  className="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-slate-800/50 transition-colors border-b border-slate-800 last:border-0"
                 >
                   <div className={cn('w-9 h-9 rounded-full flex items-center justify-center shrink-0', PLATFORM_CONFIG[post.platform].bg)}>
                     <PlatIcon size={16} className={PLATFORM_CONFIG[post.platform].color} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-medium text-slate-700 truncate">{post.title}</p>
+                    <p className="text-[13px] font-medium text-slate-300 truncate">{post.title}</p>
                     <p className="text-xs text-slate-400">{timeLabel} at {post.time}</p>
                   </div>
                   <StatusBadge status={post.status} />
-                  <button className="text-slate-400 hover:text-slate-600 p-1">
+                  <button className="text-slate-400 hover:text-slate-400 p-1">
                     <MoreHorizontal size={14} />
                   </button>
                 </motion.div>
@@ -713,9 +714,9 @@ function ContentCalendarTab() {
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.15 }}
-          className="col-span-2 bg-[#1c2658] rounded-xl border shadow-card p-5 sticky top-4"
+          className="col-span-2 bg-slate-900/40 rounded-xl border shadow-card p-5 sticky top-4"
         >
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Quick Compose</h3>
+          <h3 className="text-base font-semibold text-slate-100 mb-4">Quick Compose</h3>
           <Textarea
             placeholder="What do you want to share?"
             className="min-h-[100px] resize-none mb-3"
@@ -769,14 +770,14 @@ function PostsListTab() {
     <motion.div {...tabTransition} className="space-y-4">
       {/* Filters */}
       <div className="flex items-center gap-3">
-        <div className="flex gap-1 bg-[#1c2658] border rounded-lg p-1">
+        <div className="flex gap-1 bg-slate-900/40 border rounded-lg p-1">
           {(['all', 'scheduled', 'published', 'draft'] as const).map(s => (
             <button
               key={s}
               onClick={() => setFilterStatus(s)}
               className={cn(
                 'px-3 py-1.5 rounded-md text-xs font-medium transition-all capitalize',
-                filterStatus === s ? 'bg-violet-100 text-violet-700' : 'text-slate-500 hover:bg-[#0c1130]'
+                filterStatus === s ? 'bg-violet-100 text-violet-400' : 'text-slate-500 hover:bg-slate-800/50'
               )}
             >
               {s}
@@ -786,11 +787,11 @@ function PostsListTab() {
       </div>
 
       {/* Table */}
-      <div className="bg-[#1c2658] rounded-xl border shadow-card overflow-hidden">
+      <div className="bg-slate-900/40 rounded-xl border shadow-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#0c1130] border-b border-slate-200">
+              <tr className="bg-slate-800/50 border-b border-slate-800">
                 <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Content</th>
                 <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Platform</th>
                 <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Type</th>
@@ -807,10 +808,10 @@ function PostsListTab() {
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.015 }}
-                  className="hover:bg-[#0c1130] transition-colors"
+                  className="hover:bg-slate-800/50 transition-colors"
                 >
                   <td className="px-4 py-3">
-                    <p className="text-sm font-medium text-slate-700 truncate max-w-[240px]">{post.title}</p>
+                    <p className="text-sm font-medium text-slate-300 truncate max-w-[240px]">{post.title}</p>
                   </td>
                   <td className="px-4 py-3">
                     <div className={cn('w-8 h-8 rounded-full flex items-center justify-center', PLATFORM_CONFIG[post.platform].bg)}>
@@ -833,13 +834,13 @@ function PostsListTab() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
-                      <button onClick={() => handleEdit(post)} className="p-1.5 rounded-md text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors">
+                      <button onClick={() => handleEdit(post)} className="p-1.5 rounded-md text-slate-400 hover:text-violet-600 hover:bg-violet-500/10 transition-colors">
                         <Edit3 size={14} />
                       </button>
-                      <button className="p-1.5 rounded-md text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+                      <button className="p-1.5 rounded-md text-slate-400 hover:text-blue-600 hover:bg-blue-500/10 transition-colors">
                         <Copy size={14} />
                       </button>
-                      <button className="p-1.5 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors">
+                      <button className="p-1.5 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-500/10 transition-colors">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -870,14 +871,14 @@ function EngagementFeedTab() {
       {/* Left: Feed */}
       <div className="col-span-3 space-y-4">
         {/* Filters */}
-        <div className="flex gap-1 bg-[#1c2658] border rounded-lg p-1 w-fit">
+        <div className="flex gap-1 bg-slate-900/40 border rounded-lg p-1 w-fit">
           {(['all', 'comment', 'share', 'like', 'dm'] as const).map(t => (
             <button
               key={t}
               onClick={() => setFilterType(t)}
               className={cn(
                 'px-3 py-1.5 rounded-md text-xs font-medium transition-all capitalize',
-                filterType === t ? 'bg-violet-100 text-violet-700' : 'text-slate-500 hover:bg-[#0c1130]'
+                filterType === t ? 'bg-violet-100 text-violet-400' : 'text-slate-500 hover:bg-slate-800/50'
               )}
             >
               {t === 'dm' ? 'DMs' : t + 's'}
@@ -894,7 +895,7 @@ function EngagementFeedTab() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.04, duration: 0.35 }}
               className={cn(
-                'bg-[#1c2658] rounded-xl border shadow-card p-4 transition-all hover:shadow-card-hover',
+                'bg-slate-900/40 rounded-xl border shadow-card p-4 transition-all hover:shadow-card-hover',
                 item.sentiment === 'negative' && 'border-l-4 border-l-red-400'
               )}
             >
@@ -906,7 +907,7 @@ function EngagementFeedTab() {
                     {item.userName.charAt(0)}
                   </div>
                   <div>
-                    <span className="text-[13px] font-semibold text-slate-900">{item.userName}</span>
+                    <span className="text-[13px] font-semibold text-slate-100">{item.userName}</span>
                     <span className="text-xs text-slate-400 ml-1.5">{item.userHandle}</span>
                   </div>
                 </div>
@@ -923,7 +924,7 @@ function EngagementFeedTab() {
               </div>
 
               {/* Content */}
-              <p className="text-sm text-slate-700 mb-1.5 leading-relaxed">{item.content}</p>
+              <p className="text-sm text-slate-300 mb-1.5 leading-relaxed">{item.content}</p>
               <p className="text-xs text-slate-400 italic mb-3 truncate">Replying to: {item.contextPost}</p>
 
               {/* Meta & Actions */}
@@ -968,17 +969,17 @@ function EngagementFeedTab() {
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-[#1c2658] rounded-xl border shadow-card p-5"
+          className="bg-slate-900/40 rounded-xl border shadow-card p-5"
         >
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Sentiment Overview</h3>
+          <h3 className="text-base font-semibold text-slate-100 mb-4">Sentiment Overview</h3>
           <div className="flex items-center justify-center">
             <ResponsiveContainer width={200} height={180}>
               <PieChart>
                 <Pie
                   data={[
-                    { name: 'Positive', value: 62, color: '#177E89' },
+                    { name: 'Positive', value: 62, color: '#34d399' },
                     { name: 'Neutral', value: 28, color: '#94a3b8' },
-                    { name: 'Negative', value: 10, color: '#FC814A' },
+                    { name: 'Negative', value: 10, color: '#fb923c' },
                   ]}
                   cx="50%"
                   cy="50%"
@@ -1001,14 +1002,14 @@ function EngagementFeedTab() {
           </div>
           <div className="flex justify-center gap-4 mt-2">
             {[
-              { label: 'Positive', value: '62%', color: 'bg-emerald-500' },
+              { label: 'Positive', value: '62%', color: 'bg-emerald-500/100' },
               { label: 'Neutral', value: '28%', color: 'bg-slate-400' },
-              { label: 'Negative', value: '10%', color: 'bg-red-500' },
+              { label: 'Negative', value: '10%', color: 'bg-red-500/100' },
             ].map(s => (
               <div key={s.label} className="flex items-center gap-1.5 text-xs">
                 <span className={cn('w-2 h-2 rounded-full', s.color)} />
-                <span className="text-slate-600">{s.label}</span>
-                <span className="font-semibold text-slate-900">{s.value}</span>
+                <span className="text-slate-400">{s.label}</span>
+                <span className="font-semibold text-slate-100">{s.value}</span>
               </div>
             ))}
           </div>
@@ -1019,16 +1020,16 @@ function EngagementFeedTab() {
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.18 }}
-          className="bg-[#1c2658] rounded-xl border shadow-card p-5"
+          className="bg-slate-900/40 rounded-xl border shadow-card p-5"
         >
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Trending Topics</h3>
+          <h3 className="text-base font-semibold text-slate-100 mb-4">Trending Topics</h3>
           <div className="space-y-3">
             {[
-              { tag: '#AIagents', count: 47, color: 'bg-emerald-100 text-emerald-700' },
-              { tag: '#customersupport', count: 38, color: 'bg-sky-100 text-sky-700' },
-              { tag: '#SaaSgrowth', count: 31, color: 'bg-violet-100 text-violet-700' },
-              { tag: '#automation', count: 24, color: 'bg-amber-100 text-amber-700' },
-              { tag: '#startup', count: 19, color: 'bg-[#0c1130] text-slate-600' },
+              { tag: '#AIagents', count: 47, color: 'bg-emerald-100 text-emerald-400' },
+              { tag: '#customersupport', count: 38, color: 'bg-sky-100 text-sky-400' },
+              { tag: '#SaaSgrowth', count: 31, color: 'bg-violet-100 text-violet-400' },
+              { tag: '#automation', count: 24, color: 'bg-amber-100 text-amber-400' },
+              { tag: '#startup', count: 19, color: 'bg-slate-800/50 text-slate-400' },
             ].map(topic => (
               <div key={topic.tag} className="flex items-center justify-between">
                 <span className={cn('text-xs font-medium px-2 py-0.5 rounded', topic.color)}>{topic.tag}</span>
@@ -1043,10 +1044,10 @@ function EngagementFeedTab() {
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.26 }}
-          className="bg-[#1c2658] rounded-xl border shadow-card p-5"
+          className="bg-slate-900/40 rounded-xl border shadow-card p-5"
         >
-          <h3 className="text-sm font-semibold text-slate-900 mb-2">Avg Response Time</h3>
-          <p className="text-2xl font-bold text-slate-900">4m 32s</p>
+          <h3 className="text-sm font-semibold text-slate-100 mb-2">Avg Response Time</h3>
+          <p className="text-2xl font-bold text-slate-100">4m 32s</p>
           <p className="text-xs text-emerald-600 flex items-center gap-1 mt-0.5">
             <TrendingUp size={12} /> -12% vs yesterday
           </p>
@@ -1064,28 +1065,28 @@ function EngagementFeedTab() {
 }
 
 // ─── Tab 4: Campaigns ────────────────────────────────────
-function CampaignsTab() {
+function CampaignsTab({ campaigns }: { campaigns: any[] }) {
   const getStatusColor = (status: CampaignStatus) => {
     switch (status) {
-      case 'active': return 'bg-emerald-500';
-      case 'draft': return 'bg-amber-500';
-      case 'paused': return 'bg-amber-500';
+      case 'active': return 'bg-emerald-500/100';
+      case 'draft': return 'bg-amber-500/100';
+      case 'paused': return 'bg-amber-500/100';
       case 'completed': return 'bg-slate-400';
     }
   };
 
   const getStatusBadge = (status: CampaignStatus) => {
     switch (status) {
-      case 'active': return { bg: 'bg-emerald-100', color: 'text-emerald-700', label: 'Active' };
-      case 'draft': return { bg: 'bg-amber-100', color: 'text-amber-700', label: 'Draft' };
-      case 'paused': return { bg: 'bg-amber-100', color: 'text-amber-700', label: 'Paused' };
-      case 'completed': return { bg: 'bg-[#0c1130]', color: 'text-slate-600', label: 'Completed' };
+      case 'active': return { bg: 'bg-emerald-100', color: 'text-emerald-400', label: 'Active' };
+      case 'draft': return { bg: 'bg-amber-100', color: 'text-amber-400', label: 'Draft' };
+      case 'paused': return { bg: 'bg-amber-100', color: 'text-amber-400', label: 'Paused' };
+      case 'completed': return { bg: 'bg-slate-800/50', color: 'text-slate-400', label: 'Completed' };
     }
   };
 
   return (
     <motion.div {...tabTransition} className="grid grid-cols-2 gap-4">
-      {CAMPAIGNS.map((campaign, idx) => {
+      {campaigns.map((campaign, idx) => {
         const statusBadge = getStatusBadge(campaign.status);
         return (
           <motion.div
@@ -1094,7 +1095,7 @@ function CampaignsTab() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: idx * 0.06, duration: 0.35 }}
             whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
-            className="bg-[#1c2658] rounded-xl border shadow-card overflow-hidden"
+            className="bg-slate-900/40 rounded-xl border shadow-card overflow-hidden"
           >
             {/* Top Banner */}
             <div className={cn('h-2', getStatusColor(campaign.status))} />
@@ -1102,18 +1103,18 @@ function CampaignsTab() {
             <div className="p-5">
               {/* Header */}
               <div className="flex items-start justify-between mb-2">
-                <h3 className="text-base font-semibold text-slate-900">{campaign.name}</h3>
+                <h3 className="text-base font-semibold text-slate-100">{campaign.name}</h3>
                 <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded', statusBadge.bg, statusBadge.color)}>
                   {statusBadge.label}
                 </span>
               </div>
 
               {/* Description */}
-              <p className="text-[13px] text-slate-600 mb-3 line-clamp-2 leading-relaxed">{campaign.description}</p>
+              <p className="text-[13px] text-slate-400 mb-3 line-clamp-2 leading-relaxed">{campaign.description}</p>
 
               {/* Platform Icons */}
               <div className="flex gap-1.5 mb-4">
-                {campaign.platforms.map(p => {
+                {campaign.platforms.map((p: Platform) => {
                   const cfg = PLATFORM_CONFIG[p];
                   const Icon = cfg.icon;
                   return (
@@ -1127,19 +1128,19 @@ function CampaignsTab() {
               {/* Metrics */}
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-100">
                     {campaign.reach > 0 ? `${(campaign.reach / 1000).toFixed(1)}K` : '—'}
                   </p>
                   <p className="text-[11px] text-slate-500">Reach</p>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-100">
                     {campaign.engagementRate > 0 ? `${campaign.engagementRate}%` : '—'}
                   </p>
                   <p className="text-[11px] text-slate-500">Engagement</p>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-100">
                     {campaign.clicks > 0 ? `${(campaign.clicks / 1000).toFixed(1)}K` : '—'}
                   </p>
                   <p className="text-[11px] text-slate-500">Clicks</p>
@@ -1150,9 +1151,9 @@ function CampaignsTab() {
               <div className="mb-3">
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-slate-500">{campaign.startDate} → {campaign.endDate}</span>
-                  <span className="font-medium text-slate-700">{campaign.progress}%</span>
+                  <span className="font-medium text-slate-300">{campaign.progress}%</span>
                 </div>
-                <div className="h-1.5 bg-[#141B41] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-[#0a0a0a] rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${campaign.progress}%` }}
@@ -1163,8 +1164,8 @@ function CampaignsTab() {
               </div>
 
               {/* Footer Actions */}
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                <button className="text-xs text-violet-600 hover:text-violet-700 font-medium flex items-center gap-0.5">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-800">
+                <button className="text-xs text-violet-600 hover:text-violet-400 font-medium flex items-center gap-0.5">
                   View Details <ChevronRight size={12} />
                 </button>
                 <div className="flex gap-1">
@@ -1218,12 +1219,12 @@ function AnalyticsTab() {
             { label: 'Posts Published', value: '142', trend: '+23' },
             { label: 'New Followers', value: '+1,247', trend: '+18%' },
           ].map(metric => (
-            <div key={metric.label} className="bg-[#1c2658] border rounded-lg px-4 py-2 flex items-center gap-3">
+            <div key={metric.label} className="bg-slate-900/40 border rounded-lg px-4 py-2 flex items-center gap-3">
               <div>
                 <p className="text-xs text-slate-500">{metric.label}</p>
-                <p className="text-sm font-bold text-slate-900">{metric.value}</p>
+                <p className="text-sm font-bold text-slate-100">{metric.value}</p>
               </div>
-              <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">{metric.trend}</span>
+              <span className="text-[10px] font-medium text-emerald-600 bg-emerald-500/10 px-1.5 py-0.5 rounded">{metric.trend}</span>
             </div>
           ))}
         </div>
@@ -1232,16 +1233,16 @@ function AnalyticsTab() {
       {/* Row 1: Main Charts */}
       <div className="grid grid-cols-2 gap-4">
         {/* Engagement Rate */}
-        <div className="bg-[#1c2658] rounded-xl border shadow-card p-5">
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Engagement Rate Over Time</h3>
+        <div className="bg-slate-900/40 rounded-xl border shadow-card p-5">
+          <h3 className="text-base font-semibold text-slate-100 mb-4">Engagement Rate Over Time</h3>
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={engagementData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1c2658" />
               <XAxis dataKey="day" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <Tooltip
-                contentStyle={{ borderRadius: 8, border: '1px solid #452103', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
-                labelStyle={{ fontSize: 12, color: '#64748b' }}
+                contentStyle={{ borderRadius: 8, border: '1px solid #334155', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                labelStyle={{ fontSize: 12, color: '#94a3b8' }}
               />
               <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 12 }} />
               <Line type="monotone" dataKey="likes" stroke="#177E89" strokeWidth={2} dot={{ r: 3 }} name="Likes" />
@@ -1253,15 +1254,15 @@ function AnalyticsTab() {
         </div>
 
         {/* Follower Growth */}
-        <div className="bg-[#1c2658] rounded-xl border shadow-card p-5">
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Follower Growth</h3>
+        <div className="bg-slate-900/40 rounded-xl border shadow-card p-5">
+          <h3 className="text-base font-semibold text-slate-100 mb-4">Follower Growth</h3>
           <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={followerGrowthData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1c2658" />
               <XAxis dataKey="day" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <Tooltip
-                contentStyle={{ borderRadius: 8, border: '1px solid #452103', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                contentStyle={{ borderRadius: 8, border: '1px solid #334155', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
               />
               <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 12 }} />
               <Area type="monotone" dataKey="followers" stroke="#177E89" fill="rgba(23,126,137,0.12)" strokeWidth={2} name="Total Followers" />
@@ -1274,15 +1275,15 @@ function AnalyticsTab() {
       {/* Row 2: Breakdown Charts */}
       <div className="grid grid-cols-3 gap-4">
         {/* Posts Performance */}
-        <div className="bg-[#1c2658] rounded-xl border shadow-card p-5">
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Post Performance</h3>
+        <div className="bg-slate-900/40 rounded-xl border shadow-card p-5">
+          <h3 className="text-base font-semibold text-slate-100 mb-4">Post Performance</h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={postsPerformanceData} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#1c2658" horizontal={false} />
               <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis dataKey="post" type="category" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} width={80} />
               <Tooltip
-                contentStyle={{ borderRadius: 8, border: '1px solid #452103', fontSize: 12 }}
+                contentStyle={{ borderRadius: 8, border: '1px solid #334155', fontSize: 12 }}
               />
               <Bar dataKey="reach" fill="#177E89" radius={[0, 4, 4, 0]} name="Reach" />
             </BarChart>
@@ -1290,8 +1291,8 @@ function AnalyticsTab() {
         </div>
 
         {/* Platform Breakdown */}
-        <div className="bg-[#1c2658] rounded-xl border shadow-card p-5">
-          <h3 className="text-base font-semibold text-slate-900 mb-4">Platform Breakdown</h3>
+        <div className="bg-slate-900/40 rounded-xl border shadow-card p-5">
+          <h3 className="text-base font-semibold text-slate-100 mb-4">Platform Breakdown</h3>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
               <Pie
@@ -1307,24 +1308,24 @@ function AnalyticsTab() {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #452103', fontSize: 12 }} />
+              <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #334155', fontSize: 12 }} />
             </PieChart>
           </ResponsiveContainer>
           <div className="flex flex-wrap justify-center gap-2 mt-2">
             {platformBreakdownData.map(p => (
               <div key={p.name} className="flex items-center gap-1 text-xs">
                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-                <span className="text-slate-600">{p.name}</span>
-                <span className="font-semibold text-slate-900">{p.value}%</span>
+                <span className="text-slate-400">{p.name}</span>
+                <span className="font-semibold text-slate-100">{p.value}%</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Audience Growth Metric */}
-        <div className="bg-[#1c2658] rounded-xl border shadow-card p-5">
-          <h3 className="text-base font-semibold text-slate-900 mb-2">Audience Growth</h3>
-          <p className="text-2xl font-bold text-slate-900">12,847</p>
+        <div className="bg-slate-900/40 rounded-xl border shadow-card p-5">
+          <h3 className="text-base font-semibold text-slate-100 mb-2">Audience Growth</h3>
+          <p className="text-2xl font-bold text-slate-100">12,847</p>
           <p className="text-xs text-emerald-600 flex items-center gap-1 mt-0.5">
             <Users size={12} /> +1,247 this week
           </p>
@@ -1339,17 +1340,17 @@ function AnalyticsTab() {
       </div>
 
       {/* Top Performing Posts */}
-      <div className="bg-[#1c2658] rounded-xl border shadow-card p-5">
+      <div className="bg-slate-900/40 rounded-xl border shadow-card p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-semibold text-slate-900">Top Performing Posts</h3>
-          <button className="text-xs text-violet-600 hover:text-violet-700 font-medium flex items-center gap-0.5">
+          <h3 className="text-base font-semibold text-slate-100">Top Performing Posts</h3>
+          <button className="text-xs text-violet-600 hover:text-violet-400 font-medium flex items-center gap-0.5">
             View All <ChevronRight size={12} />
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#0c1130] border-b border-slate-200">
+              <tr className="bg-slate-800/50 border-b border-slate-800">
                 <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Post</th>
                 <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Reach</th>
                 <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Eng. Rate</th>
@@ -1363,18 +1364,18 @@ function AnalyticsTab() {
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.02 }}
-                  className="hover:bg-[#0c1130] transition-colors"
+                  className="hover:bg-slate-800/50 transition-colors"
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <div className={cn('w-7 h-7 rounded-full flex items-center justify-center', PLATFORM_CONFIG[post.platform].bg)}>
                         <PlatformIcon platform={post.platform} size={12} />
                       </div>
-                      <span className="text-sm text-slate-700">{post.title}</span>
+                      <span className="text-sm text-slate-300">{post.title}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm font-medium text-slate-900">{(post.reach / 1000).toFixed(1)}K</td>
-                  <td className="px-4 py-3 text-sm text-slate-700">{post.engagement}%</td>
+                  <td className="px-4 py-3 text-sm font-medium text-slate-100">{(post.reach / 1000).toFixed(1)}K</td>
+                  <td className="px-4 py-3 text-sm text-slate-300">{post.engagement}%</td>
                   <td className="px-4 py-3">
                     <span className="flex items-center gap-1 text-xs text-emerald-600">
                       <TrendingUp size={12} /> +{(Math.random() * 5 + 1).toFixed(1)}%
@@ -1403,13 +1404,17 @@ export default function SocialHub() {
   const [activeTab, setActiveTab] = useState('calendar');
   const [composerOpen, setComposerOpen] = useState(false);
   const [platformFilter, setPlatformFilter] = useState('all');
+  const [campaigns, setCampaigns] = useState(defaultCampaigns);
+  useEffect(() => {
+    fetchSocialCampaigns().then(data => setCampaigns(data)).catch(() => {});
+  }, []);
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'calendar': return <ContentCalendarTab />;
       case 'posts': return <PostsListTab />;
       case 'engagement': return <EngagementFeedTab />;
-      case 'campaigns': return <CampaignsTab />;
+      case 'campaigns': return <CampaignsTab campaigns={campaigns} />;
       case 'analytics': return <AnalyticsTab />;
       default: return <ContentCalendarTab />;
     }
@@ -1425,7 +1430,7 @@ export default function SocialHub() {
         className="flex items-start justify-between"
       >
         <div>
-          <h1 className="text-2xl font-bold text-[#141B41] tracking-tight">Social Media Hub</h1>
+          <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Social Media Hub</h1>
           <p className="mt-1.5 text-[13px] text-slate-500 flex items-center gap-2">
             <span>4 agents</span>
             <span className="text-slate-300">·</span>
@@ -1457,7 +1462,7 @@ export default function SocialHub() {
           </Button>
           <Button
             variant="outline"
-            className="h-9 text-sm border-slate-200 text-slate-700"
+            className="h-9 text-sm border-slate-800 text-slate-300"
           >
             <Megaphone size={16} className="mr-1.5" /> New Campaign
           </Button>
@@ -1465,7 +1470,7 @@ export default function SocialHub() {
       </motion.div>
 
       {/* Tab Bar */}
-      <div className="border-b border-slate-200 sticky top-16 z-30 bg-[#141B41]">
+      <div className="border-b border-slate-800 sticky top-16 z-30 bg-[#0a0a0a]">
         <div className="flex gap-1">
           {TABS.map(tab => (
             <button
@@ -1474,8 +1479,8 @@ export default function SocialHub() {
               className={cn(
                 'relative flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all border-b-2',
                 activeTab === tab.key
-                  ? 'text-violet-600 border-violet-600 bg-violet-50/50'
-                  : 'text-slate-500 border-transparent hover:text-slate-700 hover:bg-[#0c1130]'
+                  ? 'text-violet-600 border-violet-600 bg-violet-500/10/50'
+                  : 'text-slate-500 border-transparent hover:text-slate-300 hover:bg-slate-800/50'
               )}
             >
               <tab.icon size={16} />
@@ -1483,7 +1488,7 @@ export default function SocialHub() {
               {tab.badge && (
                 <span className={cn(
                   'text-[10px] font-semibold px-1.5 py-0.5 rounded-full',
-                  tab.key === 'engagement' ? 'bg-red-100 text-red-700' : 'bg-violet-100 text-violet-700'
+                  tab.key === 'engagement' ? 'bg-red-100 text-red-400' : 'bg-violet-100 text-violet-400'
                 )}>
                   {tab.badge}
                 </span>

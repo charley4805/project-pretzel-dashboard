@@ -152,31 +152,31 @@ const architectureSteps = [
     title: 'Event Ingestion',
     desc: 'Messages, webhooks, and scheduled triggers are pushed into a central event bus. Each event is tagged with source, priority, and target agent type.',
     icon: Zap,
-    color: '#FFC857',
+    color: '#fbbf24',
   },
   {
     title: 'Orchestrator Router',
     desc: 'The Harness engine inspects the event and routes it to the correct agent pipeline. If guardrails flag the input, the event is rejected with an audit entry.',
     icon: Workflow,
-    color: '#177E89',
+    color: '#34d399',
   },
   {
     title: 'Agent Execution',
     desc: 'The assigned agent loads its prompt template, pulls relevant context from the Obsidian Vault, and calls the configured LLM via OpenRouter or a local endpoint.',
     icon: Cpu,
-    color: '#FC814A',
+    color: '#fb923c',
   },
   {
     title: 'Output Validation',
     desc: 'The generated response is run through guardrails again (safety, policy, format). Failures trigger a retry loop or a human escalation.',
     icon: ShieldCheck,
-    color: '#FFC857',
+    color: '#fbbf24',
   },
   {
     title: 'Delivery & Logging',
     desc: 'Approved outputs are delivered to the target channel (chat, social API, email). Every step is logged to the Activity Feed for observability.',
     icon: Server,
-    color: '#177E89',
+    color: '#34d399',
   },
 ];
 
@@ -327,7 +327,7 @@ export default function Resources() {
   const filteredMcp = mcpFilter === 'All' ? mcpConnectors : mcpConnectors.filter((c) => c.category === mcpFilter);
 
   return (
-    <div className="min-h-screen bg-[#0c1130] text-slate-200 p-6 md:p-8">
+    <div className="min-h-screen bg-slate-800/50 text-slate-200 p-6 md:p-8">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -336,7 +336,7 @@ export default function Resources() {
         className="mb-8"
       >
         <div className="flex items-center gap-3 mb-2">
-          <BookOpen size={24} className="text-[#FFC857]" />
+          <BookOpen size={24} className="text-amber-400" />
           <h1 className="text-2xl font-bold text-white">Resources & Documentation</h1>
         </div>
         <p className="text-slate-400 text-sm max-w-2xl">
@@ -387,18 +387,18 @@ export default function Resources() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.04, duration: 0.3 }}
                     className="rounded-2xl border border-[#1c2658] overflow-hidden"
-                    style={{ backgroundColor: '#141B41' }}
+                    style={{ backgroundColor: '#0a0a0a' }}
                   >
                     <button
                       onClick={() => setExpandedSection(open ? null : s.id)}
-                      className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#1c2658]/40 transition-colors"
+                      className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-slate-900/40/40 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <div
                           className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                          style={{ backgroundColor: '#1c2658' }}
+                          style={{ backgroundColor: '#111827' }}
                         >
-                          <s.icon size={18} style={{ color: '#FFC857' }} />
+                          <s.icon size={18} style={{ color: '#fbbf24' }} />
                         </div>
                         <div>
                           <h3 className="text-white text-sm font-semibold">{s.title}</h3>
@@ -420,7 +420,7 @@ export default function Resources() {
                             <ul className="space-y-2">
                               {s.bullets.map((b, j) => (
                                 <li key={j} className="flex items-start gap-2 text-sm text-slate-300">
-                                  <ArrowRight size={14} className="text-[#177E89] mt-0.5 shrink-0" />
+                                  <ArrowRight size={14} className="text-emerald-400 mt-0.5 shrink-0" />
                                   {b}
                                 </li>
                               ))}
@@ -446,9 +446,9 @@ export default function Resources() {
             transition={{ duration: 0.25 }}
           >
             {/* How agents run — summary */}
-            <div className="rounded-2xl border border-[#1c2658] p-6 mb-6" style={{ backgroundColor: '#141B41' }}>
+            <div className="rounded-2xl border border-[#1c2658] p-6 mb-6" style={{ backgroundColor: '#0a0a0a' }}>
               <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
-                <Zap size={18} className="text-[#FFC857]" />
+                <Zap size={18} className="text-amber-400" />
                 How Do These Agents Run?
               </h2>
               <p className="text-slate-300 text-sm leading-relaxed mb-4">
@@ -464,7 +464,7 @@ export default function Resources() {
                   { label: 'Runtime', value: 'Node.js 20 + Docker' },
                   { label: 'Message Bus', value: 'Redis Pub/Sub or NATS' },
                 ].map((stat) => (
-                  <div key={stat.label} className="rounded-xl border border-[#1c2658] p-3" style={{ backgroundColor: '#0c1130' }}>
+                  <div key={stat.label} className="rounded-xl border border-[#1c2658] p-3" style={{ backgroundColor: '#1f293b' }}>
                     <p className="text-xs text-slate-400 uppercase tracking-wide">{stat.label}</p>
                     <p className="text-sm text-white font-medium mt-1">{stat.value}</p>
                   </div>
@@ -483,11 +483,11 @@ export default function Resources() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.08, duration: 0.3 }}
                     className="rounded-2xl border border-[#1c2658] overflow-hidden"
-                    style={{ backgroundColor: '#141B41' }}
+                    style={{ backgroundColor: '#0a0a0a' }}
                   >
                     <button
                       onClick={() => setExpandedStep(open ? null : i)}
-                      className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#1c2658]/40 transition-colors"
+                      className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-slate-900/40/40 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <div
@@ -531,8 +531,8 @@ export default function Resources() {
             </div>
 
             {/* Diagram hint */}
-            <div className="mt-6 rounded-2xl border border-dashed border-[#1c2658] p-5 text-center" style={{ backgroundColor: '#141B41' }}>
-              <Layers size={24} className="text-[#177E89] mx-auto mb-2" />
+            <div className="mt-6 rounded-2xl border border-dashed border-[#1c2658] p-5 text-center" style={{ backgroundColor: '#0a0a0a' }}>
+              <Layers size={24} className="text-emerald-400 mx-auto mb-2" />
               <p className="text-sm text-slate-300 font-medium">Architecture Diagram</p>
               <p className="text-xs text-slate-400 mt-1">
                 Event Source → Message Bus → Orchestrator → Guardrails → Agent Worker → LLM API → Output Validation → Target Channel
@@ -551,9 +551,9 @@ export default function Resources() {
             transition={{ duration: 0.25 }}
           >
             {/* What models */}
-            <div className="rounded-2xl border border-[#1c2658] p-6 mb-6" style={{ backgroundColor: '#141B41' }}>
+            <div className="rounded-2xl border border-[#1c2658] p-6 mb-6" style={{ backgroundColor: '#0a0a0a' }}>
               <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
-                <BrainCircuit size={18} className="text-[#FFC857]" />
+                <BrainCircuit size={18} className="text-amber-400" />
                 What Models Are They Using?
               </h2>
               <p className="text-slate-300 text-sm leading-relaxed mb-4">
@@ -570,10 +570,10 @@ export default function Resources() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.06 }}
                     className="rounded-xl border border-[#1c2658] p-4"
-                    style={{ backgroundColor: '#0c1130' }}
+                    style={{ backgroundColor: '#1f293b' }}
                   >
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
-                      <span className="text-xs font-bold uppercase tracking-wide text-[#FFC857]">{m.tier}</span>
+                      <span className="text-xs font-bold uppercase tracking-wide text-amber-400">{m.tier}</span>
                       <span className="text-xs text-slate-400">{m.cost}</span>
                     </div>
                     <p className="text-sm text-white font-medium mb-1">{m.model}</p>
@@ -587,9 +587,9 @@ export default function Resources() {
             </div>
 
             {/* OpenRouter Setup */}
-            <div className="rounded-2xl border border-[#1c2658] p-6" style={{ backgroundColor: '#141B41' }}>
+            <div className="rounded-2xl border border-[#1c2658] p-6" style={{ backgroundColor: '#0a0a0a' }}>
               <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
-                <Key size={18} className="text-[#177E89]" />
+                <Key size={18} className="text-emerald-400" />
                 OpenRouter Setup
               </h2>
               <p className="text-slate-300 text-sm leading-relaxed mb-4">
@@ -598,37 +598,37 @@ export default function Resources() {
               </p>
 
               <div className="space-y-4">
-                <div className="rounded-xl border border-[#1c2658] p-4" style={{ backgroundColor: '#0c1130' }}>
+                <div className="rounded-xl border border-[#1c2658] p-4" style={{ backgroundColor: '#1f293b' }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-white font-medium flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-[#177E89] text-white text-xs flex items-center justify-center">1</span>
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center">1</span>
                       Create an account
                     </p>
                   </div>
                   <p className="text-xs text-slate-400 mb-2">Go to openrouter.ai and sign up. Navigate to Settings → Keys.</p>
-                  <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-[#177E89] hover:text-[#FFC857] transition-colors">
+                  <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-emerald-400 hover:text-amber-400 transition-colors">
                     <ExternalLink size={12} /> openrouter.ai/settings/keys
                   </a>
                 </div>
 
-                <div className="rounded-xl border border-[#1c2658] p-4" style={{ backgroundColor: '#0c1130' }}>
+                <div className="rounded-xl border border-[#1c2658] p-4" style={{ backgroundColor: '#1f293b' }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-white font-medium flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-[#177E89] text-white text-xs flex items-center justify-center">2</span>
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center">2</span>
                       Generate an API key
                     </p>
                   </div>
                   <p className="text-xs text-slate-400 mb-2">Copy the key and store it in your agent environment.</p>
                 </div>
 
-                <div className="rounded-xl border border-[#1c2658] p-4" style={{ backgroundColor: '#0c1130' }}>
+                <div className="rounded-xl border border-[#1c2658] p-4" style={{ backgroundColor: '#1f293b' }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-white font-medium flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-[#177E89] text-white text-xs flex items-center justify-center">3</span>
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center">3</span>
                       Configure the environment
                     </p>
                   </div>
-                  <div className="relative rounded-lg border border-[#1c2658] p-3 mt-2" style={{ backgroundColor: '#141B41' }}>
+                  <div className="relative rounded-lg border border-[#1c2658] p-3 mt-2" style={{ backgroundColor: '#0a0a0a' }}>
                     <pre className="text-xs text-slate-300 font-mono whitespace-pre-wrap">
 {`OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxx
 OPENROUTER_HTTP_REFERER=https://your-domain.com
@@ -640,33 +640,33 @@ OPENROUTER_X_TITLE=NexusAI Agents`}
                         setCopiedKey(true);
                         setTimeout(() => setCopiedKey(false), 2000);
                       }}
-                      className="absolute top-2 right-2 p-1.5 rounded-md hover:bg-[#1c2658] transition-colors"
+                      className="absolute top-2 right-2 p-1.5 rounded-md hover:bg-slate-900/40 transition-colors"
                     >
-                      {copiedKey ? <CheckCircle size={14} className="text-[#177E89]" /> : <Copy size={14} className="text-slate-400" />}
+                      {copiedKey ? <CheckCircle size={14} className="text-emerald-400" /> : <Copy size={14} className="text-slate-400" />}
                     </button>
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-[#1c2658] p-4" style={{ backgroundColor: '#0c1130' }}>
+                <div className="rounded-xl border border-[#1c2658] p-4" style={{ backgroundColor: '#1f293b' }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-white font-medium flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-[#177E89] text-white text-xs flex items-center justify-center">4</span>
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center">4</span>
                       Map model tiers to model IDs
                     </p>
                   </div>
                   <p className="text-xs text-slate-400 mb-2">In Agent Settings, assign OpenRouter model IDs to each tier:</p>
                   <div className="space-y-1 text-xs text-slate-300 font-mono">
-                    <div className="flex items-center gap-2"><span className="text-[#FFC857]">fast:</span> mistralai/mistral-7b-instruct</div>
-                    <div className="flex items-center gap-2"><span className="text-[#FFC857]">balanced:</span> openai/gpt-4o-mini</div>
-                    <div className="flex items-center gap-2"><span className="text-[#FFC857]">premium:</span> anthropic/claude-3.5-sonnet</div>
+                    <div className="flex items-center gap-2"><span className="text-amber-400">fast:</span> mistralai/mistral-7b-instruct</div>
+                    <div className="flex items-center gap-2"><span className="text-amber-400">balanced:</span> openai/gpt-4o-mini</div>
+                    <div className="flex items-center gap-2"><span className="text-amber-400">premium:</span> anthropic/claude-3.5-sonnet</div>
                   </div>
                 </div>
               </div>
 
               <div className="mt-4 rounded-lg border border-[#FFC857]/20 p-3 flex items-start gap-2" style={{ backgroundColor: '#FFC85708' }}>
-                <AlertTriangle size={14} className="text-[#FFC857] mt-0.5 shrink-0" />
+                <AlertTriangle size={14} className="text-amber-400 mt-0.5 shrink-0" />
                 <p className="text-xs text-slate-300">
-                  <strong className="text-[#FFC857]">Do we need OpenRouter?</strong> No — you can point agents at any OpenAI-compatible endpoint (Ollama, vLLM, local LLMs). OpenRouter is simply the default because it simplifies multi-model access.
+                  <strong className="text-amber-400">Do we need OpenRouter?</strong> No — you can point agents at any OpenAI-compatible endpoint (Ollama, vLLM, local LLMs). OpenRouter is simply the default because it simplifies multi-model access.
                 </p>
               </div>
             </div>
@@ -683,9 +683,9 @@ OPENROUTER_X_TITLE=NexusAI Agents`}
             transition={{ duration: 0.25 }}
           >
             {/* Intro */}
-            <div className="rounded-2xl border border-[#1c2658] p-6 mb-6" style={{ backgroundColor: '#141B41' }}>
+            <div className="rounded-2xl border border-[#1c2658] p-6 mb-6" style={{ backgroundColor: '#0a0a0a' }}>
               <h2 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                <Plug size={18} className="text-[#FFC857]" />
+                <Plug size={18} className="text-amber-400" />
                 MCP Connectors
               </h2>
               <p className="text-slate-300 text-sm leading-relaxed">
@@ -722,19 +722,19 @@ OPENROUTER_X_TITLE=NexusAI Agents`}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04, duration: 0.3 }}
                   className="rounded-2xl border border-[#1c2658] p-5 flex flex-col"
-                  style={{ backgroundColor: '#141B41' }}
+                  style={{ backgroundColor: '#0a0a0a' }}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div
                         className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: '#1c2658' }}
+                        style={{ backgroundColor: '#111827' }}
                       >
-                        <conn.icon size={20} className="text-[#FFC857]" />
+                        <conn.icon size={20} className="text-amber-400" />
                       </div>
                       <div>
                         <h3 className="text-white text-sm font-semibold">{conn.name}</h3>
-                        <span className="text-[10px] uppercase tracking-wider text-[#177E89] font-medium">{conn.category}</span>
+                        <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-medium">{conn.category}</span>
                       </div>
                     </div>
                     <span
@@ -757,15 +757,15 @@ OPENROUTER_X_TITLE=NexusAI Agents`}
             </div>
 
             {/* Quickstart command */}
-            <div className="mt-6 rounded-2xl border border-[#1c2658] p-5" style={{ backgroundColor: '#141B41' }}>
+            <div className="mt-6 rounded-2xl border border-[#1c2658] p-5" style={{ backgroundColor: '#0a0a0a' }}>
               <h3 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
-                <Terminal size={16} className="text-[#177E89]" />
+                <Terminal size={16} className="text-emerald-400" />
                 Quick Start — Add a Connector
               </h3>
               <p className="text-xs text-slate-400 mb-3">
                 MCP servers are installed as npm packages in the agent runtime. Example:
               </p>
-              <div className="relative rounded-lg border border-[#1c2658] p-3" style={{ backgroundColor: '#0c1130' }}>
+              <div className="relative rounded-lg border border-[#1c2658] p-3" style={{ backgroundColor: '#1f293b' }}>
                 <pre className="text-xs text-slate-300 font-mono whitespace-pre-wrap">
 {`# Install the MCP server
 npm install @modelcontextprotocol/server-brave-search
@@ -775,7 +775,7 @@ BRAVE_API_KEY=your_key_here`}
                 </pre>
                 <button
                   onClick={() => copy(`npm install @modelcontextprotocol/server-brave-search\nBRAVE_API_KEY=your_key_here`)}
-                  className="absolute top-2 right-2 p-1.5 rounded-md hover:bg-[#1c2658] transition-colors"
+                  className="absolute top-2 right-2 p-1.5 rounded-md hover:bg-slate-900/40 transition-colors"
                 >
                   <Copy size={14} className="text-slate-400" />
                 </button>

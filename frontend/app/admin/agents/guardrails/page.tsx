@@ -12,16 +12,16 @@ type Severity = 'critical' | 'high' | 'medium'
 type GuardrailAgent = 'all' | 'support' | 'social' | 'leads'
 
 const severityConfig: Record<Severity, { color: string; bg: string; icon: typeof AlertTriangle }> = {
-  critical: { color: '#FC814A', bg: 'rgba(252,129,74,0.12)', icon: AlertCircle },
-  high: { color: '#FFC857', bg: 'rgba(255,200,87,0.12)', icon: AlertTriangle },
-  medium: { color: '#177E89', bg: 'rgba(23,126,137,0.12)', icon: Shield },
+  critical: { color: '#fb923c', bg: 'rgba(252,129,74,0.12)', icon: AlertCircle },
+  high: { color: '#fbbf24', bg: 'rgba(255,200,87,0.12)', icon: AlertTriangle },
+  medium: { color: '#34d399', bg: 'rgba(23,126,137,0.12)', icon: Shield },
 }
 
 const categoryColors: Record<string, { color: string; bg: string }> = {
   Privacy: { color: '#8b5cf6', bg: 'rgba(139,92,246,0.12)' },
-  Escalation: { color: '#FFC857', bg: 'rgba(255,200,87,0.12)' },
-  Content: { color: '#177E89', bg: 'rgba(23,126,137,0.12)' },
-  Brand: { color: '#FC814A', bg: 'rgba(252,129,74,0.12)' },
+  Escalation: { color: '#fbbf24', bg: 'rgba(255,200,87,0.12)' },
+  Content: { color: '#34d399', bg: 'rgba(23,126,137,0.12)' },
+  Brand: { color: '#fb923c', bg: 'rgba(252,129,74,0.12)' },
   Compliance: { color: '#10b981', bg: 'rgba(16,185,129,0.12)' },
   Quality: { color: '#06b6d4', bg: 'rgba(6,182,212,0.12)' },
   Performance: { color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' },
@@ -64,7 +64,7 @@ function getAgentBadge(type: string) {
   switch (type) {
     case 'support': return { text: 'Support', color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' }
     case 'social': return { text: 'Social', color: '#8b5cf6', bg: 'rgba(139,92,246,0.12)' }
-    case 'leads': return { text: 'Leads', color: '#FFC857', bg: 'rgba(255,200,87,0.12)' }
+    case 'leads': return { text: 'Leads', color: '#fbbf24', bg: 'rgba(255,200,87,0.12)' }
     default: return { text: 'All', color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' }
   }
 }
@@ -148,10 +148,10 @@ export default function Guardrails() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-3">
         {[
-          { label: 'Total Guardrails', value: stats.total, icon: Shield, color: '#FFC857' },
-          { label: 'Active', value: stats.active, icon: CheckCircle, color: '#177E89' },
-          { label: 'Critical', value: stats.critical, icon: AlertCircle, color: '#FC814A' },
-          { label: 'Warning', value: stats.warning, icon: AlertTriangle, color: '#FFC857' },
+          { label: 'Total Guardrails', value: stats.total, icon: Shield, color: '#fbbf24' },
+          { label: 'Active', value: stats.active, icon: CheckCircle, color: '#34d399' },
+          { label: 'Critical', value: stats.critical, icon: AlertCircle, color: '#fb923c' },
+          { label: 'Warning', value: stats.warning, icon: AlertTriangle, color: '#fbbf24' },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -161,7 +161,7 @@ export default function Guardrails() {
             className="metric-card"
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[11px] font-medium" style={{ color: '#64748b' }}>{stat.label}</span>
+              <span className="text-[11px] font-medium" style={{ color: '#94a3b8' }}>{stat.label}</span>
               <stat.icon size={16} style={{ color: stat.color }} />
             </div>
             <div className="text-xl font-bold text-white">{stat.value}</div>
@@ -172,7 +172,7 @@ export default function Guardrails() {
       {/* Search + Add */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1 max-w-sm">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#64748b' }} />
+          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#94a3b8' }} />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search guardrails..." className="input-dark pl-8" />
         </div>
         <button onClick={() => setShowAddModal(true)} className="btn-primary text-xs"><Plus size={12} /> New Guardrail</button>
@@ -220,12 +220,12 @@ export default function Guardrails() {
                       <p className="text-xs" style={{ color: '#94a3b8' }}>{g.description}</p>
                       <div className="flex items-center gap-2 mt-1.5">
                         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ background: agentBadge.bg, color: agentBadge.color, border: `1px solid ${agentBadge.color}33` }}>{agentBadge.text}</span>
-                        <span className="text-[10px]" style={{ color: '#64748b' }}>Triggered 12 times today</span>
+                        <span className="text-[10px]" style={{ color: '#94a3b8' }}>Triggered 12 times today</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
                       <button onClick={() => toggleStatus(g.id)} className="text-[10px] font-semibold px-2 py-1 rounded transition-colors" style={{ background: g.status === 'active' ? 'rgba(23,126,137,0.15)' : 'rgba(148,163,184,0.1)', color: g.status === 'active' ? '#177E89' : '#64748b', border: g.status === 'active' ? '1px solid rgba(23,126,137,0.25)' : '1px solid rgba(148,163,184,0.15)' }}>{g.status === 'active' ? 'Active' : 'Paused'}</button>
-                      <button onClick={() => setEditingId(g.id)} className="p-1 transition-colors" style={{ color: '#64748b' }}><Edit2 size={13} /></button>
+                      <button onClick={() => setEditingId(g.id)} className="p-1 transition-colors" style={{ color: '#94a3b8' }}><Edit2 size={13} /></button>
                     </div>
                   </div>
                 )}
@@ -241,7 +241,7 @@ export default function Guardrails() {
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr style={{ borderBottom: '1px solid #452103', color: '#64748b' }}>
+              <tr style={{ borderBottom: '1px solid #452103', color: '#94a3b8' }}>
                 <th className="pb-2 font-medium text-left">Time</th>
                 <th className="pb-2 font-medium text-left">Guardrail</th>
                 <th className="pb-2 font-medium text-left">Agent</th>
@@ -251,8 +251,8 @@ export default function Guardrails() {
             </thead>
             <tbody>
               {triggerLog.map((log) => (
-                <tr key={log.id} className="hover:bg-[#1c2658]/[0.02] transition-colors" style={{ borderBottom: '1px solid #452103' }}>
-                  <td className="py-2" style={{ color: '#64748b' }}>{log.time}</td>
+                <tr key={log.id} className="hover:bg-slate-900/40/[0.02] transition-colors" style={{ borderBottom: '1px solid #452103' }}>
+                  <td className="py-2" style={{ color: '#94a3b8' }}>{log.time}</td>
                   <td className="py-2 text-white">{log.guardrail}</td>
                   <td className="py-2">
                     <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{
@@ -262,7 +262,7 @@ export default function Guardrails() {
                     }}>{log.agent}</span>
                   </td>
                   <td className="py-2" style={{ color: '#94a3b8' }}>{log.context}</td>
-                  <td className="py-2" style={{ color: '#177E89' }}>{log.action}</td>
+                  <td className="py-2" style={{ color: '#34d399' }}>{log.action}</td>
                 </tr>
               ))}
             </tbody>
@@ -278,24 +278,24 @@ export default function Guardrails() {
               <h3 className="text-base font-bold text-white mb-3">New Guardrail</h3>
               <div className="space-y-2.5">
                 <div>
-                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Name</label>
+                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Name</label>
                   <input value={newGuardrail.name} onChange={(e) => setNewGuardrail({ ...newGuardrail, name: e.target.value })} placeholder="e.g., No Pricing in DMs" className="input-dark" />
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Description</label>
+                  <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Description</label>
                   <textarea value={newGuardrail.description} onChange={(e) => setNewGuardrail({ ...newGuardrail, description: e.target.value })} placeholder="What should this guardrail prevent?" rows={2} className="textarea-dark" />
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Severity</label>
+                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Severity</label>
                     <select value={newGuardrail.severity} onChange={(e) => setNewGuardrail({ ...newGuardrail, severity: e.target.value as Severity })} className="select-dark"><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option></select>
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Category</label>
+                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Category</label>
                     <select value={newGuardrail.category} onChange={(e) => setNewGuardrail({ ...newGuardrail, category: e.target.value })} className="select-dark">{Object.keys(categoryColors).map(c => <option key={c} value={c}>{c}</option>)}</select>
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#64748b' }}>Applies To</label>
+                    <label className="text-[11px] font-semibold mb-1 block" style={{ color: '#94a3b8' }}>Applies To</label>
                     <select value={newGuardrail.agent} onChange={(e) => setNewGuardrail({ ...newGuardrail, agent: e.target.value as GuardrailAgent })} className="select-dark"><option value="all">All</option><option value="support">Support</option><option value="social">Social</option><option value="leads">Leads</option></select>
                   </div>
                 </div>

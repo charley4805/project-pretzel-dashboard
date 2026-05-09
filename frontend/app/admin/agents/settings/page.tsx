@@ -81,11 +81,11 @@ const availableIntegrations: IntegrationItem[] = [
 // ───────────────────────────────────────────
 
 const agentTabs: { id: AgentType; label: string; icon: typeof Headphones; color: string; bg: string }[] = [
-  { id: 'support', label: 'Support Agent', icon: Headphones, color: '#177E89', bg: '#f5f3ff' },
-  { id: 'social', label: 'Social Media Agent', icon: Share2, color: '#0ea5e9', bg: '#f0f9ff' },
-  { id: 'leadgen', label: 'Lead Gen Agent', icon: Target, color: '#177E89', bg: 'rgba(23,126,137,0.1)' },
-  { id: 'integrations', label: 'Integrations', icon: Plug, color: '#FFC857', bg: '#fffbeb' },
-  { id: 'general', label: 'General', icon: Settings, color: '#64748b', bg: '#141B41' },
+  { id: 'support', label: 'Support Agent', icon: Headphones, color: '#34d399', bg: '#f5f3ff' },
+  { id: 'social', label: 'Social Media Agent', icon: Share2, color: '#38bdf8', bg: '#f0f9ff' },
+  { id: 'leadgen', label: 'Lead Gen Agent', icon: Target, color: '#34d399', bg: 'rgba(23,126,137,0.1)' },
+  { id: 'integrations', label: 'Integrations', icon: Plug, color: '#fbbf24', bg: '#fffbeb' },
+  { id: 'general', label: 'General', icon: Settings, color: '#94a3b8', bg: '#141B41' },
 ];
 
 // ───────────────────────────────────────────
@@ -156,34 +156,34 @@ Issue Category: {{ticket_type}}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-5">
-          <Cpu size={18} className="text-[#177E89]" />
-          <h3 className="text-base font-semibold text-slate-900">LLM Configuration</h3>
+          <Cpu size={18} className="text-emerald-400" />
+          <h3 className="text-base font-semibold text-slate-100">LLM Configuration</h3>
         </div>
 
         <div className="space-y-5">
           {/* Model */}
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Model</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Model</label>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { value: 'gpt4o', label: 'OpenAI GPT-4o', badge: 'Recommended', badgeColor: 'bg-emerald-100 text-emerald-700' },
-                { value: 'gpt4omini', label: 'GPT-4o-mini', badge: 'Faster', badgeColor: 'bg-sky-100 text-sky-700' },
-                { value: 'claude', label: 'Claude 3.5 Sonnet', badge: 'Best reasoning', badgeColor: 'bg-violet-100 text-violet-700' },
-                { value: 'gemini', label: 'Gemini 1.5 Pro', badge: 'Long context', badgeColor: 'bg-amber-100 text-amber-700' },
+                { value: 'gpt4o', label: 'OpenAI GPT-4o', badge: 'Recommended', badgeColor: 'bg-emerald-100 text-emerald-400' },
+                { value: 'gpt4omini', label: 'GPT-4o-mini', badge: 'Faster', badgeColor: 'bg-sky-100 text-sky-400' },
+                { value: 'claude', label: 'Claude 3.5 Sonnet', badge: 'Best reasoning', badgeColor: 'bg-violet-100 text-violet-400' },
+                { value: 'gemini', label: 'Gemini 1.5 Pro', badge: 'Long context', badgeColor: 'bg-amber-100 text-amber-400' },
               ].map(m => (
                 <button
                   key={m.value}
                   onClick={() => setModel(m.value)}
                   className={`flex items-center justify-between px-3 py-2.5 rounded-lg border text-left transition-all ${
                     model === m.value
-                      ? 'border-[#177E89] bg-[#f5f3ff] ring-1 ring-[#177E89]'
-                      : 'border-slate-200 hover:border-slate-300'
+                      ? 'border-emerald-500 bg-slate-800/50 ring-1 ring-[#177E89]'
+                      : 'border-slate-800 hover:border-slate-300'
                   }`}
                 >
-                  <span className="text-[13px] font-medium text-slate-700">{m.label}</span>
+                  <span className="text-[13px] font-medium text-slate-300">{m.label}</span>
                   <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${m.badgeColor}`}>{m.badge}</span>
                 </button>
               ))}
@@ -193,8 +193,8 @@ Issue Category: {{ticket_type}}
           {/* Temperature */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-[13px] font-medium text-slate-700">Temperature (Creativity)</label>
-              <span className="text-[13px] font-semibold text-[#177E89]">{temperature[0]}</span>
+              <label className="text-[13px] font-medium text-slate-300">Temperature (Creativity)</label>
+              <span className="text-[13px] font-semibold text-emerald-400">{temperature[0]}</span>
             </div>
             <Slider value={temperature} onValueChange={setTemperature} min={0} max={1} step={0.1} className="mb-1" />
             <div className="flex justify-between">
@@ -206,8 +206,8 @@ Issue Category: {{ticket_type}}
           {/* Max Tokens */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-[13px] font-medium text-slate-700">Max Response Length</label>
-              <span className="text-[13px] font-semibold text-[#177E89]">{maxTokens[0]} tokens</span>
+              <label className="text-[13px] font-medium text-slate-300">Max Response Length</label>
+              <span className="text-[13px] font-semibold text-emerald-400">{maxTokens[0]} tokens</span>
             </div>
             <Slider value={maxTokens} onValueChange={setMaxTokens} min={256} max={4096} step={256} />
             <p className="text-[11px] text-slate-400 mt-1">~{Math.round(maxTokens[0] * 0.75)} words</p>
@@ -220,43 +220,43 @@ Issue Category: {{ticket_type}}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.05 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-5">
-          <Sliders size={18} className="text-[#177E89]" />
-          <h3 className="text-base font-semibold text-slate-900">Behavior</h3>
+          <Sliders size={18} className="text-emerald-400" />
+          <h3 className="text-base font-semibold text-slate-100">Behavior</h3>
         </div>
 
         <div className="grid grid-cols-2 gap-5">
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Max Attempts</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Max Attempts</label>
             <input
               type="number"
               value={maxAttempts}
               onChange={e => setMaxAttempts(Number(e.target.value))}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
             />
           </div>
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Escalation Timeout (seconds)</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Escalation Timeout (seconds)</label>
             <input
               type="number"
               value={escalationTimeout}
               onChange={e => setEscalationTimeout(Number(e.target.value))}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
             />
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Auto-escalation</label>
+              <label className="text-[13px] font-medium text-slate-300">Auto-escalation</label>
               <p className="text-[11px] text-slate-400">Automatically escalate unresolved issues</p>
             </div>
             <Switch checked={autoEscalation} onCheckedChange={setAutoEscalation} />
           </div>
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-[13px] font-medium text-slate-700">Sentiment Threshold</label>
-              <span className="text-[13px] font-semibold text-[#177E89]">{sentimentThreshold[0]}</span>
+              <label className="text-[13px] font-medium text-slate-300">Sentiment Threshold</label>
+              <span className="text-[13px] font-semibold text-emerald-400">{sentimentThreshold[0]}</span>
             </div>
             <Slider value={sentimentThreshold} onValueChange={setSentimentThreshold} min={-1} max={0} step={0.1} />
           </div>
@@ -268,12 +268,12 @@ Issue Category: {{ticket_type}}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 shadow-sm overflow-hidden"
       >
-        <div className="p-6 border-b border-slate-200">
+        <div className="p-6 border-b border-slate-800">
           <div className="flex items-center gap-2 mb-1">
-            <FileText size={18} className="text-[#177E89]" />
-            <h3 className="text-base font-semibold text-slate-900">System Prompt</h3>
+            <FileText size={18} className="text-emerald-400" />
+            <h3 className="text-base font-semibold text-slate-100">System Prompt</h3>
           </div>
           <p className="text-[12px] text-slate-500">This prompt defines the agent&apos;s core behavior</p>
         </div>
@@ -282,12 +282,12 @@ Issue Category: {{ticket_type}}
             <textarea
               value={prompt}
               onChange={e => setPrompt(e.target.value)}
-              className="w-full min-h-[300px] p-4 rounded-lg bg-[#141B41] text-slate-100 text-[13px] leading-relaxed focus:outline-none focus:ring-2 focus:ring-violet-400 resize-none font-mono"
+              className="w-full min-h-[300px] p-4 rounded-lg bg-[#0a0a0a] text-slate-100 text-[13px] leading-relaxed focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none font-mono"
               spellCheck={false}
             />
           </div>
-          <div className="w-56 border-l border-slate-200 p-4 bg-[#0c1130]">
-            <h4 className="text-[12px] font-semibold text-slate-700 mb-3">Available Variables</h4>
+          <div className="w-56 border-l border-slate-800 p-4 bg-slate-800/50">
+            <h4 className="text-[12px] font-semibold text-slate-300 mb-3">Available Variables</h4>
             <div className="space-y-2">
               {variables.map(v => (
                 <button
@@ -295,7 +295,7 @@ Issue Category: {{ticket_type}}
                   onClick={() => setPrompt(p => p + v.name)}
                   className="w-full text-left px-2.5 py-1.5 rounded-md bg-violet-100 hover:bg-violet-200 transition-colors"
                 >
-                  <span className="text-[11px] font-mono text-violet-700">{v.name}</span>
+                  <span className="text-[11px] font-mono text-violet-400">{v.name}</span>
                   <p className="text-[10px] text-violet-600 mt-0.5">{v.desc}</p>
                 </button>
               ))}
@@ -309,17 +309,17 @@ Issue Category: {{ticket_type}}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.15 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-5">
-          <GitBranch size={18} className="text-[#177E89]" />
-          <h3 className="text-base font-semibold text-slate-900">Escalation Rules</h3>
+          <GitBranch size={18} className="text-emerald-400" />
+          <h3 className="text-base font-semibold text-slate-100">Escalation Rules</h3>
         </div>
 
         <div className="space-y-3">
           {rules.map(rule => (
-            <div key={rule.id} className="flex items-center justify-between py-2.5 px-4 rounded-lg bg-[#0c1130]">
-              <span className="text-[13px] text-slate-700">{rule.label}</span>
+            <div key={rule.id} className="flex items-center justify-between py-2.5 px-4 rounded-lg bg-slate-800/50">
+              <span className="text-[13px] text-slate-300">{rule.label}</span>
               <Switch
                 checked={rule.enabled}
                 onCheckedChange={() =>
@@ -336,28 +336,28 @@ Issue Category: {{ticket_type}}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-5">
-          <Plug size={18} className="text-[#177E89]" />
-          <h3 className="text-base font-semibold text-slate-900">Integration</h3>
+          <Plug size={18} className="text-emerald-400" />
+          <h3 className="text-base font-semibold text-slate-100">Integration</h3>
         </div>
 
         <div className="grid grid-cols-2 gap-5">
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Slack Webhook URL</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Slack Webhook URL</label>
             <input
               type="text"
               defaultValue="https://hooks.slack.com/services/T000/B000/XXXX"
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
             />
           </div>
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">KB API Endpoint</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">KB API Endpoint</label>
             <input
               type="text"
               defaultValue="https://api.notion.com/v1/databases/xxx"
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
             />
           </div>
         </div>
@@ -401,18 +401,18 @@ function SocialAgentSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
-        <h3 className="text-base font-semibold text-slate-900 mb-5">Platform Connections</h3>
+        <h3 className="text-base font-semibold text-slate-100 mb-5">Platform Connections</h3>
         <div className="grid grid-cols-2 gap-4">
           {platforms.map(p => (
-            <div key={p.id} className="flex items-center justify-between p-4 rounded-lg border border-slate-200">
+            <div key={p.id} className="flex items-center justify-between p-4 rounded-lg border border-slate-800">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${p.color}15` }}>
                   <p.icon size={20} style={{ color: p.color }} />
                 </div>
                 <div>
-                  <p className="text-[13px] font-semibold text-slate-800">{p.name}</p>
+                  <p className="text-[13px] font-semibold text-slate-200">{p.name}</p>
                   <p className="text-[11px] text-slate-500">{p.connected ? p.account : 'Not connected'}</p>
                 </div>
               </div>
@@ -432,26 +432,26 @@ function SocialAgentSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.05 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
-        <h3 className="text-base font-semibold text-slate-900 mb-5">Content Rules</h3>
+        <h3 className="text-base font-semibold text-slate-100 mb-5">Content Rules</h3>
 
         <div className="space-y-5">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-[13px] font-medium text-slate-700">Max Promotional Content (%)</label>
-              <span className="text-[13px] font-semibold text-[#0ea5e9]">{promoPercent[0]}%</span>
+              <label className="text-[13px] font-medium text-slate-300">Max Promotional Content (%)</label>
+              <span className="text-[13px] font-semibold text-sky-400">{promoPercent[0]}%</span>
             </div>
             <Slider value={promoPercent} onValueChange={setPromoPercent} min={0} max={100} step={5} />
           </div>
 
           <div className="grid grid-cols-2 gap-5">
             <div>
-              <label className="text-[13px] font-medium text-slate-700 mb-2 block">Approval Required</label>
+              <label className="text-[13px] font-medium text-slate-300 mb-2 block">Approval Required</label>
               <select
                 value={approvalRequired}
                 onChange={e => setApprovalRequired(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 bg-[#1c2658]"
+                className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-900/40"
               >
                 <option value="all">All posts</option>
                 <option value="high">High promotional only</option>
@@ -461,7 +461,7 @@ function SocialAgentSettings() {
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-[13px] font-medium text-slate-700">Auto-schedule</label>
+                <label className="text-[13px] font-medium text-slate-300">Auto-schedule</label>
                 <p className="text-[11px] text-slate-400">Automatically queue approved posts</p>
               </div>
               <Switch checked={autoSchedule} onCheckedChange={setAutoSchedule} />
@@ -475,25 +475,25 @@ function SocialAgentSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
-        <h3 className="text-base font-semibold text-slate-900 mb-5">Brand Voice</h3>
+        <h3 className="text-base font-semibold text-slate-100 mb-5">Brand Voice</h3>
 
         <div className="space-y-5">
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Voice Description</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Voice Description</label>
             <textarea
               value={brandVoice}
               onChange={e => setBrandVoice(e.target.value)}
-              className="w-full min-h-[80px] p-3 rounded-lg border border-slate-200 text-[13px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400 resize-none"
+              className="w-full min-h-[80px] p-3 rounded-lg border border-slate-800 text-[13px] text-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-5">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-[13px] font-medium text-slate-700">Formality</label>
-                <span className="text-[13px] font-semibold text-[#0ea5e9]">{formality[0]}%</span>
+                <label className="text-[13px] font-medium text-slate-300">Formality</label>
+                <span className="text-[13px] font-semibold text-sky-400">{formality[0]}%</span>
               </div>
               <Slider value={formality} onValueChange={setFormality} min={0} max={100} step={5} />
               <div className="flex justify-between mt-1">
@@ -503,8 +503,8 @@ function SocialAgentSettings() {
             </div>
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-[13px] font-medium text-slate-700">Emoji Usage</label>
-                <span className="text-[13px] font-semibold text-[#0ea5e9]">{emojiUsage[0]}%</span>
+                <label className="text-[13px] font-medium text-slate-300">Emoji Usage</label>
+                <span className="text-[13px] font-semibold text-sky-400">{emojiUsage[0]}%</span>
               </div>
               <Slider value={emojiUsage} onValueChange={setEmojiUsage} min={0} max={100} step={5} />
               <div className="flex justify-between mt-1">
@@ -521,34 +521,34 @@ function SocialAgentSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.15 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-5">
-          <Hash size={18} className="text-[#0ea5e9]" />
-          <h3 className="text-base font-semibold text-slate-900">Hashtag Settings</h3>
+          <Hash size={18} className="text-sky-400" />
+          <h3 className="text-base font-semibold text-slate-100">Hashtag Settings</h3>
         </div>
 
         <div className="space-y-5">
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Branded Hashtags</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Branded Hashtags</label>
             <input
               type="text"
               value={brandedHashtags}
               onChange={e => setBrandedHashtags(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
           </div>
 
           <div className="flex items-center justify-between">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Auto-generate hashtags</label>
+              <label className="text-[13px] font-medium text-slate-300">Auto-generate hashtags</label>
               <p className="text-[11px] text-slate-400">AI will suggest relevant hashtags per post</p>
             </div>
             <Switch checked={autoHashtags} onCheckedChange={setAutoHashtags} />
           </div>
 
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-3 block">Max Hashtags Per Platform</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-3 block">Max Hashtags Per Platform</label>
             <div className="grid grid-cols-4 gap-3">
               {(Object.entries(maxHashtags) as [string, number][]).map(([platform, value]) => (
                 <div key={platform} className="text-center">
@@ -557,7 +557,7 @@ function SocialAgentSettings() {
                     type="number"
                     value={value}
                     onChange={e => setMaxHashtags(prev => ({ ...prev, [platform]: Number(e.target.value) }))}
-                    className="w-full h-9 px-2 rounded-lg border border-slate-200 text-sm text-center focus:outline-none focus:ring-2 focus:ring-sky-400"
+                    className="w-full h-9 px-2 rounded-lg border border-slate-800 text-sm text-center focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
               ))}
@@ -571,28 +571,28 @@ function SocialAgentSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-5">
-          <Shield size={18} className="text-[#0ea5e9]" />
-          <h3 className="text-base font-semibold text-slate-900">Compliance</h3>
+          <Shield size={18} className="text-sky-400" />
+          <h3 className="text-base font-semibold text-slate-100">Compliance</h3>
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Auto-screen content</label>
+              <label className="text-[13px] font-medium text-slate-300">Auto-screen content</label>
               <p className="text-[11px] text-slate-400">Check posts against compliance rules before publishing</p>
             </div>
             <Switch checked={autoScreen} onCheckedChange={setAutoScreen} />
           </div>
 
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Prohibited Words/Phrases</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Prohibited Words/Phrases</label>
             <textarea
               value={prohibitedWords}
               onChange={e => setProhibitedWords(e.target.value)}
-              className="w-full min-h-[60px] p-3 rounded-lg border border-slate-200 text-[13px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-400 resize-none"
+              className="w-full min-h-[60px] p-3 rounded-lg border border-slate-800 text-[13px] text-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
             />
           </div>
         </div>
@@ -630,37 +630,37 @@ function LeadGenAgentSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-5">
-          <Target size={18} className="text-[#177E89]" />
-          <h3 className="text-base font-semibold text-slate-900">Scan Configuration</h3>
+          <Target size={18} className="text-emerald-400" />
+          <h3 className="text-base font-semibold text-slate-100">Scan Configuration</h3>
         </div>
 
         <div className="grid grid-cols-3 gap-5">
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Max Daily Leads</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Max Daily Leads</label>
             <input
               type="number"
               value={maxDailyLeads}
               onChange={e => setMaxDailyLeads(Number(e.target.value))}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-[13px] font-medium text-slate-700">Min Qualification Score</label>
-              <span className="text-[13px] font-semibold text-[#177E89]">{minScore[0]}</span>
+              <label className="text-[13px] font-medium text-slate-300">Min Qualification Score</label>
+              <span className="text-[13px] font-semibold text-emerald-400">{minScore[0]}</span>
             </div>
             <Slider value={minScore} onValueChange={setMinScore} min={0} max={100} step={5} />
           </div>
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Duplicate Window (days)</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Duplicate Window (days)</label>
             <input
               type="number"
               value={duplicateWindow}
               onChange={e => setDuplicateWindow(Number(e.target.value))}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
         </div>
@@ -671,39 +671,39 @@ function LeadGenAgentSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.05 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-5">
-          <MessageSquare size={18} className="text-[#177E89]" />
-          <h3 className="text-base font-semibold text-slate-900">Outreach Settings</h3>
+          <MessageSquare size={18} className="text-emerald-400" />
+          <h3 className="text-base font-semibold text-slate-100">Outreach Settings</h3>
         </div>
 
         <div className="grid grid-cols-3 gap-5">
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Max Follow-ups</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Max Follow-ups</label>
             <input
               type="number"
               value={maxFollowUps}
               onChange={e => setMaxFollowUps(Number(e.target.value))}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Follow-up Interval (hours)</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Follow-up Interval (hours)</label>
             <input
               type="number"
               value={followUpInterval}
               onChange={e => setFollowUpInterval(Number(e.target.value))}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Sequence Duration (days)</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Sequence Duration (days)</label>
             <input
               type="number"
               value={sequenceDuration}
               onChange={e => setSequenceDuration(Number(e.target.value))}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
         </div>
@@ -714,29 +714,29 @@ function LeadGenAgentSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
-        <h3 className="text-base font-semibold text-slate-900 mb-5">Qualification Weights</h3>
+        <h3 className="text-base font-semibold text-slate-100 mb-5">Qualification Weights</h3>
 
         <div className="space-y-5">
           {[
-            { label: 'Problem Fit', value: problemFitWeight, setter: setProblemFitWeight, color: '#177E89' },
-            { label: 'Intent Signals', value: intentWeight, setter: setIntentWeight, color: '#0ea5e9' },
-            { label: 'Profile Fit', value: profileWeight, setter: setProfileWeight, color: '#177E89' },
-            { label: 'Accessibility', value: accessibilityWeight, setter: setAccessibilityWeight, color: '#FFC857' },
+            { label: 'Problem Fit', value: problemFitWeight, setter: setProblemFitWeight, color: '#34d399' },
+            { label: 'Intent Signals', value: intentWeight, setter: setIntentWeight, color: '#38bdf8' },
+            { label: 'Profile Fit', value: profileWeight, setter: setProfileWeight, color: '#34d399' },
+            { label: 'Accessibility', value: accessibilityWeight, setter: setAccessibilityWeight, color: '#fbbf24' },
           ].map(item => (
             <div key={item.label}>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-[13px] font-medium text-slate-700">{item.label}</label>
+                <label className="text-[13px] font-medium text-slate-300">{item.label}</label>
                 <span className="text-[13px] font-semibold" style={{ color: item.color }}>{item.value[0]}%</span>
               </div>
               <Slider value={item.value} onValueChange={item.setter} min={0} max={100} step={5} />
             </div>
           ))}
 
-          <div className="pt-2 border-t border-slate-100">
+          <div className="pt-2 border-t border-slate-800">
             <div className="flex items-center justify-between">
-              <span className="text-[13px] text-slate-600">Total</span>
+              <span className="text-[13px] text-slate-400">Total</span>
               <span className={`text-[13px] font-bold ${problemFitWeight[0] + intentWeight[0] + profileWeight[0] + accessibilityWeight[0] === 100 ? 'text-emerald-600' : 'text-red-500'}`}>
                 {problemFitWeight[0] + intentWeight[0] + profileWeight[0] + accessibilityWeight[0]}%
               </span>
@@ -750,18 +750,18 @@ function LeadGenAgentSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.15 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
-        <h3 className="text-base font-semibold text-slate-900 mb-5">CRM Integration</h3>
+        <h3 className="text-base font-semibold text-slate-100 mb-5">CRM Integration</h3>
 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-5">
             <div>
-              <label className="text-[13px] font-medium text-slate-700 mb-2 block">Provider</label>
+              <label className="text-[13px] font-medium text-slate-300 mb-2 block">Provider</label>
               <select
                 value={crmProvider}
                 onChange={e => setCrmProvider(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-[#1c2658]"
+                className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-900/40"
               >
                 <option value="hubspot">HubSpot</option>
                 <option value="salesforce">Salesforce</option>
@@ -770,19 +770,19 @@ function LeadGenAgentSettings() {
               </select>
             </div>
             <div>
-              <label className="text-[13px] font-medium text-slate-700 mb-2 block">API Key</label>
+              <label className="text-[13px] font-medium text-slate-300 mb-2 block">API Key</label>
               <input
                 type="password"
                 value={crmApiKey}
                 onChange={e => setCrmApiKey(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
           </div>
 
           <div className="flex items-center justify-between py-2">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Auto-sync leads</label>
+              <label className="text-[13px] font-medium text-slate-300">Auto-sync leads</label>
               <p className="text-[11px] text-slate-400">Push qualified leads to CRM automatically</p>
             </div>
             <Switch checked={autoSync} onCheckedChange={setAutoSync} />
@@ -795,17 +795,17 @@ function LeadGenAgentSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
         <div className="flex items-center gap-2 mb-5">
-          <Shield size={18} className="text-[#177E89]" />
-          <h3 className="text-base font-semibold text-slate-900">Ethical & Compliance</h3>
+          <Shield size={18} className="text-emerald-400" />
+          <h3 className="text-base font-semibold text-slate-100">Ethical & Compliance</h3>
         </div>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between py-2">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Transparency mode</label>
+              <label className="text-[13px] font-medium text-slate-300">Transparency mode</label>
               <p className="text-[11px] text-slate-400">Disclose AI-generated outreach messages</p>
             </div>
             <Switch checked={transparencyMode} onCheckedChange={setTransparencyMode} />
@@ -813,7 +813,7 @@ function LeadGenAgentSettings() {
 
           <div className="flex items-center justify-between py-2">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Auto opt-out handling</label>
+              <label className="text-[13px] font-medium text-slate-300">Auto opt-out handling</label>
               <p className="text-[11px] text-slate-400">Automatically respect unsubscribe requests</p>
             </div>
             <Switch checked={optOutHandling} onCheckedChange={setOptOutHandling} />
@@ -821,7 +821,7 @@ function LeadGenAgentSettings() {
 
           <div className="flex items-center justify-between py-2">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Community rules check</label>
+              <label className="text-[13px] font-medium text-slate-300">Community rules check</label>
               <p className="text-[11px] text-slate-400">Verify outreach complies with platform rules</p>
             </div>
             <Switch checked={communityRulesCheck} onCheckedChange={setCommunityRulesCheck} />
@@ -867,7 +867,7 @@ function IntegrationsSettings() {
         transition={{ duration: 0.3 }}
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-semibold text-slate-900">Connected Integrations</h3>
+          <h3 className="text-base font-semibold text-slate-100">Connected Integrations</h3>
           <div className="flex items-center gap-3">
             <span className="text-[12px] text-slate-500">{connectedCount} connected</span>
             {issueCount > 0 && (
@@ -883,7 +883,7 @@ function IntegrationsSettings() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: idx * 0.04 }}
-              className={`bg-[#1c2658] rounded-xl border p-5 shadow-sm ${int.issue ? 'border-amber-300' : 'border-slate-200'}`}
+              className={`bg-slate-900/40 rounded-xl border p-5 shadow-sm ${int.issue ? 'border-amber-300' : 'border-slate-800'}`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -892,13 +892,13 @@ function IntegrationsSettings() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="text-[14px] font-semibold text-slate-900">{int.name}</h4>
+                      <h4 className="text-[14px] font-semibold text-slate-100">{int.name}</h4>
                       {int.connected ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
                           <Check size={10} /> Connected
                         </span>
                       ) : (
-                        <span className="text-[10px] font-medium text-slate-500 bg-[#0c1130] px-1.5 py-0.5 rounded">Disconnected</span>
+                        <span className="text-[10px] font-medium text-slate-500 bg-slate-800/50 px-1.5 py-0.5 rounded">Disconnected</span>
                       )}
                     </div>
                     <p className="text-[12px] text-slate-500 mt-0.5">{int.description}</p>
@@ -907,15 +907,15 @@ function IntegrationsSettings() {
               </div>
 
               {int.connected && (
-                <div className="mt-3 pt-3 border-t border-slate-100">
+                <div className="mt-3 pt-3 border-t border-slate-800">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-[12px] text-slate-600">{int.account}</p>
+                      <p className="text-[12px] text-slate-400">{int.account}</p>
                       <p className="text-[11px] text-slate-400">Last sync: {int.lastSync}</p>
                     </div>
                     <div className="flex gap-1">
                       {int.issue && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">
                           <AlertTriangle size={10} /> {int.issue}
                         </span>
                       )}
@@ -924,14 +924,14 @@ function IntegrationsSettings() {
                 </div>
               )}
 
-              <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-800">
                 <div className="flex gap-1">
                   {int.connected && (
                     <>
-                      <button className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-[11px] font-medium text-slate-600 hover:bg-[#0c1130] transition-colors">
+                      <button className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-[11px] font-medium text-slate-400 hover:bg-slate-800/50 transition-colors">
                         Configure
                       </button>
-                      <button className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-[11px] font-medium text-slate-600 hover:bg-[#0c1130] transition-colors">
+                      <button className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-[11px] font-medium text-slate-400 hover:bg-slate-800/50 transition-colors">
                         <RefreshCw size={10} /> Sync
                       </button>
                     </>
@@ -947,7 +947,7 @@ function IntegrationsSettings() {
                 ) : (
                   <button
                     onClick={() => toggleConnection(int.id)}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-[11px] font-medium bg-[#177E89] text-white hover:bg-[#1a919d] transition-colors"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-[11px] font-medium bg-emerald-600 text-white hover:bg-[#1a919d] transition-colors"
                   >
                     <Plug size={10} /> Connect
                   </button>
@@ -964,7 +964,7 @@ function IntegrationsSettings() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        <h3 className="text-base font-semibold text-slate-900 mb-4">Available Integrations</h3>
+        <h3 className="text-base font-semibold text-slate-100 mb-4">Available Integrations</h3>
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
           {availInts.map((int, idx) => (
             <motion.div
@@ -972,16 +972,16 @@ function IntegrationsSettings() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.15 + idx * 0.04 }}
-              className="bg-[#1c2658] rounded-xl border border-slate-200 p-5 shadow-sm"
+              className="bg-slate-900/40 rounded-xl border border-slate-800 p-5 shadow-sm"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${int.color}15` }}>
                   <Plug size={20} style={{ color: int.color }} />
                 </div>
-                <h4 className="text-[14px] font-semibold text-slate-900">{int.name}</h4>
+                <h4 className="text-[14px] font-semibold text-slate-100">{int.name}</h4>
               </div>
               <p className="text-[12px] text-slate-500 mb-4">{int.description}</p>
-              <button className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#177E89] text-white hover:bg-[#1a919d] transition-colors">
+              <button className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-emerald-600 text-white hover:bg-[#1a919d] transition-colors">
                 <Plug size={12} /> Connect
               </button>
             </motion.div>
@@ -1013,14 +1013,14 @@ function GeneralSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
-        <h3 className="text-base font-semibold text-slate-900 mb-5">Appearance</h3>
+        <h3 className="text-base font-semibold text-slate-100 mb-5">Appearance</h3>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between py-2">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Dark mode</label>
+              <label className="text-[13px] font-medium text-slate-300">Dark mode</label>
               <p className="text-[11px] text-slate-400">Use dark theme across the dashboard</p>
             </div>
             <Switch checked={darkMode} onCheckedChange={setDarkMode} />
@@ -1028,7 +1028,7 @@ function GeneralSettings() {
 
           <div className="flex items-center justify-between py-2">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Compact mode</label>
+              <label className="text-[13px] font-medium text-slate-300">Compact mode</label>
               <p className="text-[11px] text-slate-400">Reduce padding for denser layouts</p>
             </div>
             <Switch checked={compactMode} onCheckedChange={setCompactMode} />
@@ -1041,17 +1041,17 @@ function GeneralSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.05 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
-        <h3 className="text-base font-semibold text-slate-900 mb-5">Localization</h3>
+        <h3 className="text-base font-semibold text-slate-100 mb-5">Localization</h3>
 
         <div className="grid grid-cols-2 gap-5">
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Timezone</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Timezone</label>
             <select
               value={timezone}
               onChange={e => setTimezone(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 bg-[#1c2658]"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 bg-slate-900/40"
             >
               <option value="America/New_York">Eastern Time (ET)</option>
               <option value="America/Chicago">Central Time (CT)</option>
@@ -1064,11 +1064,11 @@ function GeneralSettings() {
             </select>
           </div>
           <div>
-            <label className="text-[13px] font-medium text-slate-700 mb-2 block">Date Format</label>
+            <label className="text-[13px] font-medium text-slate-300 mb-2 block">Date Format</label>
             <select
               value={dateFormat}
               onChange={e => setDateFormat(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 bg-[#1c2658]"
+              className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 bg-slate-900/40"
             >
               <option value="MM/DD/YYYY">MM/DD/YYYY</option>
               <option value="DD/MM/YYYY">DD/MM/YYYY</option>
@@ -1083,14 +1083,14 @@ function GeneralSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
-        <h3 className="text-base font-semibold text-slate-900 mb-5">Notifications</h3>
+        <h3 className="text-base font-semibold text-slate-100 mb-5">Notifications</h3>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between py-2">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Push notifications</label>
+              <label className="text-[13px] font-medium text-slate-300">Push notifications</label>
               <p className="text-[11px] text-slate-400">Browser alerts for important events</p>
             </div>
             <Switch checked={notifications} onCheckedChange={setNotifications} />
@@ -1098,7 +1098,7 @@ function GeneralSettings() {
 
           <div className="flex items-center justify-between py-2">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Daily digest email</label>
+              <label className="text-[13px] font-medium text-slate-300">Daily digest email</label>
               <p className="text-[11px] text-slate-400">Summary of agent activity each morning</p>
             </div>
             <Switch checked={digestEmail} onCheckedChange={setDigestEmail} />
@@ -1111,14 +1111,14 @@ function GeneralSettings() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.15 }}
-        className="bg-[#1c2658] rounded-xl border border-slate-200 p-6 shadow-sm"
+        className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
       >
-        <h3 className="text-base font-semibold text-slate-900 mb-5">Data Refresh</h3>
+        <h3 className="text-base font-semibold text-slate-100 mb-5">Data Refresh</h3>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between py-2">
             <div>
-              <label className="text-[13px] font-medium text-slate-700">Auto-refresh dashboard</label>
+              <label className="text-[13px] font-medium text-slate-300">Auto-refresh dashboard</label>
               <p className="text-[11px] text-slate-400">Automatically update data in real-time</p>
             </div>
             <Switch checked={autoRefresh} onCheckedChange={setAutoRefresh} />
@@ -1127,8 +1127,8 @@ function GeneralSettings() {
           {autoRefresh && (
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-[13px] font-medium text-slate-700">Refresh interval (seconds)</label>
-                <span className="text-[13px] font-semibold text-slate-700">{refreshInterval[0]}s</span>
+                <label className="text-[13px] font-medium text-slate-300">Refresh interval (seconds)</label>
+                <span className="text-[13px] font-semibold text-slate-300">{refreshInterval[0]}s</span>
               </div>
               <Slider value={refreshInterval} onValueChange={setRefreshInterval} min={5} max={120} step={5} />
             </div>
@@ -1165,7 +1165,7 @@ export default function SettingsPage() {
       {/* Page Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#141B41] tracking-tight">Agent Settings</h1>
+          <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Agent Settings</h1>
           <p className="mt-1 text-[13px] text-slate-500">Configure behavior, prompts, and integrations for your AI agent fleet</p>
         </div>
         <div className="flex items-center gap-3">
@@ -1174,15 +1174,15 @@ export default function SettingsPage() {
               <span className="flex items-center gap-1.5 text-[12px] text-amber-600 font-medium">
                 <AlertTriangle size={14} /> Unsaved changes
               </span>
-              <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-[#0c1130] transition-colors border border-slate-200">
+              <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-800/50 transition-colors border border-slate-800">
                 <RotateCcw size={12} /> Discard
               </button>
             </>
           )}
-          <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-slate-200 text-slate-700 hover:bg-[#0c1130] transition-colors">
+          <button className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-slate-800 text-slate-300 hover:bg-slate-800/50 transition-colors">
             <Play size={12} /> Test Agent
           </button>
-          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-[#177E89] text-white hover:bg-[#1a919d] transition-colors">
+          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-emerald-600 text-white hover:bg-[#1a919d] transition-colors">
             <Save size={12} /> Save Changes
           </button>
         </div>
@@ -1200,7 +1200,7 @@ export default function SettingsPage() {
                   key={tab.id}
                   onClick={() => setActiveAgent(tab.id)}
                   className={`relative w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-200 mx-auto ${
-                    isActive ? '' : 'hover:bg-[#141B41]'
+                    isActive ? '' : 'hover:bg-[#0a0a0a]'
                   }`}
                   style={{
                     backgroundColor: isActive ? `${tab.color}20` : '#1c2658',
@@ -1236,7 +1236,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-2 mb-6">
                 <activeTab.icon size={20} style={{ color: activeTab.color }} />
-                <h2 className="text-lg font-semibold text-slate-900">{activeTab.label} Settings</h2>
+                <h2 className="text-lg font-semibold text-slate-100">{activeTab.label} Settings</h2>
               </div>
               {renderAgentContent()}
             </motion.div>

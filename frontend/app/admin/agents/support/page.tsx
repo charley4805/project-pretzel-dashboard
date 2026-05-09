@@ -17,6 +17,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { fetchSupportConversations } from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -93,29 +94,29 @@ interface EscalationTicket {
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 
 const planColors: Record<string, string> = {
-  Enterprise: 'bg-violet-100 text-violet-700',
-  Pro: 'bg-sky-100 text-sky-700',
-  Starter: 'bg-[#0c1130] text-slate-600',
+  Enterprise: 'bg-violet-100 text-violet-400',
+  Pro: 'bg-sky-100 text-sky-400',
+  Starter: 'bg-slate-800/50 text-slate-400',
 };
 
 const statusConfig: Record<ConversationStatus, { color: string; bg: string; dot: string; label: string }> = {
-  active: { color: 'text-emerald-700', bg: 'bg-emerald-50', dot: 'bg-emerald-500', label: 'Active' },
-  resolved: { color: 'text-slate-600', bg: 'bg-[#0c1130]', dot: 'bg-slate-400', label: 'Resolved' },
-  escalated: { color: 'text-red-700', bg: 'bg-red-50', dot: 'bg-red-500', label: 'Escalated' },
-  waiting: { color: 'text-amber-700', bg: 'bg-amber-50', dot: 'bg-amber-500', label: 'Waiting' },
+  active: { color: 'text-emerald-400', bg: 'bg-emerald-500/10', dot: 'bg-emerald-500/100', label: 'Active' },
+  resolved: { color: 'text-slate-400', bg: 'bg-slate-800/50', dot: 'bg-slate-400', label: 'Resolved' },
+  escalated: { color: 'text-red-400', bg: 'bg-red-500/10', dot: 'bg-red-500/100', label: 'Escalated' },
+  waiting: { color: 'text-amber-400', bg: 'bg-amber-500/10', dot: 'bg-amber-500/100', label: 'Waiting' },
 };
 
 const priorityConfig: Record<Priority, { color: string; bg: string; label: string }> = {
-  low: { color: 'text-slate-600', bg: 'bg-[#0c1130]', label: 'Low' },
-  medium: { color: 'text-sky-700', bg: 'bg-sky-100', label: 'Medium' },
-  high: { color: 'text-amber-700', bg: 'bg-amber-100', label: 'High' },
-  critical: { color: 'text-red-700', bg: 'bg-red-100', label: 'Critical' },
+  low: { color: 'text-slate-400', bg: 'bg-slate-800/50', label: 'Low' },
+  medium: { color: 'text-sky-400', bg: 'bg-sky-100', label: 'Medium' },
+  high: { color: 'text-amber-400', bg: 'bg-amber-100', label: 'High' },
+  critical: { color: 'text-red-400', bg: 'bg-red-100', label: 'Critical' },
 };
 
 const severityConfig: Record<Severity, { color: string; bg: string; border: string; dot: string; label: string }> = {
-  critical: { color: 'text-red-700', bg: 'bg-red-50', border: 'border-red-200', dot: 'bg-red-500', label: 'Critical' },
-  high: { color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200', dot: 'bg-amber-500', label: 'High' },
-  medium: { color: 'text-sky-700', bg: 'bg-sky-50', border: 'border-sky-200', dot: 'bg-sky-500', label: 'Medium' },
+  critical: { color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-200', dot: 'bg-red-500/100', label: 'Critical' },
+  high: { color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-200', dot: 'bg-amber-500/100', label: 'High' },
+  medium: { color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-200', dot: 'bg-sky-500/100', label: 'Medium' },
 };
 
 // Note: sentiment is part of Conversation type for future use
@@ -138,7 +139,7 @@ const sarahMessages: ChatMessage[] = [
   { id: 'm13', type: 'agent', content: "You're very welcome, Sarah. I've also increased your rate limit buffer by 20% as a precaution. Is there anything else I can help with?", timestamp: '10:33 AM', agentName: 'Agent #3', avatar: '/avatar-3.jpg' },
 ];
 
-const conversations: Conversation[] = [
+const defaultConversations: Conversation[] = [
   { id: '1', userName: 'Sarah Mitchell', email: 'sarah@acme.com', avatar: '/avatar-6.jpg', plan: 'Enterprise', lastMessage: 'The API keeps returning 500 errors...', timestamp: '2m', status: 'active', priority: 'critical', sentiment: 'negative', unread: 2, ticketNumber: '#4821', tags: ['Enterprise', 'Technical'], messages: sarahMessages },
   { id: '2', userName: 'Mike Rodriguez', email: 'mike@techcorp.io', avatar: '/avatar-2.jpg', plan: 'Pro', lastMessage: 'Can I get a refund for last month?', timestamp: '4m', status: 'active', priority: 'medium', sentiment: 'neutral', unread: 1, ticketNumber: '#4822', tags: ['Billing'], messages: [] },
   { id: '3', userName: 'Jessica Taylor', email: 'jessica@startup.co', avatar: '/avatar-4.jpg', plan: 'Starter', lastMessage: 'How do I connect Zapier?', timestamp: '6m', status: 'waiting', priority: 'low', sentiment: 'neutral', unread: 0, ticketNumber: '#4824', tags: ['Integration'], messages: [] },
@@ -233,7 +234,7 @@ const rightPanelStagger = {
 
 function TypingIndicator() {
   return (
-    <div className="flex items-center gap-1.5 px-4 py-3 bg-[#1c2658] border border-slate-200 rounded-2xl rounded-tl-sm w-fit">
+    <div className="flex items-center gap-1.5 px-4 py-3 bg-slate-900/40 border border-slate-800 rounded-2xl rounded-tl-sm w-fit">
       <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
       <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
       <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -256,6 +257,10 @@ function getStatusDotColor(status: ConversationStatus): string {
 
 export default function SupportConsole() {
   const [selectedId, setSelectedId] = useState<string>('1');
+  const [conversations, setConversations] = useState<Conversation[]>(defaultConversations);
+  useEffect(() => {
+    fetchSupportConversations().then(data => setConversations(data)).catch(() => {});
+  }, []);
   const [queueFilter, setQueueFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [messageText, setMessageText] = useState('');
@@ -328,13 +333,13 @@ export default function SupportConsole() {
   const onlineAgents = supportAgents.filter((a) => a.status === 'online').length;
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-64px)] bg-[#141B41] overflow-hidden">
+    <div className="flex flex-col h-[calc(100dvh-64px)] bg-[#0a0a0a] overflow-hidden">
       {/* ── Page Header Bar ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
-        className="flex items-center justify-between px-6 py-3 bg-[#1c2658] border-b border-slate-200 shrink-0"
+        className="flex items-center justify-between px-6 py-3 bg-slate-900/40 border-b border-slate-800 shrink-0"
       >
         <div>
           <div className="flex items-center gap-2 text-[13px] text-slate-500">
@@ -347,7 +352,7 @@ export default function SupportConsole() {
         </div>
         <div className="flex items-center gap-3">
           {/* Filter pills */}
-          <div className="flex items-center gap-1 bg-[#0c1130] rounded-lg p-0.5">
+          <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg p-0.5">
             {([
               { key: 'all', label: 'All' },
               { key: 'active', label: 'Active' },
@@ -363,8 +368,8 @@ export default function SupportConsole() {
                 className={cn(
                   'px-3 py-1 rounded-md text-xs font-medium transition-all duration-150',
                   headerFilter === tab.key
-                    ? 'bg-[#177E89] text-white'
-                    : 'text-slate-600 hover:text-slate-800 hover:bg-[#141B41]/60'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-[#0a0a0a]/60'
                 )}
               >
                 {tab.label}
@@ -379,7 +384,7 @@ export default function SupportConsole() {
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-56 h-9 pl-8 pr-3 text-sm bg-[#1c2658] border-0 rounded-lg text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#ddd6fe] focus:bg-[#1c2658] transition-all"
+              className="w-56 h-9 pl-8 pr-3 text-sm bg-slate-900/40 border-0 rounded-lg text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-600 focus:bg-slate-900/40 transition-all"
             />
           </div>
         </div>
@@ -388,9 +393,9 @@ export default function SupportConsole() {
       {/* ── Main Three-Column Layout ── */}
       <div className="flex flex-1 overflow-hidden">
         {/* ── Column 1: Chat Queue ── */}
-        <div className="w-[280px] bg-[#1c2658] border-r border-slate-200 flex flex-col shrink-0">
+        <div className="w-[280px] bg-slate-900/40 border-r border-slate-800 flex flex-col shrink-0">
           {/* Queue filter tabs */}
-          <div className="sticky top-0 z-10 bg-[#1c2658] border-b border-slate-200 px-3 pt-2 pb-0">
+          <div className="sticky top-0 z-10 bg-slate-900/40 border-b border-slate-800 px-3 pt-2 pb-0">
             <div className="flex">
               {filterTabs.map((tab) => (
                 <button
@@ -399,8 +404,8 @@ export default function SupportConsole() {
                   className={cn(
                     'flex-1 pb-2 text-xs font-medium border-b-2 transition-colors duration-150 text-center',
                     queueFilter === tab.key
-                      ? 'text-[#177E89] border-[#177E89]'
-                      : 'text-slate-500 border-transparent hover:text-slate-700'
+                      ? 'text-emerald-400 border-emerald-500'
+                      : 'text-slate-500 border-transparent hover:text-slate-300'
                   )}
                 >
                   {tab.label}{' '}
@@ -411,7 +416,7 @@ export default function SupportConsole() {
           </div>
 
           {/* Search */}
-          <div className="px-3 py-2 border-b border-slate-100">
+          <div className="px-3 py-2 border-b border-slate-800">
             <div className="relative">
               <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -419,7 +424,7 @@ export default function SupportConsole() {
                 placeholder="Search by name, ticket #, or keyword..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-8 pl-8 pr-2 text-xs bg-[#0c1130] border-0 rounded-lg text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#ddd6fe] focus:bg-[#1c2658] transition-all"
+                className="w-full h-8 pl-8 pr-2 text-xs bg-slate-800/50 border-0 rounded-lg text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-600 focus:bg-slate-900/40 transition-all"
               />
             </div>
           </div>
@@ -442,10 +447,10 @@ export default function SupportConsole() {
                     setShowTyping(true);
                   }}
                   className={cn(
-                    'w-full text-left px-4 py-3 border-b border-slate-100 transition-all duration-150 relative',
+                    'w-full text-left px-4 py-3 border-b border-slate-800 transition-all duration-150 relative',
                     selectedId === conv.id
-                      ? 'bg-violet-50 border-l-[3px] border-l-[#8b5cf6]'
-                      : 'hover:bg-[#0c1130] border-l-[3px] border-l-transparent'
+                      ? 'bg-violet-500/10 border-l-[3px] border-l-[#8b5cf6]'
+                      : 'hover:bg-slate-800/50 border-l-[3px] border-l-transparent'
                   )}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -463,9 +468,9 @@ export default function SupportConsole() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[13px] font-semibold text-slate-900 truncate">{conv.userName}</span>
+                          <span className="text-[13px] font-semibold text-slate-100 truncate">{conv.userName}</span>
                           {conv.unread > 0 && (
-                            <span className="shrink-0 w-4 h-4 rounded-full bg-[#177E89] text-white text-[10px] font-medium flex items-center justify-center">
+                            <span className="shrink-0 w-4 h-4 rounded-full bg-emerald-600 text-white text-[10px] font-medium flex items-center justify-center">
                               {conv.unread}
                             </span>
                           )}
@@ -482,7 +487,7 @@ export default function SupportConsole() {
                       {priorityConfig[conv.priority].label}
                     </span>
                     {conv.tags.slice(0, 2).map((tag) => (
-                      <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-[#0c1130] text-slate-600 font-medium">
+                      <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800/50 text-slate-400 font-medium">
                         {tag}
                       </span>
                     ))}
@@ -491,7 +496,7 @@ export default function SupportConsole() {
               ))}
             </div>
             <div className="p-3">
-              <button className="w-full py-2 text-xs text-slate-500 font-medium hover:text-slate-700 hover:bg-[#0c1130] rounded-lg transition-colors flex items-center justify-center gap-1.5">
+              <button className="w-full py-2 text-xs text-slate-500 font-medium hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-colors flex items-center justify-center gap-1.5">
                 <Clock size={12} />
                 Load more conversations
               </button>
@@ -500,9 +505,9 @@ export default function SupportConsole() {
         </div>
 
         {/* ── Column 2: Conversation Viewer ── */}
-        <div className="flex-1 flex flex-col min-w-0 bg-gradient-to-b from-slate-50 to-white">
+        <div className="flex-1 flex flex-col min-w-0 bg-[#0a0a0a]">
           {/* Conversation Header */}
-          <div className="flex items-center justify-between px-6 py-3 bg-[#1c2658] border-b border-slate-200 shrink-0">
+          <div className="flex items-center justify-between px-6 py-3 bg-slate-900/40 border-b border-slate-800 shrink-0">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <img
@@ -517,8 +522,8 @@ export default function SupportConsole() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-base font-semibold text-[#141B41]">{selectedConversation.userName}</span>
-                  <span className={cn('text-[11px] px-2 py-0.5 rounded font-semibold', planColors[selectedConversation.plan] || 'bg-[#0c1130] text-slate-600')}>
+                  <span className="text-base font-semibold text-slate-100">{selectedConversation.userName}</span>
+                  <span className={cn('text-[11px] px-2 py-0.5 rounded font-semibold', planColors[selectedConversation.plan] || 'bg-slate-800/50 text-slate-400')}>
                     {selectedConversation.plan}
                   </span>
                   <span className={cn('text-xs', statusConfig[selectedConversation.status].color)}>
@@ -543,12 +548,12 @@ export default function SupportConsole() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 text-xs gap-1.5 border-amber-300 text-amber-700 hover:bg-amber-50"
+                className="h-8 text-xs gap-1.5 border-amber-300 text-amber-400 hover:bg-amber-500/10"
               >
                 <AlertTriangle size={14} />
                 Escalate
               </Button>
-              <Button size="sm" className="h-8 text-xs gap-1.5 bg-[#177E89] hover:bg-[#1a919d]">
+              <Button size="sm" className="h-8 text-xs gap-1.5 bg-emerald-600 hover:bg-emerald-500">
                 <CheckCircle2 size={14} />
                 Resolve
               </Button>
@@ -583,9 +588,9 @@ export default function SupportConsole() {
                       variants={messageStagger}
                       className="flex items-center gap-3 my-2"
                     >
-                      <div className="flex-1 h-px bg-[#141B41]" />
+                      <div className="flex-1 h-px bg-[#0a0a0a]" />
                       <span className="text-xs text-slate-500 whitespace-pre-line text-center">{msg.content}</span>
-                      <div className="flex-1 h-px bg-[#141B41]" />
+                      <div className="flex-1 h-px bg-[#0a0a0a]" />
                     </motion.div>
                   );
                 }
@@ -602,11 +607,11 @@ export default function SupportConsole() {
                     >
                       <div className="flex flex-col items-end max-w-[70%]">
                         <span className="text-[11px] text-violet-400 mb-0.5">{msg.agentName}</span>
-                        <div className="bg-[#177E89] text-white px-4 py-2.5 rounded-2xl rounded-tr-sm">
+                        <div className="bg-emerald-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm">
                           <p className="text-sm leading-relaxed">{msg.content}</p>
                         </div>
                         {msg.cannedLabel && (
-                          <span className="mt-1 text-[11px] px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 font-medium">
+                          <span className="mt-1 text-[11px] px-2 py-0.5 rounded-full bg-violet-100 text-violet-400 font-medium">
                             Canned: {msg.cannedLabel}
                           </span>
                         )}
@@ -628,8 +633,8 @@ export default function SupportConsole() {
                   >
                     <img src={selectedConversation.avatar} alt="" className="w-7 h-7 rounded-full object-cover self-end mb-5" />
                     <div className="max-w-[70%]">
-                      <div className="bg-[#1c2658] border border-slate-200 px-4 py-2.5 rounded-2xl rounded-tl-sm">
-                        <p className="text-sm text-[#141B41] leading-relaxed">{msg.content}</p>
+                      <div className="bg-slate-900/40 border border-slate-800 px-4 py-2.5 rounded-2xl rounded-tl-sm">
+                        <p className="text-sm text-slate-100 leading-relaxed">{msg.content}</p>
                       </div>
                       <span className="text-[11px] text-slate-400 mt-1 block">{msg.timestamp}</span>
                     </div>
@@ -658,7 +663,7 @@ export default function SupportConsole() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
-            className="shrink-0 bg-[#1c2658] border-t border-slate-200 px-6 py-3"
+            className="shrink-0 bg-slate-900/40 border-t border-slate-800 px-6 py-3"
           >
             <div className="flex items-start gap-3">
               <textarea
@@ -674,13 +679,13 @@ export default function SupportConsole() {
                 }}
                 placeholder="Type your reply..."
                 rows={1}
-                className="flex-1 min-h-[40px] max-h-[120px] px-3 py-2 text-sm text-[#141B41] placeholder:text-slate-400 bg-[#0c1130] border border-slate-200 rounded-lg resize-none outline-none focus:ring-2 focus:ring-[#ddd6fe] focus:border-[#177E89] transition-all"
+                className="flex-1 min-h-[40px] max-h-[120px] px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 bg-slate-800/50 border border-slate-800 rounded-lg resize-none outline-none focus:ring-2 focus:ring-slate-600 focus:border-emerald-500 transition-all"
               />
               <div className="flex items-center gap-1.5">
                 {/* Canned responses */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="h-8 w-8 flex items-center justify-center rounded-lg text-slate-500 hover:bg-[#0c1130] hover:text-slate-700 transition-colors">
+                    <button className="h-8 w-8 flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-800/50 hover:text-slate-300 transition-colors">
                       <MessageSquare size={16} />
                     </button>
                   </DropdownMenuTrigger>
@@ -705,10 +710,10 @@ export default function SupportConsole() {
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                <button className="h-8 w-8 flex items-center justify-center rounded-lg text-slate-500 hover:bg-[#0c1130] hover:text-slate-700 transition-colors">
+                <button className="h-8 w-8 flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-800/50 hover:text-slate-300 transition-colors">
                   <Paperclip size={16} />
                 </button>
-                <button className="h-8 w-8 flex items-center justify-center rounded-lg text-amber-600 hover:bg-amber-50 transition-colors">
+                <button className="h-8 w-8 flex items-center justify-center rounded-lg text-amber-600 hover:bg-amber-500/10 transition-colors">
                   <AlertTriangle size={16} />
                 </button>
                 <motion.button
@@ -718,8 +723,8 @@ export default function SupportConsole() {
                   className={cn(
                     'h-8 px-3 flex items-center justify-center gap-1 rounded-lg text-sm font-medium transition-all',
                     messageText.trim()
-                      ? 'bg-[#177E89] text-white hover:bg-[#1a919d]'
-                      : 'bg-[#0c1130] text-slate-400 cursor-not-allowed'
+                      ? 'bg-emerald-600 text-white hover:bg-[#1a919d]'
+                      : 'bg-slate-800/50 text-slate-400 cursor-not-allowed'
                   )}
                 >
                   <Send size={14} />
@@ -730,22 +735,22 @@ export default function SupportConsole() {
         </div>
 
         {/* ── Column 3: Right Panel ── */}
-        <div className="w-[320px] bg-[#141B41] border-l border-slate-200 flex flex-col gap-4 p-4 overflow-y-auto shrink-0">
+        <div className="w-[320px] bg-[#0a0a0a] border-l border-slate-800 flex flex-col gap-4 p-4 overflow-y-auto shrink-0">
           {/* Agent Status Panel */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="bg-[#1c2658] rounded-xl shadow-sm border border-slate-100 overflow-hidden"
+            className="bg-slate-900/40 rounded-xl shadow-sm border border-slate-800 overflow-hidden"
           >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-[#141B41]">Agent Status</span>
-                <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 text-[11px]">
+                <span className="text-sm font-semibold text-slate-100">Agent Status</span>
+                <Badge className="bg-emerald-100 text-emerald-400 hover:bg-emerald-100 text-[11px]">
                   {onlineAgents}/15 Online
                 </Badge>
               </div>
-              <button className="text-xs text-[#177E89] font-medium hover:underline flex items-center gap-0.5">
+              <button className="text-xs text-emerald-400 font-medium hover:underline flex items-center gap-0.5">
                 View All
                 <ChevronDown size={12} className="-rotate-90" />
               </button>
@@ -758,43 +763,43 @@ export default function SupportConsole() {
                   initial="hidden"
                   animate="visible"
                   variants={rightPanelStagger}
-                  className="flex items-center gap-3 p-2.5 rounded-lg bg-[#0c1130] hover:bg-[#1c2658] hover:shadow-sm transition-all cursor-pointer group"
+                  className="flex items-center gap-3 p-2.5 rounded-lg bg-slate-800/50 hover:bg-slate-900/40 hover:shadow-sm transition-all cursor-pointer group"
                 >
                   <div className="relative shrink-0">
                     <img src={agent.avatar} alt={agent.name} className="w-9 h-9 rounded-full object-cover" />
                     <span
                       className={cn(
                         'absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white',
-                        agent.status === 'online' && 'bg-emerald-500',
-                        agent.status === 'busy' && 'bg-amber-500',
-                        agent.status === 'offline' && 'bg-red-500'
+                        agent.status === 'online' && 'bg-emerald-500/100',
+                        agent.status === 'busy' && 'bg-amber-500/100',
+                        agent.status === 'offline' && 'bg-red-500/100'
                       )}
                     />
                     {agent.status === 'online' && (
-                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white animate-pulse" />
+                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500/100 border-2 border-white animate-pulse" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[13px] font-semibold text-[#141B41]">{agent.number} — {agent.name}</span>
+                      <span className="text-[13px] font-semibold text-slate-100">{agent.number} — {agent.name}</span>
                     </div>
                     <p className="text-xs text-slate-500 truncate">{agent.currentTask}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <div className="flex flex-col items-end gap-1">
-                      <div className="w-10 h-1 bg-[#141B41] rounded-full overflow-hidden">
+                      <div className="w-10 h-1 bg-[#0a0a0a] rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${agent.load}%` }}
                           transition={{ duration: 0.5, delay: 0.2 + i * 0.04, ease: 'easeOut' }}
                           className={cn(
                             'h-full rounded-full',
-                            agent.load < 60 ? 'bg-emerald-500' : agent.load < 85 ? 'bg-amber-500' : 'bg-red-500'
+                            agent.load < 60 ? 'bg-emerald-500/100' : agent.load < 85 ? 'bg-amber-500/100' : 'bg-red-500/100'
                           )}
                         />
                       </div>
                     </div>
-                    <span className="w-5 h-5 rounded-full bg-[#0c1130] text-slate-600 text-[10px] font-medium flex items-center justify-center">
+                    <span className="w-5 h-5 rounded-full bg-slate-800/50 text-slate-400 text-[10px] font-medium flex items-center justify-center">
                       {agent.conversations}
                     </span>
                   </div>
@@ -808,18 +813,18 @@ export default function SupportConsole() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
-            className="bg-[#1c2658] rounded-xl shadow-sm border border-slate-100 overflow-hidden flex-1"
+            className="bg-slate-900/40 rounded-xl shadow-sm border border-slate-800 overflow-hidden flex-1"
           >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-[#141B41]">Escalation Queue</span>
-                <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 text-[11px]">
+                <span className="text-sm font-semibold text-slate-100">Escalation Queue</span>
+                <Badge className="bg-amber-100 text-amber-400 hover:bg-amber-100 text-[11px]">
                   {escalations.length} pending
                 </Badge>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-0.5">
+                  <button className="text-xs text-slate-500 hover:text-slate-300 flex items-center gap-0.5">
                     All
                     <ChevronDown size={12} />
                   </button>
@@ -859,15 +864,15 @@ export default function SupportConsole() {
 
                     {/* Ticket info */}
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[13px] font-semibold text-[#141B41]">{ticket.ticketNumber}</span>
+                      <span className="text-[13px] font-semibold text-slate-100">{ticket.ticketNumber}</span>
                       <span className="text-xs text-slate-500">{ticket.customer}</span>
-                      <span className={cn('text-[10px] px-1.5 py-0.5 rounded font-medium', planColors[ticket.plan] || 'bg-[#0c1130] text-slate-600')}>
+                      <span className={cn('text-[10px] px-1.5 py-0.5 rounded font-medium', planColors[ticket.plan] || 'bg-slate-800/50 text-slate-400')}>
                         {ticket.plan}
                       </span>
                     </div>
 
                     {/* Issue */}
-                    <p className="text-[13px] text-slate-600 mb-1.5 line-clamp-2">{ticket.issue}</p>
+                    <p className="text-[13px] text-slate-400 mb-1.5 line-clamp-2">{ticket.issue}</p>
 
                     {/* Meta */}
                     <div className="flex items-center gap-2 mb-2.5">
@@ -875,7 +880,7 @@ export default function SupportConsole() {
                         <Clock size={10} />
                         {ticket.waitingTime}
                       </span>
-                      <span className="text-[11px] px-1.5 py-0.5 rounded bg-[#0c1130] text-slate-600 font-medium">
+                      <span className="text-[11px] px-1.5 py-0.5 rounded bg-slate-800/50 text-slate-400 font-medium">
                         {ticket.assignedTeam}
                       </span>
                     </div>
@@ -897,7 +902,7 @@ export default function SupportConsole() {
                     <div className="flex items-center gap-1.5">
                       <Button
                         size="sm"
-                        className="h-7 text-[11px] gap-1 bg-[#177E89] hover:bg-[#1a919d]"
+                        className="h-7 text-[11px] gap-1 bg-emerald-600 hover:bg-emerald-500"
                         onClick={() => handleClaimEscalation(ticket.id)}
                       >
                         <ArrowUpCircle size={12} />
@@ -921,7 +926,7 @@ export default function SupportConsole() {
                   className="flex flex-col items-center justify-center py-8 text-center"
                 >
                   <CheckCircle2 size={32} className="text-emerald-400 mb-2" />
-                  <p className="text-sm font-medium text-slate-600">All caught up!</p>
+                  <p className="text-sm font-medium text-slate-400">All caught up!</p>
                   <p className="text-xs text-slate-400 mt-0.5">No pending escalations</p>
                 </motion.div>
               )}
