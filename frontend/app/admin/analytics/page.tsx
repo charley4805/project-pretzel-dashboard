@@ -6,6 +6,7 @@ import { FounderInsightsPanel } from '@/components/analytics/founder-insights-pa
 import { HealthStatusGrid } from '@/components/analytics/health-status-grid';
 import { LiveFeed } from '@/components/analytics/analytics-live-feed';
 import { GrowthChart } from '@/components/analytics/analytics-growth-chart';
+import { fetchAgentsOverview } from '@/lib/api';
 import {
   Activity, Users, Search, Brain, Clock,
   Wrench, Star, Building2, CheckCircle, RefreshCw, WifiOff,
@@ -25,7 +26,9 @@ function Disconnected({ label = 'Disconnected' }: { label?: string }) {
 export default function AnalyticsDashboard() {
   const [overview, setOverview] = useState<any>(null);
   const [knot, setKnot] = useState<any>(null);
+  const [agentsOverview, setAgentsOverview] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [agentsLoading, setAgentsLoading] = useState(false);
   const [source, setSource] = useState('all');
   const [range, setRange] = useState('today');
 
@@ -48,6 +51,21 @@ export default function AnalyticsDashboard() {
   }, [source]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  useEffect(() => {
+    const loadAgents = async () => {
+      setAgentsLoading(true);
+      try {
+        const data = await fetchAgentsOverview();
+        setAgentsOverview(data);
+      } catch {
+        setAgentsOverview(null);
+      } finally {
+        setAgentsLoading(false);
+      }
+    };
+    loadAgents();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-slate-100 p-4 md:p-6 font-sans">
@@ -146,6 +164,29 @@ export default function AnalyticsDashboard() {
                 <AnalyticsKpiCard title="Search Volume" value={overview.total_searches_today} icon={<Search size={17} className="text-orange-400" />} loading={loading} />
                 <AnalyticsKpiCard title="API Requests" value={overview.api_requests_today} icon={<Activity size={17} className="text-slate-400" />} loading={loading} />
                 <AnalyticsKpiCard title="Avg Latency" value={overview.avg_api_latency_ms} icon={<Clock size={17} className="text-teal-400" />} loading={loading} suffix="ms" />
+              </div>
+            )}
+          </section>
+
+          <section>
+            <p className="text-[11px] text-amber-500 uppercase tracking-widest font-semibold mb-3">Agent Command Summary</p>
+            {agentsLoading ? (
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-slate-400">Loading agent summary…</div>
+            ) : !agentsOverview ? (
+              <Disconnected label="Agent data unavailable" />
+            ) : (
+              <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+                {[
+                  { title: 'Agents', value: agentsOverview.summary.total, color: 'text-slate-100' },
+                  { title: 'Online', value: agentsOverview.summary.online, color: 'text-emerald-300' },
+                  { title: 'Warnings', value: agentsOverview.summary.warning, color: 'text-amber-300' },
+                  { title: 'Errors', value: agentsOverview.summary.error, color: 'text-rose-300' },
+                ].map((item) => (
+                  <div key={item.title} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
+                    <p className="text-xs uppercase tracking-[0.24em] text-slate-500 mb-2">{item.title}</p>
+                    <p className={`text-3xl font-semibold ${item.color}`}>{item.value}</p>
+                  </div>
+                ))}
               </div>
             )}
           </section>

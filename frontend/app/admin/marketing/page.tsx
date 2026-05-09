@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AnalyticsKpiCard } from '@/components/analytics/analytics-kpi-card';
 import { FunnelChart } from '@/components/analytics/funnel-chart';
-import { UserPlus, TrendingUp, Eye, Rocket, Search, Megaphone, RefreshCw, WifiOff } from 'lucide-react';
+import { fetchAgentsOverview } from '@/lib/api';
+import { UserPlus, TrendingUp, Eye, Rocket, Zap, Search, Megaphone, RefreshCw, WifiOff } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell,
@@ -22,6 +23,7 @@ function Disconnected({ label = 'Disconnected — data unavailable' }: { label?:
 
 export default function MarketingCommandCenter() {
   const [data, setData] = useState<any>(null);
+  const [agentsOverview, setAgentsOverview] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -41,11 +43,11 @@ export default function MarketingCommandCenter() {
       ]);
       setData({
         ...ov,
-        funnel:              funnel.funnel   ?? [],
-        acquisition_sources: acq.sources    ?? [],
-        weekly_signups:      trends.weekly  ?? [],
-        top_search_terms:    search.terms   ?? [],
-        campaigns:           camp.campaigns ?? [],
+        funnel: funnel.funnel ?? [],
+        acquisition_sources: acq.sources ?? [],
+        weekly_signups: trends.weekly ?? [],
+        top_search_terms: search.terms ?? [],
+        campaigns: camp.campaigns ?? [],
       });
     } catch {
       setData(null);
@@ -55,6 +57,18 @@ export default function MarketingCommandCenter() {
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  useEffect(() => {
+    const loadAgents = async () => {
+      try {
+        const result = await fetchAgentsOverview();
+        setAgentsOverview(result);
+      } catch {
+        setAgentsOverview(null);
+      }
+    };
+    loadAgents();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-slate-100 p-4 md:p-6 font-sans">
@@ -84,12 +98,44 @@ export default function MarketingCommandCenter() {
           <div className="col-span-full"><Disconnected label="Marketing data unavailable" /></div>
         ) : (
           <>
-            <AnalyticsKpiCard title="New Signups Today"   value={data.new_signups_today}   delta={data.new_signups_delta}  icon={<UserPlus   size={17} className="text-amber-400"  />} loading={loading} />
-            <AnalyticsKpiCard title="Conversion Rate"      value={data.conversion_rate}      delta={data.conversion_delta}   icon={<TrendingUp size={17} className="text-emerald-400" />} loading={loading} suffix="%" isDecimal />
-            <AnalyticsKpiCard title="Visitors Today"       value={data.visitors_today}       delta={data.visitors_delta}     icon={<Eye        size={17} className="text-blue-400"   />} loading={loading} />
-            <AnalyticsKpiCard title="Trial Starts"         value={data.trial_starts_today}   delta={data.trial_delta}        icon={<Rocket     size={17} className="text-purple-400" />} loading={loading} />
+            <AnalyticsKpiCard title="New Signups Today" value={data.new_signups_today} delta={data.new_signups_delta} icon={<UserPlus size={17} className="text-amber-400" />} loading={loading} />
+            <AnalyticsKpiCard title="Conversion Rate" value={data.conversion_rate} delta={data.conversion_delta} icon={<TrendingUp size={17} className="text-emerald-400" />} loading={loading} suffix="%" isDecimal />
+            <AnalyticsKpiCard title="Visitors Today" value={data.visitors_today} delta={data.visitors_delta} icon={<Eye size={17} className="text-blue-400" />} loading={loading} />
+            <AnalyticsKpiCard title="Trial Starts" value={data.trial_starts_today} delta={data.trial_delta} icon={<Rocket size={17} className="text-purple-400" />} loading={loading} />
           </>
         )}
+      </div>
+
+      {/* AGENT PERFORMANCE */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+          <div className="flex items-center gap-3 mb-4">
+            <Zap size={16} className="text-amber-300" />
+            <h2 className="text-sm font-medium text-slate-300">Agent Assist</h2>
+          </div>
+          {!agentsOverview ? (
+            <div className="text-sm text-slate-500">Agent performance unavailable</div>
+          ) : (
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'Active Agents', value: agentsOverview.summary.online, hint: 'support / social / leadgen' },
+                  { label: 'Warnings', value: agentsOverview.summary.warning, hint: 'review flagged' },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-xl bg-slate-900/70 p-4 border border-slate-800">
+                    <p className="text-xs uppercase tracking-[0.24em] text-slate-500 mb-2">{item.label}</p>
+                    <p className="text-2xl font-semibold text-white">{item.value}</p>
+                    <p className="text-[11px] text-slate-500 mt-1">{item.hint}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-xl bg-slate-900/70 p-4 border border-slate-800">
+                <p className="text-xs uppercase tracking-[0.24em] text-slate-500 mb-2">Agent Activity</p>
+                <p className="text-sm text-slate-300">{agentsOverview.recent_activity?.[0]?.action ?? 'No recent activity captured'}</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* FUNNEL + ACQUISITION */}
@@ -173,7 +219,7 @@ export default function MarketingCommandCenter() {
                     contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', fontSize: '12px' }}
                   />
                   <Line type="monotone" dataKey="signups" stroke="#f59e0b" strokeWidth={2} dot={false} name="Pretzel.io" />
-                  <Line type="monotone" dataKey="knot"    stroke="#60a5fa" strokeWidth={2} dot={false} name="PretzelKnot" />
+                  <Line type="monotone" dataKey="knot" stroke="#60a5fa" strokeWidth={2} dot={false} name="PretzelKnot" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -197,9 +243,8 @@ export default function MarketingCommandCenter() {
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <span className="text-slate-500 text-xs font-mono">{t.count.toLocaleString()}</span>
-                    <span className={`text-xs font-semibold w-10 text-right ${
-                      t.delta?.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'
-                    }`}>{t.delta}</span>
+                    <span className={`text-xs font-semibold w-10 text-right ${t.delta?.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'
+                      }`}>{t.delta}</span>
                   </div>
                 </div>
               ))}
@@ -236,11 +281,10 @@ export default function MarketingCommandCenter() {
                     <td className="py-3 pr-6 text-amber-400 font-mono font-semibold">{c.conversions}</td>
                     <td className="py-3 pr-6 text-slate-300 font-mono">{c.cpa}</td>
                     <td className="py-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        c.status === 'active'
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.status === 'active'
                           ? 'bg-emerald-500/10 text-emerald-400'
                           : 'bg-slate-700/50 text-slate-500'
-                      }`}>
+                        }`}>
                         {c.status}
                       </span>
                     </td>

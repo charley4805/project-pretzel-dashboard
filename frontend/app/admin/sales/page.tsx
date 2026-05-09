@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AnalyticsKpiCard } from '@/components/analytics/analytics-kpi-card';
 import { RevenueChart } from '@/components/analytics/revenue-chart';
+import { fetchAgentsOverview } from '@/lib/api';
 import {
-  DollarSign, TrendingUp, Users, CreditCard,
+  DollarSign, TrendingUp, Users, CreditCard, Zap,
   AlertCircle, Repeat, Building2, RefreshCw, WifiOff,
 } from 'lucide-react';
 import {
@@ -33,6 +34,7 @@ function Disconnected({ label = 'Disconnected — data unavailable' }: { label?:
 
 export default function SalesCommandCenter() {
   const [data, setData] = useState<any>(null);
+  const [agentsOverview, setAgentsOverview] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -50,10 +52,10 @@ export default function SalesCommandCenter() {
       ]);
       setData({
         ...ov,
-        revenue_chart:       rev.monthly       ?? [],
-        subscription_tiers:  subs.tiers        ?? [],
-        recent_transactions: tx.transactions   ?? [],
-        contract_pipeline:   pipe.stages       ?? [],
+        revenue_chart: rev.monthly ?? [],
+        subscription_tiers: subs.tiers ?? [],
+        recent_transactions: tx.transactions ?? [],
+        contract_pipeline: pipe.stages ?? [],
       });
     } catch {
       setData(null);
@@ -63,6 +65,18 @@ export default function SalesCommandCenter() {
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  useEffect(() => {
+    const loadAgents = async () => {
+      try {
+        const result = await fetchAgentsOverview();
+        setAgentsOverview(result);
+      } catch {
+        setAgentsOverview(null);
+      }
+    };
+    loadAgents();
+  }, []);
 
   const maxPipeline = data?.contract_pipeline?.length
     ? Math.max(...data.contract_pipeline.map((s: any) => s.count))
@@ -96,14 +110,41 @@ export default function SalesCommandCenter() {
           <div className="col-span-full"><Disconnected label="Sales data unavailable" /></div>
         ) : (
           <>
-            <AnalyticsKpiCard title="MRR"              value={data.mrr}                          delta={data.mrr_delta}          icon={<DollarSign  size={17} className="text-emerald-400" />} loading={loading} prefix="$" />
-            <AnalyticsKpiCard title="ARR"              value={data.arr}                          delta={data.arr_delta}          icon={<TrendingUp  size={17} className="text-emerald-400" />} loading={loading} prefix="$" />
-            <AnalyticsKpiCard title="Active Subs"      value={data.active_subscriptions}         delta={data.active_subs_delta}  icon={<Users       size={17} className="text-amber-400"   />} loading={loading} />
-            <AnalyticsKpiCard title="Trial → Paid MTD" value={data.trial_conversions_this_month} delta={data.trial_conv_delta}   icon={<Repeat      size={17} className="text-purple-400" />} loading={loading} />
-            <AnalyticsKpiCard title="Churn Rate"       value={data.churn_rate}                   delta={data.churn_delta}        icon={<AlertCircle size={17} className="text-rose-400"    />} loading={loading} suffix="%" isDecimal invertDelta />
-            <AnalyticsKpiCard title="ARPU"             value={data.avg_revenue_per_user}                                         icon={<CreditCard  size={17} className="text-blue-400"    />} loading={loading} prefix="$" isDecimal />
+            <AnalyticsKpiCard title="MRR" value={data.mrr} delta={data.mrr_delta} icon={<DollarSign size={17} className="text-emerald-400" />} loading={loading} prefix="$" />
+            <AnalyticsKpiCard title="ARR" value={data.arr} delta={data.arr_delta} icon={<TrendingUp size={17} className="text-emerald-400" />} loading={loading} prefix="$" />
+            <AnalyticsKpiCard title="Active Subs" value={data.active_subscriptions} delta={data.active_subs_delta} icon={<Users size={17} className="text-amber-400" />} loading={loading} />
+            <AnalyticsKpiCard title="Trial → Paid MTD" value={data.trial_conversions_this_month} delta={data.trial_conv_delta} icon={<Repeat size={17} className="text-purple-400" />} loading={loading} />
+            <AnalyticsKpiCard title="Churn Rate" value={data.churn_rate} delta={data.churn_delta} icon={<AlertCircle size={17} className="text-rose-400" />} loading={loading} suffix="%" isDecimal invertDelta />
+            <AnalyticsKpiCard title="ARPU" value={data.avg_revenue_per_user} icon={<CreditCard size={17} className="text-blue-400" />} loading={loading} prefix="$" isDecimal />
           </>
         )}
+      </div>
+
+      {/* AGENT FLEET SUMMARY */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+          <div className="flex items-center gap-3 mb-4">
+            <Zap size={16} className="text-amber-300" />
+            <h2 className="text-sm font-medium text-slate-300">Agent Fleet</h2>
+          </div>
+          {!agentsOverview ? (
+            <div className="text-sm text-slate-500">Agent metric data unavailable</div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: 'Total', value: agentsOverview.summary.total },
+                { label: 'Online', value: agentsOverview.summary.online },
+                { label: 'Warnings', value: agentsOverview.summary.warning },
+                { label: 'Errors', value: agentsOverview.summary.error },
+              ].map((item) => (
+                <div key={item.label} className="rounded-xl bg-slate-900/70 p-4 border border-slate-800">
+                  <p className="text-xs uppercase tracking-[0.24em] text-slate-500 mb-2">{item.label}</p>
+                  <p className="text-2xl font-semibold text-white">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* REVENUE CHART + TIER BREAKDOWN */}
@@ -242,19 +283,17 @@ export default function SalesCommandCenter() {
                     </td>
                     <td className="py-3 pr-6 text-emerald-400 font-mono font-semibold">${tx.amount}</td>
                     <td className="py-3 pr-6">
-                      <span className={`text-xs font-medium ${
-                        tx.source === 'pretzel' ? 'text-amber-400' : 'text-blue-400'
-                      }`}>
+                      <span className={`text-xs font-medium ${tx.source === 'pretzel' ? 'text-amber-400' : 'text-blue-400'
+                        }`}>
                         {tx.source === 'pretzel' ? '🥨 Pretzel.io' : '🔵 Knot'}
                       </span>
                     </td>
                     <td className="py-3 pr-6 text-slate-500 text-xs whitespace-nowrap">{tx.date}</td>
                     <td className="py-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        tx.status === 'paid'     ? 'bg-emerald-500/10 text-emerald-400' :
-                        tx.status === 'failed'   ? 'bg-rose-500/10    text-rose-400'    :
-                                                   'bg-slate-700/50   text-slate-500'
-                      }`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${tx.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400' :
+                          tx.status === 'failed' ? 'bg-rose-500/10    text-rose-400' :
+                            'bg-slate-700/50   text-slate-500'
+                        }`}>
                         {tx.status}
                       </span>
                     </td>
