@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         pretzel: {
-          50:  '#fef9ee',
+          50: '#fef9ee',
           100: '#fef0d3',
           200: '#fddea6',
           300: '#fcc869',
