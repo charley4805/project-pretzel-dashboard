@@ -291,8 +291,8 @@ export default function SalesCommandCenter() {
                     <td className="py-3 pr-6 text-slate-500 text-xs whitespace-nowrap">{tx.date}</td>
                     <td className="py-3">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${tx.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400' :
-                          tx.status === 'failed' ? 'bg-rose-500/10    text-rose-400' :
-                            'bg-slate-700/50   text-slate-500'
+                        tx.status === 'failed' ? 'bg-rose-500/10    text-rose-400' :
+                          'bg-slate-700/50   text-slate-500'
                         }`}>
                         {tx.status}
                       </span>

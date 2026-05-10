@@ -282,8 +282,8 @@ export default function MarketingCommandCenter() {
                     <td className="py-3 pr-6 text-slate-300 font-mono">{c.cpa}</td>
                     <td className="py-3">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.status === 'active'
-                          ? 'bg-emerald-500/10 text-emerald-400'
-                          : 'bg-slate-700/50 text-slate-500'
+                        ? 'bg-emerald-500/10 text-emerald-400'
+                        : 'bg-slate-700/50 text-slate-500'
                         }`}>
                         {c.status}
                       </span>
