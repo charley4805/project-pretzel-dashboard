@@ -134,10 +134,10 @@ export default function TrafficPage() {
               key={s}
               onClick={() => setSource(s)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${source === s
-                  ? s === 'knot' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
-                    : s === 'pretzel' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
-                      : 'bg-slate-700 text-white border border-slate-600'
-                  : 'bg-transparent text-slate-500 border border-slate-800 hover:border-slate-600'
+                ? s === 'knot' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
+                  : s === 'pretzel' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                    : 'bg-slate-700 text-white border border-slate-600'
+                : 'bg-transparent text-slate-500 border border-slate-800 hover:border-slate-600'
                 }`}
             >
               {s === 'all' ? 'All Sources' : s === 'pretzel' ? 'Pretzel.io' : 'PretzelKnot'}
@@ -157,8 +157,8 @@ export default function TrafficPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
             {kpiCards().map(({ label, value, highlight, blue }: any) => (
               <div key={label} className={`rounded-xl border p-4 ${blue ? 'border-blue-500/30 bg-blue-500/5'
-                  : highlight ? 'border-amber-500/30 bg-amber-500/5'
-                    : 'border-slate-800 bg-slate-900/60'
+                : highlight ? 'border-amber-500/30 bg-amber-500/5'
+                  : 'border-slate-800 bg-slate-900/60'
                 }`}>
                 <p className="text-[11px] text-slate-500 uppercase tracking-wider">{label}</p>
                 <p className={`text-xl font-bold mt-1 ${blue ? 'text-blue-400' : highlight ? 'text-amber-400' : 'text-white'
@@ -300,6 +300,5 @@ export default function TrafficPage() {
         )}
       </div>
     </div>
-    </div >
   );
 }
