@@ -71,7 +71,7 @@ export default function MarketingCommandCenter() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-pretzel-walnut text-slate-100 p-4 md:p-6 font-sans">
+    <div className="min-h-screen text-white p-4 md:p-6 font-sans">
 
       {/* HEADER */}
       <div className="flex justify-between items-start mb-8">
@@ -140,7 +140,7 @@ export default function MarketingCommandCenter() {
 
       {/* FUNNEL + ACQUISITION */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-        <div className="lg:col-span-3 bg-pretzel-indigo border border-slate-800 rounded-xl p-5">
+        <div className="lg:col-span-3 bg-slate-900/60 border border-slate-800 rounded-xl p-5">
           <h3 className="text-sm font-medium text-slate-300 mb-5 flex items-center gap-2">
             <TrendingUp size={15} className="text-amber-400" /> User Acquisition Funnel
             <span className="ml-auto text-[10px] text-slate-600">Source: analytics_events + daily_rollups</span>
@@ -152,7 +152,7 @@ export default function MarketingCommandCenter() {
           )}
         </div>
 
-        <div className="lg:col-span-2 bg-pretzel-indigo border border-slate-800 rounded-xl p-5">
+        <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-xl p-5">
           <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
             <Search size={15} className="text-orange-400" /> Acquisition Sources
             <span className="ml-auto text-[10px] text-slate-600">utm_source</span>
@@ -198,7 +198,7 @@ export default function MarketingCommandCenter() {
 
       {/* SIGNUP TREND + TOP SEARCH TERMS */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-        <div className="lg:col-span-3 bg-pretzel-indigo border border-slate-800 rounded-xl p-5">
+        <div className="lg:col-span-3 bg-slate-900/60 border border-slate-800 rounded-xl p-5">
           <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
             <UserPlus size={15} className="text-amber-400" /> Weekly Signup Trend
             <span className="ml-auto flex items-center gap-4 text-[10px] text-slate-500">
@@ -226,7 +226,7 @@ export default function MarketingCommandCenter() {
           )}
         </div>
 
-        <div className="lg:col-span-2 bg-pretzel-indigo border border-slate-800 rounded-xl p-5">
+        <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-xl p-5">
           <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
             <Search size={15} className="text-orange-400" /> Top Knot Search Terms
             <span className="ml-auto text-[10px] text-slate-600">PretzelKnot directory</span>
@@ -254,7 +254,7 @@ export default function MarketingCommandCenter() {
       </div>
 
       {/* CAMPAIGN TABLE */}
-      <div className="bg-pretzel-indigo border border-slate-800 rounded-xl p-5">
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
         <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
           <Megaphone size={15} className="text-amber-400" /> Campaign Performance
           <span className="ml-auto text-[10px] text-slate-600">Source: Google Ads + Meta Ads APIs</span>

@@ -444,7 +444,7 @@ export default function SupportConsole() {
                   variants={listItemStagger}
                   onClick={() => {
                     setSelectedId(conv.id);
-                    if (conv.messages.length > 0) {
+                    if ((conv.messages ?? []).length > 0) {
                       setMessages(conv.messages);
                     }
                     setShowTyping(true);
@@ -489,7 +489,7 @@ export default function SupportConsole() {
                     <span className={cn('text-[10px] px-1.5 py-0.5 rounded font-medium', priorityConfig[conv.priority].bg, priorityConfig[conv.priority].color)}>
                       {priorityConfig[conv.priority].label}
                     </span>
-                    {conv.tags.slice(0, 2).map((tag) => (
+                    {(conv.tags ?? []).slice(0, 2).map((tag) => (
                       <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800/50 text-slate-400 font-medium">
                         {tag}
                       </span>

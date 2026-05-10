@@ -1377,7 +1377,7 @@ export default function SettingsPage() {
                   key={tab.id}
                   onClick={() => setActiveAgent(tab.id)}
                   className={`relative w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-200 mx-auto ${
-                    isActive ? '' : 'hover:bg-pretzel-indigo'
+                    isActive ? '' : 'hover:bg-slate-800'
                   }`}
                   style={{
                     backgroundColor: isActive ? `${tab.color}20` : '#452103',

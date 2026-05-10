@@ -451,7 +451,7 @@ function PostComposerModal({
                   onClick={() => setPostType(key)}
                   className={cn(
                     'px-3 py-1.5 rounded-md text-xs font-medium transition-all',
-                    postType === key ? cn(config.bg, config.color, 'ring-1 ring-offset-1') : 'bg-slate-800/50 text-slate-500 hover:bg-pretzel-indigo'
+                    postType === key ? cn(config.bg, config.color, 'ring-1 ring-offset-1') : 'bg-slate-800/50 text-slate-500 hover:bg-slate-800'
                   )}
                 >
                   {config.label}
@@ -606,7 +606,7 @@ function ContentCalendarTab() {
                     <span className="text-[11px] font-medium text-slate-500 uppercase">{format(day, 'EEE')}</span>
                     <span className={cn(
                       'text-xs font-bold px-1.5 py-0.5 rounded-full',
-                      dayPosts.length > 0 ? 'bg-slate-600 text-white' : 'bg-pretzel-indigo text-slate-500'
+                      dayPosts.length > 0 ? 'bg-slate-600 text-white' : 'bg-slate-800 text-slate-500'
                     )}>
                       {dayPosts.length}
                     </span>
@@ -1153,7 +1153,7 @@ function CampaignsTab({ campaigns }: { campaigns: any[] }) {
                   <span className="text-slate-500">{campaign.startDate} ? {campaign.endDate}</span>
                   <span className="font-medium text-slate-300">{campaign.progress}%</span>
                 </div>
-                <div className="h-1.5 bg-pretzel-indigo rounded-full overflow-hidden">
+                <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${campaign.progress}%` }}
@@ -1470,7 +1470,7 @@ export default function SocialHub() {
       </motion.div>
 
       {/* Tab Bar */}
-      <div className="border-b border-slate-800 sticky top-16 z-30 bg-pretzel-indigo">
+      <div className="border-b border-slate-800 sticky top-16 z-30 bg-slate-900">
         <div className="flex gap-1">
           {TABS.map(tab => (
             <button

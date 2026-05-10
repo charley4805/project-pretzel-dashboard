@@ -83,7 +83,7 @@ export default function SalesCommandCenter() {
     : 1;
 
   return (
-    <div className="min-h-screen bg-pretzel-walnut text-slate-100 p-4 md:p-6 font-sans">
+    <div className="min-h-screen text-white p-4 md:p-6 font-sans">
 
       {/* HEADER */}
       <div className="flex justify-between items-start mb-8">
@@ -149,7 +149,7 @@ export default function SalesCommandCenter() {
 
       {/* REVENUE CHART + TIER BREAKDOWN */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-        <div className="lg:col-span-3 bg-pretzel-indigo border border-slate-800 rounded-xl p-5">
+        <div className="lg:col-span-3 bg-slate-900/60 border border-slate-800 rounded-xl p-5">
           <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
             <TrendingUp size={15} className="text-emerald-400" /> Monthly Recurring Revenue
             <span className="ml-auto flex items-center gap-4 text-[10px] text-slate-500">
@@ -166,7 +166,7 @@ export default function SalesCommandCenter() {
           </div>
         </div>
 
-        <div className="lg:col-span-2 bg-pretzel-indigo border border-slate-800 rounded-xl p-5">
+        <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-xl p-5">
           <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
             <CreditCard size={15} className="text-amber-400" /> Subscriptions by Tier
             <span className="ml-auto text-[10px] text-slate-600">Both platforms</span>
@@ -214,7 +214,7 @@ export default function SalesCommandCenter() {
       </div>
 
       {/* CONTRACT PIPELINE */}
-      <div className="bg-pretzel-indigo border border-slate-800 rounded-xl p-5 mb-8">
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 mb-8">
         <h3 className="text-sm font-medium text-slate-300 mb-5 flex items-center gap-2">
           <Building2 size={15} className="text-amber-400" /> Contract Pipeline
           <span className="ml-auto text-[10px] text-slate-600">Source: Pretzel.io contracts table</span>
@@ -248,7 +248,7 @@ export default function SalesCommandCenter() {
       </div>
 
       {/* RECENT TRANSACTIONS */}
-      <div className="bg-pretzel-indigo border border-slate-800 rounded-xl p-5">
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
         <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
           <CreditCard size={15} className="text-emerald-400" /> Recent Transactions
           <span className="ml-auto text-[10px] text-slate-600">Pretzel.io + PretzelKnot Stripe events</span>
