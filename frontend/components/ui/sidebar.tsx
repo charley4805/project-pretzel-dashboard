@@ -3,15 +3,24 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, TrendingUp, DollarSign, Activity, BarChart2, Mail, Share2, Menu, X } from 'lucide-react';
+import { BarChart3, TrendingUp, DollarSign, Activity, BarChart2, Mail, Share2, Menu, X, Bot, Headphones, MessageSquare, Target, Settings, BookOpen } from 'lucide-react';
 
-const navItems = [
+const navItemsMain = [
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Marketing', href: '/admin/marketing', icon: TrendingUp },
   { label: 'Sales', href: '/admin/sales', icon: DollarSign },
   { label: 'Traffic', href: '/admin/traffic', icon: BarChart2 },
   { label: 'Inbox', href: '/admin/inbox', icon: Mail },
   { label: 'Social', href: '/admin/social', icon: Share2 },
+];
+
+const navItemsAgents = [
+  { label: 'Agents', href: '/admin/agents', icon: Bot, section: true },
+  { label: '   Support', href: '/admin/agents/support', icon: Headphones },
+  { label: '   Social', href: '/admin/agents/social', icon: MessageSquare },
+  { label: '   Leads', href: '/admin/agents/leads', icon: Target },
+  { label: '   Settings', href: '/admin/agents/settings', icon: Settings },
+  { label: '   Vault', href: '/admin/agents/vault', icon: BookOpen },
 ];
 
 export function Sidebar() {
@@ -72,20 +81,44 @@ export function Sidebar() {
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1">
-          {navItems.map(({ label, href, icon: Icon }) => {
+          {/* Business Operations */}
+          {navItemsMain.map(({ label, href, icon: Icon }) => {
             const isActive = pathname.startsWith(href);
             return (
               <Link
                 key={href}
                 href={href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium ${isActive
-                    ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent'
+                  ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent'
                   }`}
               >
                 <Icon size={15} className={isActive ? 'text-amber-400' : 'text-slate-500'} />
                 {label}
                 {isActive && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-amber-400" />}
+              </Link>
+            );
+          })}
+
+          {/* Divider */}
+          <div className="my-3 h-px bg-slate-800/50" />
+
+          {/* Agent Operations */}
+          <p className="text-[9px] uppercase tracking-widest text-slate-600 font-semibold px-3 py-2">Agent Operations</p>
+          {navItemsAgents.map(({ label, href, icon: Icon }) => {
+            const isActive = pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium ${isActive
+                  ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent'
+                  }`}
+              >
+                <Icon size={15} className={isActive ? 'text-emerald-400' : 'text-slate-500'} />
+                {label}
+                {isActive && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-400" />}
               </Link>
             );
           })}

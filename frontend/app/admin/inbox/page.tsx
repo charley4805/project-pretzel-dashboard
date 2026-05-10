@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Mail, Star, WifiOff } from 'lucide-react';
+import { Mail, Star, WifiOff, Headphones, Zap } from 'lucide-react';
+import { fetchAgentsOverview } from '@/lib/api';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
@@ -21,16 +22,15 @@ function Disconnected({ label = 'Disconnected — data unavailable' }: { label?:
 
 function fmtDate(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
-  if (diff < 3_600_000)  return `${Math.floor(diff / 60_000)}m ago`;
+  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
   if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function EmailCard({ email }: { email: Email }) {
   return (
-    <div className={`p-4 rounded-lg border transition-colors cursor-pointer ${
-      email.unread ? 'border-amber-500/20 bg-amber-500/5' : 'border-slate-800 bg-slate-900/40 hover:bg-slate-800/40'
-    }`}>
+    <div className={`p-4 rounded-lg border transition-colors cursor-pointer ${email.unread ? 'border-amber-500/20 bg-amber-500/5' : 'border-slate-800 bg-slate-900/40 hover:bg-slate-800/40'
+      }`}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           {email.unread && <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0 mt-0.5" />}
@@ -49,8 +49,10 @@ function EmailCard({ email }: { email: Email }) {
 
 export default function InboxPage() {
   const [support, setSupport] = useState<Email[] | null>(null);
-  const [sales,   setSales]   = useState<Email[] | null>(null);
-  const [stats,   setStats]   = useState<any>(null);
+  const [sales, setSales] = useState<Email[] | null>(null);
+  const [stats, setStats] = useState<any>(null);
+  const [agentsOverview, setAgentsOverview] = useState<any>(null);
+  const [agentsLoading, setAgentsLoading] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -62,6 +64,19 @@ export default function InboxPage() {
       setSupport(Array.isArray(sp) ? sp : null);
       setSales(Array.isArray(sa) ? sa : null);
     });
+
+    const loadAgents = async () => {
+      setAgentsLoading(true);
+      try {
+        const data = await fetchAgentsOverview();
+        setAgentsOverview(data);
+      } catch {
+        setAgentsOverview(null);
+      } finally {
+        setAgentsLoading(false);
+      }
+    };
+    loadAgents();
   }, []);
 
   return (
@@ -86,9 +101,9 @@ export default function InboxPage() {
         </div>
         <div className="flex flex-wrap gap-3">
           {[
-            { label: 'Unread',  value: stats?.total_unread  ?? '—', color: 'text-amber-400'   },
-            { label: 'Support', value: stats?.support_unread ?? '—', color: 'text-blue-400'    },
-            { label: 'Sales',   value: stats?.sales_unread  ?? '—', color: 'text-emerald-400' },
+            { label: 'Unread', value: stats?.total_unread ?? '—', color: 'text-amber-400' },
+            { label: 'Support', value: stats?.support_unread ?? '—', color: 'text-blue-400' },
+            { label: 'Sales', value: stats?.sales_unread ?? '—', color: 'text-emerald-400' },
           ].map(({ label, value, color }) => (
             <div key={label} className="text-center px-4 py-2 rounded-lg border border-slate-800 bg-slate-900/60">
               <p className={`text-lg font-bold ${color}`}>{value}</p>
@@ -97,6 +112,24 @@ export default function InboxPage() {
           ))}
         </div>
       </div>
+
+      {agentsOverview && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {[
+            { title: 'Agents', value: agentsOverview.summary.total, icon: Zap, color: 'text-slate-100' },
+            { title: 'Online', value: agentsOverview.summary.online, icon: Headphones, color: 'text-emerald-300' },
+            { title: 'Warnings', value: agentsOverview.summary.warning, icon: Zap, color: 'text-amber-300' },
+          ].map((item) => (
+            <div key={item.title} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 flex items-center gap-3">
+              <item.icon size={18} className={item.color} />
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">{item.title}</p>
+                <p className={`text-2xl font-semibold ${item.color}`}>{item.value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">

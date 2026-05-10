@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import admin_analytics, marketing, sales, traffic, gmail_inbox, crm, social
+from app.api.routes import admin_analytics, marketing, sales, traffic, gmail_inbox, crm, social, agents
 
 app = FastAPI(
     title="Project Pretzel Analytics API",
@@ -31,6 +31,7 @@ app.include_router(traffic.router,         prefix="/api/admin/traffic",     tags
 app.include_router(gmail_inbox.router,     prefix="/api/admin/inbox",       tags=["Inbox"])
 app.include_router(crm.router,             prefix="/api/admin/crm",         tags=["CRM"])
 app.include_router(social.router,          prefix="/api/admin/social",      tags=["Social"])
+app.include_router(agents.router,           prefix="/api/admin/agents",      tags=["Agents"])
 
 
 @app.get("/health")

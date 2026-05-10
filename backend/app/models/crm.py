@@ -1,6 +1,6 @@
 import uuid
 import datetime
-from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Uuid
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Uuid, Float
 from app.models.database import Base
 
 
@@ -14,6 +14,9 @@ class CRMLead(Base):
     source = Column(String, nullable=True)
     status = Column(String, default="new")  # new, contacted, qualified, converted, lost
     notes = Column(Text, nullable=True)
+    lead_source_agent_id = Column(String(36), nullable=True)
+    agent_score = Column(Float, nullable=True)
+    agent_notes = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
     updated_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
@@ -30,6 +33,8 @@ class CRMEmailLog(Base):
     agent_name = Column(String, nullable=True)
     campaign = Column(String, nullable=True)
     status = Column(String, default="sent")  # sent, bounced, opened, replied
+    support_agent_id = Column(String(36), nullable=True)
+    draft_status = Column(String, default="sent")  # draft | pending_review | sent
 
 
 class CRMActivity(Base):
