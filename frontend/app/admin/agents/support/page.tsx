@@ -333,26 +333,27 @@ export default function SupportConsole() {
   const onlineAgents = supportAgents.filter((a) => a.status === 'online').length;
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-64px)] bg-pretzel-indigo overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-56px)] md:h-screen overflow-hidden" style={{ backgroundColor: '#F5EDD6' }}>
       {/* -- Page Header Bar -- */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
-        className="flex items-center justify-between px-6 py-3 bg-slate-900/40 border-b border-slate-800 shrink-0"
+        className="flex items-center justify-between px-6 py-3 shrink-0"
+        style={{ backgroundColor: '#452103', borderBottom: '1px solid #5a2d04' }}
       >
         <div>
-          <div className="flex items-center gap-2 text-[13px] text-slate-500">
-            <span className="text-emerald-600 font-semibold">{onlineAgents}</span> agents online
-            <span className="text-slate-300">-</span>
-            <span className="text-emerald-600 font-semibold">{conversations.length}</span> active conversations
-            <span className="text-slate-300">-</span>
-            <span className="text-amber-600 font-semibold">{escalatedCount}</span> escalations
+          <div className="flex items-center gap-2 text-[13px]" style={{ color: '#E8D5B7' }}>
+            <span className="font-semibold" style={{ color: '#177E89' }}>{onlineAgents}</span> agents online
+            <span style={{ color: '#FFC857' }}>·</span>
+            <span className="font-semibold" style={{ color: '#177E89' }}>{conversations.length}</span> active conversations
+            <span style={{ color: '#FFC857' }}>·</span>
+            <span className="font-semibold" style={{ color: '#FC814A' }}>{escalatedCount}</span> escalations
           </div>
         </div>
         <div className="flex items-center gap-3">
           {/* Filter pills */}
-          <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg p-0.5">
+          <div className="flex items-center gap-1 rounded-lg p-0.5" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
             {([
               { key: 'all', label: 'All' },
               { key: 'active', label: 'Active' },
@@ -369,7 +370,7 @@ export default function SupportConsole() {
                   'px-3 py-1 rounded-md text-xs font-medium transition-all duration-150',
                   headerFilter === tab.key
                     ? 'bg-emerald-600 text-white'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-pretzel-indigo/60'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/20'
                 )}
               >
                 {tab.label}
@@ -384,7 +385,8 @@ export default function SupportConsole() {
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-56 h-9 pl-8 pr-3 text-sm bg-slate-900/40 border-0 rounded-lg text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-600 focus:bg-slate-900/40 transition-all"
+              className="w-56 h-9 pl-8 pr-3 text-sm rounded-lg outline-none transition-all"
+              style={{ backgroundColor: 'rgba(255,255,255,0.12)', color: '#E8D5B7', border: 'none' }}
             />
           </div>
         </div>
@@ -393,9 +395,9 @@ export default function SupportConsole() {
       {/* -- Main Three-Column Layout -- */}
       <div className="flex flex-1 overflow-hidden">
         {/* -- Column 1: Chat Queue -- */}
-        <div className="w-[280px] bg-slate-900/40 border-r border-slate-800 flex flex-col shrink-0">
+        <div className="w-[280px] flex flex-col shrink-0" style={{ backgroundColor: '#E8D5B7', borderRight: '1px solid rgba(69,33,3,0.2)' }}>
           {/* Queue filter tabs */}
-          <div className="sticky top-0 z-10 bg-slate-900/40 border-b border-slate-800 px-3 pt-2 pb-0">
+          <div className="sticky top-0 z-10 px-3 pt-2 pb-0" style={{ backgroundColor: '#E8D5B7', borderBottom: '1px solid rgba(69,33,3,0.15)' }}>
             <div className="flex">
               {filterTabs.map((tab) => (
                 <button
@@ -416,15 +418,16 @@ export default function SupportConsole() {
           </div>
 
           {/* Search */}
-          <div className="px-3 py-2 border-b border-slate-800">
+          <div className="px-3 py-2" style={{ borderBottom: '1px solid rgba(69,33,3,0.15)' }}>
             <div className="relative">
-              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2" style={{ color: '#8B6355' }} />
               <input
                 type="text"
                 placeholder="Search by name, ticket #, or keyword..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-8 pl-8 pr-2 text-xs bg-slate-800/50 border-0 rounded-lg text-slate-300 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-slate-600 focus:bg-slate-900/40 transition-all"
+                className="w-full h-8 pl-8 pr-2 text-xs rounded-lg outline-none transition-all"
+                style={{ backgroundColor: 'rgba(255,255,255,0.5)', color: '#141B41', border: '1px solid rgba(69,33,3,0.2)' }}
               />
             </div>
           </div>
@@ -446,12 +449,12 @@ export default function SupportConsole() {
                     }
                     setShowTyping(true);
                   }}
-                  className={cn(
-                    'w-full text-left px-4 py-3 border-b border-slate-800 transition-all duration-150 relative',
-                    selectedId === conv.id
-                      ? 'bg-violet-500/10 border-l-[3px] border-l-[#8b5cf6]'
-                      : 'hover:bg-slate-800/50 border-l-[3px] border-l-transparent'
-                  )}
+                  className="w-full text-left px-4 py-3 transition-all duration-150 relative"
+                  style={{
+                    borderBottom: '1px solid rgba(69,33,3,0.12)',
+                    borderLeft: `3px solid ${selectedId === conv.id ? '#177E89' : 'transparent'}`,
+                    backgroundColor: selectedId === conv.id ? 'rgba(23,126,137,0.08)' : 'transparent',
+                  }}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
@@ -468,7 +471,7 @@ export default function SupportConsole() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[13px] font-semibold text-slate-100 truncate">{conv.userName}</span>
+                          <span className="text-[13px] font-semibold truncate" style={{ color: '#141B41' }}>{conv.userName}</span>
                           {conv.unread > 0 && (
                             <span className="shrink-0 w-4 h-4 rounded-full bg-emerald-600 text-white text-[10px] font-medium flex items-center justify-center">
                               {conv.unread}
@@ -480,7 +483,7 @@ export default function SupportConsole() {
                     <span className="text-[11px] text-slate-400 shrink-0">{conv.timestamp}</span>
                   </div>
                   <div className="mt-1 flex items-center gap-1.5 pl-10">
-                    <p className="text-xs text-slate-500 truncate flex-1">{conv.lastMessage}</p>
+                    <p className="text-xs truncate flex-1" style={{ color: '#8B6355' }}>{conv.lastMessage}</p>
                   </div>
                   <div className="mt-1.5 flex items-center gap-1 pl-10">
                     <span className={cn('text-[10px] px-1.5 py-0.5 rounded font-medium', priorityConfig[conv.priority].bg, priorityConfig[conv.priority].color)}>
@@ -496,7 +499,7 @@ export default function SupportConsole() {
               ))}
             </div>
             <div className="p-3">
-              <button className="w-full py-2 text-xs text-slate-500 font-medium hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+              <button className="w-full py-2 text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-1.5" style={{ color: '#452103' }}>
                 <Clock size={12} />
                 Load more conversations
               </button>
@@ -505,9 +508,9 @@ export default function SupportConsole() {
         </div>
 
         {/* -- Column 2: Conversation Viewer -- */}
-        <div className="flex-1 flex flex-col min-w-0 bg-pretzel-indigo">
+        <div className="flex-1 flex flex-col min-w-0" style={{ backgroundColor: '#FFC857' }}>
           {/* Conversation Header */}
-          <div className="flex items-center justify-between px-6 py-3 bg-slate-900/40 border-b border-slate-800 shrink-0">
+          <div className="flex items-center justify-between px-6 py-3 shrink-0" style={{ backgroundColor: '#452103', borderBottom: '1px solid #5a2d04' }}>
             <div className="flex items-center gap-3">
               <div className="relative">
                 <img
@@ -522,7 +525,7 @@ export default function SupportConsole() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-base font-semibold text-slate-100">{selectedConversation.userName}</span>
+                  <span className="text-base font-semibold text-white">{selectedConversation.userName}</span>
                   <span className={cn('text-[11px] px-2 py-0.5 rounded font-semibold', planColors[selectedConversation.plan] || 'bg-slate-800/50 text-slate-400')}>
                     {selectedConversation.plan}
                   </span>
@@ -588,9 +591,9 @@ export default function SupportConsole() {
                       variants={messageStagger}
                       className="flex items-center gap-3 my-2"
                     >
-                      <div className="flex-1 h-px bg-pretzel-indigo" />
-                      <span className="text-xs text-slate-500 whitespace-pre-line text-center">{msg.content}</span>
-                      <div className="flex-1 h-px bg-pretzel-indigo" />
+                      <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(69,33,3,0.2)' }} />
+                      <span className="text-xs whitespace-pre-line text-center" style={{ color: '#452103' }}>{msg.content}</span>
+                      <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(69,33,3,0.2)' }} />
                     </motion.div>
                   );
                 }
@@ -663,7 +666,8 @@ export default function SupportConsole() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
-            className="shrink-0 bg-slate-900/40 border-t border-slate-800 px-6 py-3"
+            className="shrink-0 px-6 py-3"
+            style={{ backgroundColor: '#452103', borderTop: '1px solid #5a2d04' }}
           >
             <div className="flex items-start gap-3">
               <textarea
@@ -679,7 +683,8 @@ export default function SupportConsole() {
                 }}
                 placeholder="Type your reply..."
                 rows={1}
-                className="flex-1 min-h-[40px] max-h-[120px] px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 bg-slate-800/50 border border-slate-800 rounded-lg resize-none outline-none focus:ring-2 focus:ring-slate-600 focus:border-emerald-500 transition-all"
+                className="flex-1 min-h-[40px] max-h-[120px] px-3 py-2 text-sm rounded-lg resize-none outline-none transition-all"
+                style={{ backgroundColor: 'rgba(255,255,255,0.12)', color: '#E8D5B7', border: '1px solid rgba(255,200,87,0.3)' }}
               />
               <div className="flex items-center gap-1.5">
                 {/* Canned responses */}
@@ -735,17 +740,18 @@ export default function SupportConsole() {
         </div>
 
         {/* -- Column 3: Right Panel -- */}
-        <div className="w-[320px] bg-pretzel-indigo border-l border-slate-800 flex flex-col gap-4 p-4 overflow-y-auto shrink-0">
+        <div className="w-[320px] flex flex-col gap-4 p-4 overflow-y-auto shrink-0" style={{ backgroundColor: '#FFC857', borderLeft: '1px solid rgba(69,33,3,0.2)' }}>
           {/* Agent Status Panel */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="bg-slate-900/40 rounded-xl shadow-sm border border-slate-800 overflow-hidden"
+            className="rounded-xl shadow-sm overflow-hidden"
+            style={{ backgroundColor: '#452103', border: '1px solid #5a2d04' }}
           >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
+            <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid #5a2d04' }}>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-slate-100">Agent Status</span>
+                <span className="text-sm font-semibold text-white">Agent Status</span>
                 <Badge className="bg-emerald-100 text-emerald-400 hover:bg-emerald-100 text-[11px]">
                   {onlineAgents}/15 Online
                 </Badge>
@@ -763,7 +769,8 @@ export default function SupportConsole() {
                   initial="hidden"
                   animate="visible"
                   variants={rightPanelStagger}
-                  className="flex items-center gap-3 p-2.5 rounded-lg bg-slate-800/50 hover:bg-slate-900/40 hover:shadow-sm transition-all cursor-pointer group"
+                  className="flex items-center gap-3 p-2.5 rounded-lg transition-all cursor-pointer group"
+                  style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
                 >
                   <div className="relative shrink-0">
                     <img src={agent.avatar} alt={agent.name} className="w-9 h-9 rounded-full object-cover" />
@@ -781,13 +788,13 @@ export default function SupportConsole() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[13px] font-semibold text-slate-100">{agent.number} - {agent.name}</span>
+                      <span className="text-[13px] font-semibold text-white">{agent.number} - {agent.name}</span>
                     </div>
-                    <p className="text-xs text-slate-500 truncate">{agent.currentTask}</p>
+                    <p className="text-xs truncate" style={{ color: '#B8946E' }}>{agent.currentTask}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <div className="flex flex-col items-end gap-1">
-                      <div className="w-10 h-1 bg-pretzel-indigo rounded-full overflow-hidden">
+                      <div className="w-10 h-1 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(69,33,3,0.2)' }}>
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${agent.load}%` }}
@@ -813,11 +820,12 @@ export default function SupportConsole() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
-            className="bg-slate-900/40 rounded-xl shadow-sm border border-slate-800 overflow-hidden flex-1"
+            className="rounded-xl shadow-sm overflow-hidden flex-1"
+            style={{ backgroundColor: '#452103', border: '1px solid #5a2d04' }}
           >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
+            <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid #5a2d04' }}>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-slate-100">Escalation Queue</span>
+                <span className="text-sm font-semibold text-white">Escalation Queue</span>
                 <Badge className="bg-amber-100 text-amber-400 hover:bg-amber-100 text-[11px]">
                   {escalations.length} pending
                 </Badge>
@@ -864,15 +872,15 @@ export default function SupportConsole() {
 
                     {/* Ticket info */}
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[13px] font-semibold text-slate-100">{ticket.ticketNumber}</span>
-                      <span className="text-xs text-slate-500">{ticket.customer}</span>
+                      <span className="text-[13px] font-semibold text-white">{ticket.ticketNumber}</span>
+                      <span className="text-xs text-white/70">{ticket.customer}</span>
                       <span className={cn('text-[10px] px-1.5 py-0.5 rounded font-medium', planColors[ticket.plan] || 'bg-slate-800/50 text-slate-400')}>
                         {ticket.plan}
                       </span>
                     </div>
 
                     {/* Issue */}
-                    <p className="text-[13px] text-slate-400 mb-1.5 line-clamp-2">{ticket.issue}</p>
+                    <p className="text-[13px] mb-1.5 line-clamp-2" style={{ color: '#E8D5B7' }}>{ticket.issue}</p>
 
                     {/* Meta */}
                     <div className="flex items-center gap-2 mb-2.5">

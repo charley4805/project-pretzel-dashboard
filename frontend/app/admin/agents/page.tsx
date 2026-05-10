@@ -130,7 +130,7 @@ export default function Overview() {
   return (
     <div className="p-8">
       {/* Subtitle */}
-      <p className="text-sm text-slate-500 mb-6">Real-time overview of your agent fleet</p>
+      <p className="text-sm mb-6" style={{ color: '#8B6355' }}>Real-time overview of your agent fleet</p>
 
       {/* --- KPI Cards Row --- */}
       <motion.div
@@ -143,7 +143,7 @@ export default function Overview() {
           <motion.div
             key={kpi.label}
             variants={cardFadeUp}
-            className="bg-slate-900/40 rounded-xl shadow-card p-5 cursor-pointer hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
+            className="rounded-xl shadow-card p-5 cursor-pointer hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200" style={{ backgroundColor: '#452103' }}
           >
             <div className="flex items-start justify-between mb-3">
               <div
@@ -200,11 +200,11 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="bg-slate-900/40 rounded-xl shadow-card p-5"
+            className="rounded-xl shadow-card p-5" style={{ backgroundColor: '#452103' }}
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-semibold text-slate-100">Agent Fleet Status</h2>
+                <h2 className="text-base font-semibold text-white">Agent Fleet Status</h2>
                 <span className="flex items-center gap-1.5 ml-2">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -224,7 +224,7 @@ export default function Overview() {
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.25 + gi * 0.08, type: 'spring', stiffness: 300, damping: 25 }}
-                  className="rounded-lg border border-slate-800 p-4 hover:bg-slate-800/50 transition-colors duration-150 cursor-pointer group"
+                  className="rounded-lg p-4 hover:opacity-90 transition-colors duration-150 cursor-pointer group" style={{ border: '1px solid rgba(255,200,87,0.15)', backgroundColor: 'rgba(255,200,87,0.06)' }}
                 >
                   <div className="flex items-center gap-2 mb-3">
                     <group.icon size={22} style={{ color: group.iconColor }} />
@@ -310,10 +310,10 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="bg-slate-900/40 rounded-xl shadow-card p-5"
+            className="rounded-xl shadow-card p-5" style={{ backgroundColor: '#452103' }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold text-slate-100">Performance Trends</h2>
+              <h2 className="text-base font-semibold text-white">Performance Trends</h2>
               <div className="flex items-center gap-3">
                 <button className="flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-slate-800/50 hover:bg-slate-800/50 px-3 py-1.5 rounded-lg transition-colors">
                   Last 7 days
@@ -372,7 +372,7 @@ export default function Overview() {
                 <motion.div
                   key={section.type}
                   variants={cardFadeUp}
-                  className="bg-slate-900/40 rounded-xl shadow-card overflow-hidden"
+                  className="rounded-xl shadow-card overflow-hidden" style={{ backgroundColor: '#452103' }}
                 >
                   <button
                     onClick={() => setExpandedBreakdown(isExpanded ? null : section.type)}
@@ -441,11 +441,11 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="bg-slate-900/40 rounded-xl shadow-card p-5"
+            className="rounded-xl shadow-card p-5" style={{ backgroundColor: '#452103' }}
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-semibold text-slate-100">Activity Feed</h2>
+                <h2 className="text-base font-semibold text-white">Activity Feed</h2>
                 <span className="flex items-center gap-1.5 ml-1">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -515,7 +515,7 @@ export default function Overview() {
             variants={cardStagger}
             initial="hidden"
             animate="show"
-            className="bg-slate-900/40 rounded-xl shadow-card p-5"
+            className="rounded-xl shadow-card p-5" style={{ backgroundColor: '#452103' }}
           >
             <h2 className="text-base font-semibold text-slate-100 mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 gap-3">
@@ -528,7 +528,7 @@ export default function Overview() {
                   }}
                   whileHover={{ y: -1, backgroundColor: '#1e293b' }}
                   whileTap={{ scale: 0.97 }}
-                  className="flex flex-col items-center justify-center gap-2 bg-slate-800/50 rounded-xl p-4 min-h-[80px] transition-colors duration-150"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl p-4 min-h-[80px] transition-all duration-150" style={{ backgroundColor: 'rgba(255,200,87,0.1)', border: '1px solid rgba(255,200,87,0.2)' }}
                 >
                   <action.icon size={24} className="text-emerald-400" />
                   <span className="text-[13px] font-medium text-slate-100">{action.label}</span>
@@ -543,10 +543,10 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="bg-slate-900/40 rounded-xl shadow-card p-5"
+            className="rounded-xl shadow-card p-5" style={{ backgroundColor: '#452103' }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold text-slate-100">System Health</h2>
+              <h2 className="text-base font-semibold text-white">System Health</h2>
               <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-400">99.97%</span>
             </div>
             {/* Services */}
@@ -576,7 +576,7 @@ export default function Overview() {
                     <span className="text-slate-500">{res.label}</span>
                     <span className="font-semibold text-slate-300">{res.value}%</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-pretzel-indigo overflow-hidden">
+                  <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,200,87,0.15)' }}>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${res.value}%` }}

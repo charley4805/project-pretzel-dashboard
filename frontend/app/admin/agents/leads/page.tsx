@@ -118,7 +118,7 @@ interface OutreachEntry {
 // -------------------------------------------
 
 const STAGE_CONFIG: Record<PipelineStage, { label: string; color: string; bg: string; border: string }> = {
-  discovered: { label: 'DISCOVERED', color: '#94a3b8', bg: '#141B41', border: '#452103' },
+  discovered: { label: 'DISCOVERED', color: '#94a3b8', bg: '#FFC857', border: '#452103' },
   qualified: { label: 'QUALIFIED', color: '#38bdf8', bg: '#f0f9ff', border: '#bae6fd' },
   contacted: { label: 'CONTACTED', color: '#fbbf24', bg: '#fffbeb', border: 'rgba(255,200,87,0.15)' },
   responded: { label: 'RESPONDED', color: '#34d399', bg: '#f5f3ff', border: '#ddd6fe' },
@@ -729,7 +729,7 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
               {timeline.map((entry, idx) => (
                 <div key={entry.id} className="flex gap-3 relative">
                   {idx < timeline.length - 1 && (
-                    <div className="absolute left-[7px] top-6 bottom-0 w-px bg-pretzel-indigo" />
+                    <div className="absolute left-[7px] top-6 bottom-0 w-px bg-[rgba(255,200,87,0.15)]" />
                   )}
                   <div className="mt-0.5">
                     {entry.status === 'completed' ? (

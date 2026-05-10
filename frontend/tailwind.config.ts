@@ -26,6 +26,9 @@ const config: Config = {
           pollen: '#FFC857',
           coral: '#FC814A',
           indigo: '#141B41',
+          tan: '#D2B48C',
+          'tan-light': '#E8D5B7',
+          'tan-dark': '#B8946E',
         },
       },
       fontFamily: {

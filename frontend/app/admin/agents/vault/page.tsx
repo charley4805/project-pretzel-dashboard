@@ -116,7 +116,7 @@ export default function ObsidianVault() {
           <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#94a3b8' }} />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search documents, tags..." className="input-dark pl-8" />
         </div>
-        <div className="flex items-center rounded-md p-0.5" style={{ background: '#1c2658', border: '1px solid #334155' }}>
+        <div className="flex items-center rounded-md p-0.5" style={{ background: '#452103', border: '1px solid #5a2d04' }}>
           <button onClick={() => setViewMode('grid')} className="p-1.5 rounded transition-colors" style={{ color: viewMode === 'grid' ? '#FFC857' : '#64748b', background: viewMode === 'grid' ? 'rgba(255,200,87,0.1)' : 'transparent' }}><Grid3X3 size={14} /></button>
           <button onClick={() => setViewMode('list')} className="p-1.5 rounded transition-colors" style={{ color: viewMode === 'list' ? '#FFC857' : '#64748b', background: viewMode === 'list' ? 'rgba(255,200,87,0.1)' : 'transparent' }}><List size={14} /></button>
         </div>
@@ -207,7 +207,7 @@ export default function ObsidianVault() {
       <AnimatePresence>
         {editingDoc && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={() => { setEditingDoc(null); setIsCreating(false) }}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} transition={{ duration: 0.2 }} className="card-dark w-full max-w-4xl h-[80vh] flex flex-col" style={{ background: '#1c2658' }} onClick={(e) => e.stopPropagation()}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} transition={{ duration: 0.2 }} className="card-dark w-full max-w-4xl h-[80vh] flex flex-col" style={{ background: '#452103' }} onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between p-4 shrink-0" style={{ borderBottom: '1px solid #452103' }}>
                 <div className="flex items-center gap-3 flex-1">
                   <input value={editingDoc.title} onChange={(e) => setEditingDoc({ ...editingDoc, title: e.target.value })} placeholder="Document title..." className="input-dark flex-1 text-sm font-semibold" />

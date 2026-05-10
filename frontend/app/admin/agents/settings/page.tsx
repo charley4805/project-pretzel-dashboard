@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Headphones,
@@ -12,6 +12,7 @@ import {
   RefreshCw,
   AlertTriangle,
   MessageSquare,
+  Clock,
   Twitter,
   Linkedin,
   Facebook,
@@ -282,7 +283,8 @@ Issue Category: {{ticket_type}}
             <textarea
               value={prompt}
               onChange={e => setPrompt(e.target.value)}
-              className="w-full min-h-[300px] p-4 rounded-lg bg-pretzel-indigo text-slate-100 text-[13px] leading-relaxed focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none font-mono"
+              className="w-full min-h-[300px] p-4 rounded-lg text-[13px] leading-relaxed focus:outline-none resize-none font-mono"
+              style={{ backgroundColor: '#452103', color: '#E8D5B7', border: '1px solid #5a2d04', outlineColor: '#FFC857' }}
               spellCheck={false}
             />
           </div>
@@ -996,6 +998,178 @@ function IntegrationsSettings() {
 // GENERAL SETTINGS
 // -------------------------------------------
 
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const HOURS = Array.from({ length: 24 }, (_, i) => {
+  const h = i % 12 || 12;
+  const ampm = i < 12 ? 'AM' : 'PM';
+  return { value: i, label: `${h}:00 ${ampm}` };
+});
+
+interface AgentSchedule {
+  enabled: boolean;
+  days: string[];
+  startHour: number;
+  endHour: number;
+}
+
+function AgentHoursSettings() {
+  const [schedules, setSchedules] = useState<Record<string, AgentSchedule>>({
+    support: { enabled: true, days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], startHour: 8, endHour: 20 },
+    social: { enabled: true, days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], startHour: 7, endHour: 22 },
+    leadgen: { enabled: false, days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], startHour: 9, endHour: 17 },
+  });
+
+  const agentLabels: Record<string, { label: string; color: string; icon: typeof Headphones }> = {
+    support: { label: 'Support Agent', color: '#177E89', icon: Headphones },
+    social: { label: 'Social Media Agent', color: '#FC814A', icon: Share2 },
+    leadgen: { label: 'Lead Gen Agent', color: '#FFC857', icon: Target },
+  };
+
+  const toggleDay = (agentKey: string, day: string) => {
+    setSchedules(prev => ({
+      ...prev,
+      [agentKey]: {
+        ...prev[agentKey],
+        days: prev[agentKey].days.includes(day)
+          ? prev[agentKey].days.filter(d => d !== day)
+          : [...prev[agentKey].days, day],
+      },
+    }));
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="bg-slate-900/40 rounded-xl border border-slate-800 p-6 shadow-sm"
+    >
+      <div className="flex items-center gap-2 mb-6">
+        <Clock size={18} className="text-pretzel-pollen" style={{ color: '#FFC857' }} />
+        <h3 className="text-base font-semibold text-slate-100">Agent Active Hours</h3>
+        <span className="ml-auto text-[11px] text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded-md">
+          Timezone: set in Localization
+        </span>
+      </div>
+
+      <div className="space-y-6">
+        {Object.entries(schedules).map(([agentKey, schedule]) => {
+          const meta = agentLabels[agentKey];
+          const AgentIcon = meta.icon;
+          return (
+            <div key={agentKey} className="rounded-lg border border-slate-800 p-4">
+              {/* Agent header + enable toggle */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <AgentIcon size={16} style={{ color: meta.color }} />
+                  <span className="text-[13px] font-semibold text-slate-100">{meta.label}</span>
+                  {schedule.enabled && (
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ backgroundColor: `${meta.color}20`, color: meta.color }}>
+                      Active
+                    </span>
+                  )}
+                </div>
+                <Switch
+                  checked={schedule.enabled}
+                  onCheckedChange={val => setSchedules(prev => ({ ...prev, [agentKey]: { ...prev[agentKey], enabled: val } }))}
+                />
+              </div>
+
+              {schedule.enabled && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4"
+                >
+                  {/* Active days */}
+                  <div>
+                    <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 block">
+                      Active Days
+                    </label>
+                    <div className="flex gap-1.5 flex-wrap">
+                      {DAYS.map(day => {
+                        const active = schedule.days.includes(day);
+                        return (
+                          <button
+                            key={day}
+                            onClick={() => toggleDay(agentKey, day)}
+                            className="w-10 h-9 rounded-lg text-xs font-semibold transition-all"
+                            style={{
+                              backgroundColor: active ? `${meta.color}20` : 'rgba(255,255,255,0.04)',
+                              color: active ? meta.color : '#64748b',
+                              border: active ? `1px solid ${meta.color}40` : '1px solid rgba(255,255,255,0.06)',
+                            }}
+                          >
+                            {day}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Time range */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 block">
+                        Start Time
+                      </label>
+                      <select
+                        value={schedule.startHour}
+                        onChange={e => setSchedules(prev => ({
+                          ...prev,
+                          [agentKey]: { ...prev[agentKey], startHour: Number(e.target.value) },
+                        }))}
+                        className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm text-slate-100 bg-slate-900/40 focus:outline-none focus:ring-2"
+                        style={{ '--tw-ring-color': meta.color } as React.CSSProperties}
+                      >
+                        {HOURS.map(h => (
+                          <option key={h.value} value={h.value}>{h.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 block">
+                        End Time
+                      </label>
+                      <select
+                        value={schedule.endHour}
+                        onChange={e => setSchedules(prev => ({
+                          ...prev,
+                          [agentKey]: { ...prev[agentKey], endHour: Number(e.target.value) },
+                        }))}
+                        className="w-full h-10 px-3 rounded-lg border border-slate-800 text-sm text-slate-100 bg-slate-900/40 focus:outline-none focus:ring-2"
+                        style={{ '--tw-ring-color': meta.color } as React.CSSProperties}
+                      >
+                        {HOURS.filter(h => h.value > schedule.startHour).map(h => (
+                          <option key={h.value} value={h.value}>{h.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Summary */}
+                  <div className="rounded-lg px-3 py-2 text-[12px]" style={{ backgroundColor: `${meta.color}10`, color: meta.color }}>
+                    {schedule.days.length === 0
+                      ? 'No active days selected — agent will be inactive'
+                      : `Active ${schedule.days.join(', ')} from ${HOURS[schedule.startHour]?.label} to ${HOURS[schedule.endHour]?.label}`}
+                  </div>
+                </motion.div>
+              )}
+
+              {!schedule.enabled && (
+                <p className="text-[12px] text-slate-500">Agent is disabled — will not respond to any requests.</p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
 function GeneralSettings() {
   const [timezone, setTimezone] = useState('America/New_York');
   const [dateFormat, setDateFormat] = useState('MM/DD/YYYY');
@@ -1008,6 +1182,9 @@ function GeneralSettings() {
 
   return (
     <div className="space-y-6">
+      {/* Agent Hours */}
+      <AgentHoursSettings />
+
       {/* Appearance */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -1203,7 +1380,7 @@ export default function SettingsPage() {
                     isActive ? '' : 'hover:bg-pretzel-indigo'
                   }`}
                   style={{
-                    backgroundColor: isActive ? `${tab.color}20` : '#1c2658',
+                    backgroundColor: isActive ? `${tab.color}20` : '#452103',
                     borderLeft: isActive ? `3px solid ${tab.color}` : '3px solid transparent',
                   }}
                   whileHover={{ scale: 1.05 }}

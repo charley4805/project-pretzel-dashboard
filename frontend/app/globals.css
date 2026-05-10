@@ -8,14 +8,14 @@
   height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #D2B48C;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #452103;
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #f59e0b;
+  background: #FFC857;
 }
 
 /* Smooth transitions globally */
@@ -23,4 +23,66 @@
   transition-property: color, background-color, border-color;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 100ms;
+}
+
+/* Brand component classes used by Guardrails and Harnesses pages */
+@layer components {
+  .card-dark {
+    @apply rounded-xl;
+    background-color: #452103;
+    border: 1px solid #5a2d04;
+  }
+
+  .metric-card {
+    @apply rounded-xl p-4;
+    background-color: #452103;
+    border: 1px solid #5a2d04;
+  }
+
+  .input-dark {
+    @apply w-full h-9 px-3 rounded-lg text-sm outline-none;
+    background-color: rgba(255,255,255,0.08);
+    color: #E8D5B7;
+    border: 1px solid rgba(255,200,87,0.2);
+  }
+  .input-dark::placeholder { color: #8B6355; }
+  .input-dark:focus { border-color: #FFC857; box-shadow: 0 0 0 2px rgba(255,200,87,0.15); }
+
+  .textarea-dark {
+    @apply w-full px-3 py-2 rounded-lg text-sm outline-none resize-none;
+    background-color: rgba(255,255,255,0.08);
+    color: #E8D5B7;
+    border: 1px solid rgba(255,200,87,0.2);
+  }
+  .textarea-dark::placeholder { color: #8B6355; }
+  .textarea-dark:focus { border-color: #FFC857; }
+
+  .select-dark {
+    @apply h-9 px-3 rounded-lg text-sm outline-none;
+    background-color: #452103;
+    color: #E8D5B7;
+    border: 1px solid rgba(255,200,87,0.2);
+  }
+  .select-dark:focus { border-color: #FFC857; }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-1 px-3 py-2 rounded-lg font-semibold transition-all;
+    background-color: #177E89;
+    color: #fff;
+    border: none;
+  }
+  .btn-primary:hover { background-color: #1a919d; }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-1 px-3 py-2 rounded-lg font-semibold transition-all;
+    background-color: rgba(255,255,255,0.08);
+    color: #E8D5B7;
+    border: 1px solid rgba(255,200,87,0.15);
+  }
+  .btn-secondary:hover { background-color: rgba(255,255,255,0.12); }
+
+  .section-header {
+    @apply flex items-center gap-1.5 text-sm font-semibold mb-3;
+    color: #FFC857;
+  }
 }
