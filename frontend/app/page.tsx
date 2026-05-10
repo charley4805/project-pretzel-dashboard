@@ -10,7 +10,7 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+    <div className="min-h-screen bg-pretzel-walnut flex items-center justify-center">
       <div className="flex items-center gap-3 text-slate-500">
         <span className="text-2xl animate-bounce">🥨</span>
         <span className="text-sm">Loading Command Center…</span>
@@ -18,3 +18,4 @@ export default function HomePage() {
     </div>
   );
 }
+

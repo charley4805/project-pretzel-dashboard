@@ -92,7 +92,7 @@ export default function InboxPage() {
               </span>
             )}
             {stats?.connected && (
-              <span className="ml-2 text-xs text-emerald-500 border border-emerald-800/40 bg-emerald-900/20 rounded px-1.5 py-0.5">● live</span>
+              <span className="ml-2 text-xs text-emerald-500 border border-emerald-800/40 bg-emerald-900/20 rounded px-1.5 py-0.5"> live</span>
             )}
           </p>
           {stats?.note && (

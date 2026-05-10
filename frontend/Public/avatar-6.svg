@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Agent avatar 6">
+  <defs>
+    <linearGradient id="grad6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141B41" />
+      <stop offset="100%" stop-color="#452103" />
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="24" fill="url(#grad6)" />
+  <circle cx="60" cy="46" r="20" fill="#FFC857" opacity="0.96" />
+  <circle cx="60" cy="46" r="10" fill="#141B41" />
+  <rect x="35" y="72" width="50" height="18" rx="9" fill="#177E89" opacity="0.92" />
+  <path d="M47 78h26" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+</svg>

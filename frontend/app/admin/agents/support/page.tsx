@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -29,7 +29,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// --- Types -------------------------------------------------------------------
 
 type ConversationStatus = 'active' | 'resolved' | 'escalated' | 'waiting';
 type Priority = 'low' | 'medium' | 'high' | 'critical';
@@ -91,7 +91,7 @@ interface EscalationTicket {
   assignedTeam: string;
 }
 
-// ─── Mock Data ───────────────────────────────────────────────────────────────
+// --- Mock Data ---------------------------------------------------------------
 
 const planColors: Record<string, string> = {
   Enterprise: 'bg-violet-100 text-violet-400',
@@ -124,52 +124,52 @@ const severityConfig: Record<Severity, { color: string; bg: string; border: stri
 void 0 as unknown as Record<Sentiment, never>;
 
 const sarahMessages: ChatMessage[] = [
-  { id: 'm1', type: 'system', content: 'Conversation started — Enterprise customer\nTicket #4821 created', timestamp: '10:15 AM' },
-  { id: 'm2', type: 'agent', content: 'Hello Sarah! Welcome back. I\'m Agent #3. How can I help you today?', timestamp: '10:15 AM', agentName: 'Agent #3', avatar: '/avatar-3.jpg' },
-  { id: 'm3', type: 'customer', content: 'Hi, our team has been getting 500 Internal Server Errors on the API for the past hour. This is blocking our checkout flow. Very urgent.', timestamp: '10:16 AM', avatar: '/avatar-6.jpg' },
-  { id: 'm4', type: 'agent', content: "I'm sorry to hear that. Let me check your account status and recent API logs right away.", timestamp: '10:17 AM', agentName: 'Agent #3', avatar: '/avatar-3.jpg' },
+  { id: 'm1', type: 'system', content: 'Conversation started - Enterprise customer\nTicket #4821 created', timestamp: '10:15 AM' },
+  { id: 'm2', type: 'agent', content: 'Hello Sarah! Welcome back. I\'m Agent #3. How can I help you today?', timestamp: '10:15 AM', agentName: 'Agent #3', avatar: '/avatar-3\.svg' },
+  { id: 'm3', type: 'customer', content: 'Hi, our team has been getting 500 Internal Server Errors on the API for the past hour. This is blocking our checkout flow. Very urgent.', timestamp: '10:16 AM', avatar: '/avatar-6\.svg' },
+  { id: 'm4', type: 'agent', content: "I'm sorry to hear that. Let me check your account status and recent API logs right away.", timestamp: '10:17 AM', agentName: 'Agent #3', avatar: '/avatar-3\.svg' },
   { id: 'm5', type: 'system', content: 'Agent #3 is checking server logs...', timestamp: '10:18 AM' },
-  { id: 'm6', type: 'agent', content: 'I can see the issue. There was a rate limiting misconfiguration on your Enterprise plan. I\'m fixing it now.', timestamp: '10:19 AM', agentName: 'Agent #3', avatar: '/avatar-3.jpg', cannedLabel: 'Rate Limit Fix' },
-  { id: 'm7', type: 'customer', content: "Okay, how long will it take? Our customers can't complete purchases.", timestamp: '10:20 AM', avatar: '/avatar-6.jpg' },
-  { id: 'm8', type: 'agent', content: "The fix is deploying now. It should be resolved within 2-3 minutes. I'll monitor it and confirm once it's live.", timestamp: '10:21 AM', agentName: 'Agent #3', avatar: '/avatar-3.jpg' },
-  { id: 'm9', type: 'system', content: 'Fix deployed at 10:23 AM — Monitoring...', timestamp: '10:23 AM' },
-  { id: 'm10', type: 'agent', content: 'Great news! The fix is live. I\'ve verified that your API endpoints are responding with 200 OK. Can you try a test transaction?', timestamp: '10:25 AM', agentName: 'Agent #3', avatar: '/avatar-3.jpg' },
-  { id: 'm11', type: 'customer', content: 'Let me check with our dev team...', timestamp: '10:28 AM', avatar: '/avatar-6.jpg' },
-  { id: 'm12', type: 'customer', content: "Yes! It's working now. Thank you so much for the quick resolution.", timestamp: '10:32 AM', avatar: '/avatar-6.jpg' },
-  { id: 'm13', type: 'agent', content: "You're very welcome, Sarah. I've also increased your rate limit buffer by 20% as a precaution. Is there anything else I can help with?", timestamp: '10:33 AM', agentName: 'Agent #3', avatar: '/avatar-3.jpg' },
+  { id: 'm6', type: 'agent', content: 'I can see the issue. There was a rate limiting misconfiguration on your Enterprise plan. I\'m fixing it now.', timestamp: '10:19 AM', agentName: 'Agent #3', avatar: '/avatar-3\.svg', cannedLabel: 'Rate Limit Fix' },
+  { id: 'm7', type: 'customer', content: "Okay, how long will it take? Our customers can't complete purchases.", timestamp: '10:20 AM', avatar: '/avatar-6\.svg' },
+  { id: 'm8', type: 'agent', content: "The fix is deploying now. It should be resolved within 2-3 minutes. I'll monitor it and confirm once it's live.", timestamp: '10:21 AM', agentName: 'Agent #3', avatar: '/avatar-3\.svg' },
+  { id: 'm9', type: 'system', content: 'Fix deployed at 10:23 AM - Monitoring...', timestamp: '10:23 AM' },
+  { id: 'm10', type: 'agent', content: 'Great news! The fix is live. I\'ve verified that your API endpoints are responding with 200 OK. Can you try a test transaction?', timestamp: '10:25 AM', agentName: 'Agent #3', avatar: '/avatar-3\.svg' },
+  { id: 'm11', type: 'customer', content: 'Let me check with our dev team...', timestamp: '10:28 AM', avatar: '/avatar-6\.svg' },
+  { id: 'm12', type: 'customer', content: "Yes! It's working now. Thank you so much for the quick resolution.", timestamp: '10:32 AM', avatar: '/avatar-6\.svg' },
+  { id: 'm13', type: 'agent', content: "You're very welcome, Sarah. I've also increased your rate limit buffer by 20% as a precaution. Is there anything else I can help with?", timestamp: '10:33 AM', agentName: 'Agent #3', avatar: '/avatar-3\.svg' },
 ];
 
 const defaultConversations: Conversation[] = [
-  { id: '1', userName: 'Sarah Mitchell', email: 'sarah@acme.com', avatar: '/avatar-6.jpg', plan: 'Enterprise', lastMessage: 'The API keeps returning 500 errors...', timestamp: '2m', status: 'active', priority: 'critical', sentiment: 'negative', unread: 2, ticketNumber: '#4821', tags: ['Enterprise', 'Technical'], messages: sarahMessages },
-  { id: '2', userName: 'Mike Rodriguez', email: 'mike@techcorp.io', avatar: '/avatar-2.jpg', plan: 'Pro', lastMessage: 'Can I get a refund for last month?', timestamp: '4m', status: 'active', priority: 'medium', sentiment: 'neutral', unread: 1, ticketNumber: '#4822', tags: ['Billing'], messages: [] },
-  { id: '3', userName: 'Jessica Taylor', email: 'jessica@startup.co', avatar: '/avatar-4.jpg', plan: 'Starter', lastMessage: 'How do I connect Zapier?', timestamp: '6m', status: 'waiting', priority: 'low', sentiment: 'neutral', unread: 0, ticketNumber: '#4824', tags: ['Integration'], messages: [] },
-  { id: '4', userName: 'David Kim', email: 'david@enterprise.com', avatar: '/avatar-5.jpg', plan: 'Enterprise', lastMessage: 'Urgent: Our team lost dashboard access', timestamp: '8m', status: 'escalated', priority: 'critical', sentiment: 'very_negative', unread: 3, ticketNumber: '#4823', tags: ['Enterprise', 'Urgent'], messages: [] },
-  { id: '5', userName: 'Emily Chen', email: 'emily@design.studio', avatar: '/avatar-1.jpg', plan: 'Pro', lastMessage: 'Feature request: dark mode for mobile', timestamp: '12m', status: 'waiting', priority: 'low', sentiment: 'positive', unread: 0, ticketNumber: '#4825', tags: ['Feature'], messages: [] },
-  { id: '6', userName: 'James Wilson', email: 'james@smallbiz.com', avatar: '/avatar-3.jpg', plan: 'Starter', lastMessage: 'Billing cycle question', timestamp: '15m', status: 'active', priority: 'medium', sentiment: 'neutral', unread: 0, ticketNumber: '#4826', tags: ['Billing'], messages: [] },
-  { id: '7', userName: 'Anna Lopez', email: 'anna@saas.co', avatar: '/avatar-4.jpg', plan: 'Pro', lastMessage: 'Webhook not firing on payment success', timestamp: '18m', status: 'active', priority: 'high', sentiment: 'negative', unread: 1, ticketNumber: '#4827', tags: ['Technical'], messages: [] },
-  { id: '8', userName: 'Robert Brown', email: 'robert@bigco.org', avatar: '/avatar-2.jpg', plan: 'Enterprise', lastMessage: 'Need help with SSO configuration', timestamp: '22m', status: 'waiting', priority: 'high', sentiment: 'neutral', unread: 0, ticketNumber: '#4828', tags: ['Enterprise', 'Security'], messages: [] },
-  { id: '9', userName: 'Lisa Wang', email: 'lisa@freelance.net', avatar: '/avatar-1.jpg', plan: 'Starter', lastMessage: 'Export data to CSV?', timestamp: '25m', status: 'resolved', priority: 'low', sentiment: 'positive', unread: 0, ticketNumber: '#4829', tags: ['Data'], messages: [] },
-  { id: '10', userName: 'Tom Martinez', email: 'tom@mobile.app', avatar: '/avatar-5.jpg', plan: 'Pro', lastMessage: 'Integration with Salesforce', timestamp: '28m', status: 'active', priority: 'medium', sentiment: 'neutral', unread: 0, ticketNumber: '#4830', tags: ['Integration'], messages: [] },
-  { id: '11', userName: 'Karen Lee', email: 'karen@consulting.com', avatar: '/avatar-6.jpg', plan: 'Enterprise', lastMessage: 'Custom reporting permissions', timestamp: '32m', status: 'escalated', priority: 'high', sentiment: 'negative', unread: 2, ticketNumber: '#4831', tags: ['Enterprise', 'Feature'], messages: [] },
-  { id: '12', userName: 'Chris Evans', email: 'chris@ecommerce.io', avatar: '/avatar-3.jpg', plan: 'Starter', lastMessage: 'Password reset not working', timestamp: '35m', status: 'waiting', priority: 'medium', sentiment: 'neutral', unread: 0, ticketNumber: '#4832', tags: ['Account'], messages: [] },
-  { id: '13', userName: 'Amanda White', email: 'amanda@techcorp.io', avatar: '/avatar-4.jpg', plan: 'Pro', lastMessage: 'API rate limit increase request', timestamp: '40m', status: 'active', priority: 'medium', sentiment: 'neutral', unread: 0, ticketNumber: '#4833', tags: ['Technical'], messages: [] },
-  { id: '14', userName: 'Daniel Park', email: 'daniel@bigco.org', avatar: '/avatar-2.jpg', plan: 'Enterprise', lastMessage: 'Data migration from competitor', timestamp: '45m', status: 'active', priority: 'high', sentiment: 'positive', unread: 1, ticketNumber: '#4834', tags: ['Enterprise', 'Migration'], messages: [] },
-  { id: '15', userName: 'Rachel Green', email: 'rachel@startup.co', avatar: '/avatar-1.jpg', plan: 'Starter', lastMessage: 'Cancel my subscription', timestamp: '50m', status: 'waiting', priority: 'medium', sentiment: 'negative', unread: 0, ticketNumber: '#4835', tags: ['Billing'], messages: [] },
+  { id: '1', userName: 'Sarah Mitchell', email: 'sarah@acme.com', avatar: '/avatar-6\.svg', plan: 'Enterprise', lastMessage: 'The API keeps returning 500 errors...', timestamp: '2m', status: 'active', priority: 'critical', sentiment: 'negative', unread: 2, ticketNumber: '#4821', tags: ['Enterprise', 'Technical'], messages: sarahMessages },
+  { id: '2', userName: 'Mike Rodriguez', email: 'mike@techcorp.io', avatar: '/avatar-2\.svg', plan: 'Pro', lastMessage: 'Can I get a refund for last month?', timestamp: '4m', status: 'active', priority: 'medium', sentiment: 'neutral', unread: 1, ticketNumber: '#4822', tags: ['Billing'], messages: [] },
+  { id: '3', userName: 'Jessica Taylor', email: 'jessica@startup.co', avatar: '/avatar-4\.svg', plan: 'Starter', lastMessage: 'How do I connect Zapier?', timestamp: '6m', status: 'waiting', priority: 'low', sentiment: 'neutral', unread: 0, ticketNumber: '#4824', tags: ['Integration'], messages: [] },
+  { id: '4', userName: 'David Kim', email: 'david@enterprise.com', avatar: '/avatar-5\.svg', plan: 'Enterprise', lastMessage: 'Urgent: Our team lost dashboard access', timestamp: '8m', status: 'escalated', priority: 'critical', sentiment: 'very_negative', unread: 3, ticketNumber: '#4823', tags: ['Enterprise', 'Urgent'], messages: [] },
+  { id: '5', userName: 'Emily Chen', email: 'emily@design.studio', avatar: '/avatar-1\.svg', plan: 'Pro', lastMessage: 'Feature request: dark mode for mobile', timestamp: '12m', status: 'waiting', priority: 'low', sentiment: 'positive', unread: 0, ticketNumber: '#4825', tags: ['Feature'], messages: [] },
+  { id: '6', userName: 'James Wilson', email: 'james@smallbiz.com', avatar: '/avatar-3\.svg', plan: 'Starter', lastMessage: 'Billing cycle question', timestamp: '15m', status: 'active', priority: 'medium', sentiment: 'neutral', unread: 0, ticketNumber: '#4826', tags: ['Billing'], messages: [] },
+  { id: '7', userName: 'Anna Lopez', email: 'anna@saas.co', avatar: '/avatar-4\.svg', plan: 'Pro', lastMessage: 'Webhook not firing on payment success', timestamp: '18m', status: 'active', priority: 'high', sentiment: 'negative', unread: 1, ticketNumber: '#4827', tags: ['Technical'], messages: [] },
+  { id: '8', userName: 'Robert Brown', email: 'robert@bigco.org', avatar: '/avatar-2\.svg', plan: 'Enterprise', lastMessage: 'Need help with SSO configuration', timestamp: '22m', status: 'waiting', priority: 'high', sentiment: 'neutral', unread: 0, ticketNumber: '#4828', tags: ['Enterprise', 'Security'], messages: [] },
+  { id: '9', userName: 'Lisa Wang', email: 'lisa@freelance.net', avatar: '/avatar-1\.svg', plan: 'Starter', lastMessage: 'Export data to CSV?', timestamp: '25m', status: 'resolved', priority: 'low', sentiment: 'positive', unread: 0, ticketNumber: '#4829', tags: ['Data'], messages: [] },
+  { id: '10', userName: 'Tom Martinez', email: 'tom@mobile.app', avatar: '/avatar-5\.svg', plan: 'Pro', lastMessage: 'Integration with Salesforce', timestamp: '28m', status: 'active', priority: 'medium', sentiment: 'neutral', unread: 0, ticketNumber: '#4830', tags: ['Integration'], messages: [] },
+  { id: '11', userName: 'Karen Lee', email: 'karen@consulting.com', avatar: '/avatar-6\.svg', plan: 'Enterprise', lastMessage: 'Custom reporting permissions', timestamp: '32m', status: 'escalated', priority: 'high', sentiment: 'negative', unread: 2, ticketNumber: '#4831', tags: ['Enterprise', 'Feature'], messages: [] },
+  { id: '12', userName: 'Chris Evans', email: 'chris@ecommerce.io', avatar: '/avatar-3\.svg', plan: 'Starter', lastMessage: 'Password reset not working', timestamp: '35m', status: 'waiting', priority: 'medium', sentiment: 'neutral', unread: 0, ticketNumber: '#4832', tags: ['Account'], messages: [] },
+  { id: '13', userName: 'Amanda White', email: 'amanda@techcorp.io', avatar: '/avatar-4\.svg', plan: 'Pro', lastMessage: 'API rate limit increase request', timestamp: '40m', status: 'active', priority: 'medium', sentiment: 'neutral', unread: 0, ticketNumber: '#4833', tags: ['Technical'], messages: [] },
+  { id: '14', userName: 'Daniel Park', email: 'daniel@bigco.org', avatar: '/avatar-2\.svg', plan: 'Enterprise', lastMessage: 'Data migration from competitor', timestamp: '45m', status: 'active', priority: 'high', sentiment: 'positive', unread: 1, ticketNumber: '#4834', tags: ['Enterprise', 'Migration'], messages: [] },
+  { id: '15', userName: 'Rachel Green', email: 'rachel@startup.co', avatar: '/avatar-1\.svg', plan: 'Starter', lastMessage: 'Cancel my subscription', timestamp: '50m', status: 'waiting', priority: 'medium', sentiment: 'negative', unread: 0, ticketNumber: '#4835', tags: ['Billing'], messages: [] },
 ];
 
 const supportAgents: SupportAgent[] = [
-  { id: 'a1', number: 'Agent #1', name: 'Nexus-1', avatar: '/avatar-1.jpg', status: 'online', currentTask: 'Handling #4821 — API issue', load: 65, conversations: 4, totalToday: 28, avgResponseTime: '1m 42s', uptime: '4h 12m' },
-  { id: 'a2', number: 'Agent #2', name: 'Nexus-2', avatar: '/avatar-2.jpg', status: 'online', currentTask: 'Resolving billing dispute', load: 80, conversations: 5, totalToday: 34, avgResponseTime: '2m 15s', uptime: '5h 30m' },
-  { id: 'a3', number: 'Agent #3', name: 'Nexus-3', avatar: '/avatar-3.jpg', status: 'online', currentTask: 'New chat — Enterprise', load: 45, conversations: 3, totalToday: 19, avgResponseTime: '1m 28s', uptime: '3h 45m' },
-  { id: 'a4', number: 'Agent #4', name: 'Nexus-4', avatar: '/avatar-4.jpg', status: 'busy', currentTask: '3 escalations queued', load: 90, conversations: 6, totalToday: 41, avgResponseTime: '3m 05s', uptime: '6h 10m' },
-  { id: 'a5', number: 'Agent #5', name: 'Nexus-5', avatar: '/avatar-5.jpg', status: 'online', currentTask: 'Password reset x2', load: 55, conversations: 3, totalToday: 22, avgResponseTime: '1m 55s', uptime: '4h 50m' },
-  { id: 'a6', number: 'Agent #6', name: 'Nexus-6', avatar: '/avatar-6.jpg', status: 'offline', currentTask: 'Scheduled maintenance', load: 0, conversations: 0, totalToday: 0, avgResponseTime: '—', uptime: '0m' },
+  { id: 'a1', number: 'Agent #1', name: 'Nexus-1', avatar: '/avatar-1\.svg', status: 'online', currentTask: 'Handling #4821 - API issue', load: 65, conversations: 4, totalToday: 28, avgResponseTime: '1m 42s', uptime: '4h 12m' },
+  { id: 'a2', number: 'Agent #2', name: 'Nexus-2', avatar: '/avatar-2\.svg', status: 'online', currentTask: 'Resolving billing dispute', load: 80, conversations: 5, totalToday: 34, avgResponseTime: '2m 15s', uptime: '5h 30m' },
+  { id: 'a3', number: 'Agent #3', name: 'Nexus-3', avatar: '/avatar-3\.svg', status: 'online', currentTask: 'New chat - Enterprise', load: 45, conversations: 3, totalToday: 19, avgResponseTime: '1m 28s', uptime: '3h 45m' },
+  { id: 'a4', number: 'Agent #4', name: 'Nexus-4', avatar: '/avatar-4\.svg', status: 'busy', currentTask: '3 escalations queued', load: 90, conversations: 6, totalToday: 41, avgResponseTime: '3m 05s', uptime: '6h 10m' },
+  { id: 'a5', number: 'Agent #5', name: 'Nexus-5', avatar: '/avatar-5\.svg', status: 'online', currentTask: 'Password reset x2', load: 55, conversations: 3, totalToday: 22, avgResponseTime: '1m 55s', uptime: '4h 50m' },
+  { id: 'a6', number: 'Agent #6', name: 'Nexus-6', avatar: '/avatar-6\.svg', status: 'offline', currentTask: 'Scheduled maintenance', load: 0, conversations: 0, totalToday: 0, avgResponseTime: '-', uptime: '0m' },
 ];
 
 const escalationTickets: EscalationTicket[] = [
-  { id: 'e1', ticketNumber: '#4823', customer: 'David Kim', plan: 'Enterprise', issue: 'Database connection timeout — checkout blocked', reason: 'Infrastructure failure affecting multiple customers', waitingTime: '8m', solutionsTried: ['Restarted DB connection pool', 'Checked network latency', 'Verified DNS resolution'], severity: 'critical', assignedTeam: 'Infrastructure' },
-  { id: 'e2', ticketNumber: '#4819', customer: 'Karen Lee', plan: 'Enterprise', issue: 'SSO misconfig — 200 users locked out', reason: 'IdP certificate expired, needs manual rotation', waitingTime: '22m', solutionsTried: ['Verified SAML config', 'Re-exported metadata', 'Tested with staging IdP'], severity: 'high', assignedTeam: 'Security' },
-  { id: 'e3', ticketNumber: '#4817', customer: 'Tom Chen', plan: 'Pro', issue: 'Webhook delivery failure — payment notifications', reason: 'Retry queue backed up > 10K events', waitingTime: '35m', solutionsTried: ['Cleared dead letter queue', 'Increased retry count', 'Verified endpoint health'], severity: 'high', assignedTeam: 'Platform' },
+  { id: 'e1', ticketNumber: '#4823', customer: 'David Kim', plan: 'Enterprise', issue: 'Database connection timeout - checkout blocked', reason: 'Infrastructure failure affecting multiple customers', waitingTime: '8m', solutionsTried: ['Restarted DB connection pool', 'Checked network latency', 'Verified DNS resolution'], severity: 'critical', assignedTeam: 'Infrastructure' },
+  { id: 'e2', ticketNumber: '#4819', customer: 'Karen Lee', plan: 'Enterprise', issue: 'SSO misconfig - 200 users locked out', reason: 'IdP certificate expired, needs manual rotation', waitingTime: '22m', solutionsTried: ['Verified SAML config', 'Re-exported metadata', 'Tested with staging IdP'], severity: 'high', assignedTeam: 'Security' },
+  { id: 'e3', ticketNumber: '#4817', customer: 'Tom Chen', plan: 'Pro', issue: 'Webhook delivery failure - payment notifications', reason: 'Retry queue backed up > 10K events', waitingTime: '35m', solutionsTried: ['Cleared dead letter queue', 'Increased retry count', 'Verified endpoint health'], severity: 'high', assignedTeam: 'Platform' },
   { id: 'e4', ticketNumber: '#4812', customer: 'Lisa Park', plan: 'Pro', issue: 'Custom field API returning null values', reason: 'Schema migration incomplete for custom fields', waitingTime: '1h 12m', solutionsTried: ['Re-ran migration script', 'Checked field mappings', 'Verified API version'], severity: 'medium', assignedTeam: 'API Team' },
 ];
 
@@ -201,7 +201,7 @@ const filterTabs = [
   { key: 'escalated', label: 'Escalated', count: 3 },
 ] as const;
 
-// ─── Animation Config ────────────────────────────────────────────────────────
+// --- Animation Config --------------------------------------------------------
 
 const listItemStagger = {
   hidden: { opacity: 0, x: -12 },
@@ -230,7 +230,7 @@ const rightPanelStagger = {
   }),
 };
 
-// ─── Typing Indicator ────────────────────────────────────────────────────────
+// --- Typing Indicator --------------------------------------------------------
 
 function TypingIndicator() {
   return (
@@ -242,7 +242,7 @@ function TypingIndicator() {
   );
 }
 
-// ─── Status Dot ──────────────────────────────────────────────────────────────
+// --- Status Dot --------------------------------------------------------------
 
 function getStatusDotColor(status: ConversationStatus): string {
   switch (status) {
@@ -253,7 +253,7 @@ function getStatusDotColor(status: ConversationStatus): string {
   }
 }
 
-// ─── Main Component ──────────────────────────────────────────────────────────
+// --- Main Component ----------------------------------------------------------
 
 export default function SupportConsole() {
   const [selectedId, setSelectedId] = useState<string>('1');
@@ -314,7 +314,7 @@ export default function SupportConsole() {
       content: messageText.trim(),
       timestamp: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true }),
       agentName: 'Agent #3',
-      avatar: '/avatar-3.jpg',
+      avatar: '/avatar-3\.svg',
     };
     setMessages((prev) => [...prev, newMessage]);
     setMessageText('');
@@ -333,8 +333,8 @@ export default function SupportConsole() {
   const onlineAgents = supportAgents.filter((a) => a.status === 'online').length;
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-64px)] bg-[#0a0a0a] overflow-hidden">
-      {/* ── Page Header Bar ── */}
+    <div className="flex flex-col h-[calc(100dvh-64px)] bg-pretzel-indigo overflow-hidden">
+      {/* -- Page Header Bar -- */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -344,9 +344,9 @@ export default function SupportConsole() {
         <div>
           <div className="flex items-center gap-2 text-[13px] text-slate-500">
             <span className="text-emerald-600 font-semibold">{onlineAgents}</span> agents online
-            <span className="text-slate-300">·</span>
+            <span className="text-slate-300">-</span>
             <span className="text-emerald-600 font-semibold">{conversations.length}</span> active conversations
-            <span className="text-slate-300">·</span>
+            <span className="text-slate-300">-</span>
             <span className="text-amber-600 font-semibold">{escalatedCount}</span> escalations
           </div>
         </div>
@@ -369,7 +369,7 @@ export default function SupportConsole() {
                   'px-3 py-1 rounded-md text-xs font-medium transition-all duration-150',
                   headerFilter === tab.key
                     ? 'bg-emerald-600 text-white'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-[#0a0a0a]/60'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-pretzel-indigo/60'
                 )}
               >
                 {tab.label}
@@ -390,9 +390,9 @@ export default function SupportConsole() {
         </div>
       </motion.div>
 
-      {/* ── Main Three-Column Layout ── */}
+      {/* -- Main Three-Column Layout -- */}
       <div className="flex flex-1 overflow-hidden">
-        {/* ── Column 1: Chat Queue ── */}
+        {/* -- Column 1: Chat Queue -- */}
         <div className="w-[280px] bg-slate-900/40 border-r border-slate-800 flex flex-col shrink-0">
           {/* Queue filter tabs */}
           <div className="sticky top-0 z-10 bg-slate-900/40 border-b border-slate-800 px-3 pt-2 pb-0">
@@ -504,8 +504,8 @@ export default function SupportConsole() {
           </ScrollArea>
         </div>
 
-        {/* ── Column 2: Conversation Viewer ── */}
-        <div className="flex-1 flex flex-col min-w-0 bg-[#0a0a0a]">
+        {/* -- Column 2: Conversation Viewer -- */}
+        <div className="flex-1 flex flex-col min-w-0 bg-pretzel-indigo">
           {/* Conversation Header */}
           <div className="flex items-center justify-between px-6 py-3 bg-slate-900/40 border-b border-slate-800 shrink-0">
             <div className="flex items-center gap-3">
@@ -535,7 +535,7 @@ export default function SupportConsole() {
                 </div>
                 <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                   <span>{selectedConversation.email}</span>
-                  <span className="text-slate-300">·</span>
+                  <span className="text-slate-300">-</span>
                   <span className="text-slate-400">{selectedConversation.ticketNumber}</span>
                 </div>
               </div>
@@ -588,9 +588,9 @@ export default function SupportConsole() {
                       variants={messageStagger}
                       className="flex items-center gap-3 my-2"
                     >
-                      <div className="flex-1 h-px bg-[#0a0a0a]" />
+                      <div className="flex-1 h-px bg-pretzel-indigo" />
                       <span className="text-xs text-slate-500 whitespace-pre-line text-center">{msg.content}</span>
-                      <div className="flex-1 h-px bg-[#0a0a0a]" />
+                      <div className="flex-1 h-px bg-pretzel-indigo" />
                     </motion.div>
                   );
                 }
@@ -734,8 +734,8 @@ export default function SupportConsole() {
           </motion.div>
         </div>
 
-        {/* ── Column 3: Right Panel ── */}
-        <div className="w-[320px] bg-[#0a0a0a] border-l border-slate-800 flex flex-col gap-4 p-4 overflow-y-auto shrink-0">
+        {/* -- Column 3: Right Panel -- */}
+        <div className="w-[320px] bg-pretzel-indigo border-l border-slate-800 flex flex-col gap-4 p-4 overflow-y-auto shrink-0">
           {/* Agent Status Panel */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -781,13 +781,13 @@ export default function SupportConsole() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[13px] font-semibold text-slate-100">{agent.number} — {agent.name}</span>
+                      <span className="text-[13px] font-semibold text-slate-100">{agent.number} - {agent.name}</span>
                     </div>
                     <p className="text-xs text-slate-500 truncate">{agent.currentTask}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <div className="flex flex-col items-end gap-1">
-                      <div className="w-10 h-1 bg-[#0a0a0a] rounded-full overflow-hidden">
+                      <div className="w-10 h-1 bg-pretzel-indigo rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${agent.load}%` }}
@@ -937,3 +937,4 @@ export default function SupportConsole() {
     </div>
   );
 }
+

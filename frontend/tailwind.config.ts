@@ -21,6 +21,11 @@ const config: Config = {
           800: '#92400e',
           900: '#78350f',
           950: '#451a03',
+          walnut: '#452103',
+          teal: '#177E89',
+          pollen: '#FFC857',
+          coral: '#FC814A',
+          indigo: '#141B41',
         },
       },
       fontFamily: {

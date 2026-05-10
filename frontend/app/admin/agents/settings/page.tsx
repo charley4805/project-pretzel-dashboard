@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,9 +30,9 @@ import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 // recharts available for charts if needed
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // TYPES
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 type AgentType = 'support' | 'social' | 'leadgen' | 'integrations' | 'general';
 
@@ -48,9 +48,9 @@ interface IntegrationItem {
   issue?: string;
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // MOCK DATA
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 const integrations: IntegrationItem[] = [
   { id: 'int1', name: 'Zendesk', icon: 'zendesk', color: '#03363D', description: 'Support ticket sync and agent handoff', connected: true, account: 'support@co.zendesk.com', lastSync: '2m ago' },
@@ -76,9 +76,9 @@ const availableIntegrations: IntegrationItem[] = [
   { id: 'avail6', name: 'Calendly', icon: 'calendly', color: '#006BFF', description: 'Meeting scheduling for qualified leads', connected: false },
 ];
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // SIDEBAR TAB CONFIG
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 const agentTabs: { id: AgentType; label: string; icon: typeof Headphones; color: string; bg: string }[] = [
   { id: 'support', label: 'Support Agent', icon: Headphones, color: '#34d399', bg: '#f5f3ff' },
@@ -88,9 +88,9 @@ const agentTabs: { id: AgentType; label: string; icon: typeof Headphones; color:
   { id: 'general', label: 'General', icon: Settings, color: '#94a3b8', bg: '#141B41' },
 ];
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // SUPPORT AGENT SETTINGS
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function SupportAgentSettings() {
   const [model, setModel] = useState('gpt4o');
@@ -144,7 +144,7 @@ Issue Category: {{ticket_type}}
     { id: 'er3', label: 'Negative sentiment detected', enabled: true },
     { id: 'er4', label: 'Billing dispute > $500', enabled: true },
     { id: 'er5', label: 'Security-related inquiry', enabled: true },
-    { id: 'er6', label: 'Technical — needs engineering', enabled: true },
+    { id: 'er6', label: 'Technical - needs engineering', enabled: true },
   ];
 
   const [rules, setRules] = useState(escalationRules);
@@ -282,7 +282,7 @@ Issue Category: {{ticket_type}}
             <textarea
               value={prompt}
               onChange={e => setPrompt(e.target.value)}
-              className="w-full min-h-[300px] p-4 rounded-lg bg-[#0a0a0a] text-slate-100 text-[13px] leading-relaxed focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none font-mono"
+              className="w-full min-h-[300px] p-4 rounded-lg bg-pretzel-indigo text-slate-100 text-[13px] leading-relaxed focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none font-mono"
               spellCheck={false}
             />
           </div>
@@ -366,9 +366,9 @@ Issue Category: {{ticket_type}}
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // SOCIAL MEDIA AGENT SETTINGS
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function SocialAgentSettings() {
   const [platforms, setPlatforms] = useState([
@@ -381,7 +381,7 @@ function SocialAgentSettings() {
   const [promoPercent, setPromoPercent] = useState([30]);
   const [approvalRequired, setApprovalRequired] = useState('high');
   const [autoSchedule, setAutoSchedule] = useState(true);
-  const [brandVoice, setBrandVoice] = useState('Knowledgeable but approachable. Use data and examples to support claims. Match platform tone — professional for LinkedIn, casual for Twitter.');
+  const [brandVoice, setBrandVoice] = useState('Knowledgeable but approachable. Use data and examples to support claims. Match platform tone - professional for LinkedIn, casual for Twitter.');
   const [formality, setFormality] = useState([70]);
   const [emojiUsage, setEmojiUsage] = useState([40]);
   const [brandedHashtags, setBrandedHashtags] = useState('#NexusAI, #BuildWithAI');
@@ -601,9 +601,9 @@ function SocialAgentSettings() {
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // LEAD GEN AGENT SETTINGS
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function LeadGenAgentSettings() {
   const [maxDailyLeads, setMaxDailyLeads] = useState(50);
@@ -832,9 +832,9 @@ function LeadGenAgentSettings() {
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // INTEGRATIONS SETTINGS
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function IntegrationsSettings() {
   const [connectedInts, setConnectedInts] = useState(integrations);
@@ -992,9 +992,9 @@ function IntegrationsSettings() {
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // GENERAL SETTINGS
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function GeneralSettings() {
   const [timezone, setTimezone] = useState('America/New_York');
@@ -1139,9 +1139,9 @@ function GeneralSettings() {
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // MAIN PAGE
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 export default function SettingsPage() {
   const [activeAgent, setActiveAgent] = useState<AgentType>('support');
@@ -1200,7 +1200,7 @@ export default function SettingsPage() {
                   key={tab.id}
                   onClick={() => setActiveAgent(tab.id)}
                   className={`relative w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-200 mx-auto ${
-                    isActive ? '' : 'hover:bg-[#0a0a0a]'
+                    isActive ? '' : 'hover:bg-pretzel-indigo'
                   }`}
                   style={{
                     backgroundColor: isActive ? `${tab.color}20` : '#1c2658',
@@ -1246,3 +1246,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+
