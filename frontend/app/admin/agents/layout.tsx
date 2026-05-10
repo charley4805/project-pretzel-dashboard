@@ -8,7 +8,7 @@ export default function AgentLayout({
     children: React.ReactNode
 }) {
     return (
-        <div className="min-h-screen bg-pretzel-tan text-pretzel-indigo">
+        <div className="min-h-screen bg-[#0a0d14] text-slate-100">
             {children}
         </div>
     );

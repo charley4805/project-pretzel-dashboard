@@ -68,7 +68,7 @@ export default function AnalyticsDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-pretzel-walnut text-slate-100 p-4 md:p-6 font-sans">
+    <div className="min-h-screen text-white p-4 md:p-6 font-sans">
 
       {/* HEADER */}
       <div className="flex justify-between items-start mb-6">
@@ -106,11 +106,11 @@ export default function AnalyticsDashboard() {
 
       {/* SOURCE BADGES */}
       <div className="flex gap-3 mb-8">
-        <div className="flex items-center gap-2 bg-[#FFC857] border border-slate-800 rounded-lg px-3 py-1.5">
+        <div className="flex items-center gap-2 bg-slate-900/60 border border-slate-800 rounded-lg px-3 py-1.5">
           <div className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
           <span className="text-xs text-slate-400">Pretzel.io — FastAPI + Supabase</span>
         </div>
-        <div className="flex items-center gap-2 bg-[#FFC857] border border-slate-800 rounded-lg px-3 py-1.5">
+        <div className="flex items-center gap-2 bg-slate-900/60 border border-slate-800 rounded-lg px-3 py-1.5">
           <div className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
           <span className="text-xs text-slate-400">PretzelKnot — .NET + PostgreSQL</span>
         </div>
@@ -193,7 +193,7 @@ export default function AnalyticsDashboard() {
 
           {/* CHARTS */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-[#FFC857] border border-slate-800 rounded-xl p-5">
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
               <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
                 <Users size={15} className="text-amber-400" /> User Growth & Activation
               </h3>
@@ -201,7 +201,7 @@ export default function AnalyticsDashboard() {
                 <GrowthChart />
               </div>
             </div>
-            <div className="bg-[#FFC857] border border-slate-800 rounded-xl p-5">
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
               <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
                 <Brain size={15} className="text-purple-400" /> AI Usage Trends
               </h3>
@@ -213,7 +213,7 @@ export default function AnalyticsDashboard() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <HealthStatusGrid />
-            <div className="bg-[#FFC857] border border-slate-800 rounded-xl p-5">
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
               <h3 className="text-sm font-medium text-slate-300 mb-4 flex items-center gap-2">
                 <Clock size={15} /> API Load &amp; Performance
               </h3>

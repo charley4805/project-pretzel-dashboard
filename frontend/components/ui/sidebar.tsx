@@ -67,11 +67,10 @@ export function Sidebar() {
           style={{ borderBottom: '1px solid #5a2d04' }}
         >
           <div className="flex items-center gap-2.5">
-            <img
-              src="/Pretzel_transparent.png"
-              alt="Project Pretzel"
-              className="w-8 h-8 object-contain"
-            />
+            <svg width="32" height="32" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="Project Pretzel">
+              <rect width="64" height="64" rx="12" fill="rgba(255,200,87,0.15)"/>
+              <text x="32" y="44" fontFamily="serif" fontSize="36" fontWeight="bold" fill="#FFC857" textAnchor="middle">P</text>
+            </svg>
             <div>
               <p className="text-sm font-semibold text-white tracking-tight leading-tight">Project Pretzel</p>
               <p className="text-[10px] tracking-widest uppercase font-medium" style={{ color: '#FFC857' }}>

@@ -130,7 +130,7 @@ export default function Overview() {
   return (
     <div className="p-8">
       {/* Subtitle */}
-      <p className="text-sm mb-6" style={{ color: '#8B6355' }}>Real-time overview of your agent fleet</p>
+      <p className="text-sm mb-6 text-slate-500">Real-time overview of your agent fleet</p>
 
       {/* --- KPI Cards Row --- */}
       <motion.div
@@ -143,7 +143,7 @@ export default function Overview() {
           <motion.div
             key={kpi.label}
             variants={cardFadeUp}
-            className="rounded-xl shadow-card p-5 cursor-pointer hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200" style={{ backgroundColor: '#452103' }}
+            className="bg-slate-900/60 rounded-xl shadow-card p-5 cursor-pointer hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
           >
             <div className="flex items-start justify-between mb-3">
               <div
@@ -200,7 +200,7 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="rounded-xl shadow-card p-5" style={{ backgroundColor: '#452103' }}
+            className="bg-slate-900/60 rounded-xl shadow-card p-5"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -310,7 +310,7 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="rounded-xl shadow-card p-5" style={{ backgroundColor: '#452103' }}
+            className="bg-slate-900/60 rounded-xl shadow-card p-5"
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-white">Performance Trends</h2>
@@ -372,7 +372,7 @@ export default function Overview() {
                 <motion.div
                   key={section.type}
                   variants={cardFadeUp}
-                  className="rounded-xl shadow-card overflow-hidden" style={{ backgroundColor: '#452103' }}
+                  className="bg-slate-900/60 rounded-xl shadow-card overflow-hidden"
                 >
                   <button
                     onClick={() => setExpandedBreakdown(isExpanded ? null : section.type)}
@@ -441,7 +441,7 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="rounded-xl shadow-card p-5" style={{ backgroundColor: '#452103' }}
+            className="bg-slate-900/60 rounded-xl shadow-card p-5"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -515,7 +515,7 @@ export default function Overview() {
             variants={cardStagger}
             initial="hidden"
             animate="show"
-            className="rounded-xl shadow-card p-5" style={{ backgroundColor: '#452103' }}
+            className="bg-slate-900/60 rounded-xl shadow-card p-5"
           >
             <h2 className="text-base font-semibold text-slate-100 mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 gap-3">
@@ -543,7 +543,7 @@ export default function Overview() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
-            className="rounded-xl shadow-card p-5" style={{ backgroundColor: '#452103' }}
+            className="bg-slate-900/60 rounded-xl shadow-card p-5"
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-white">System Health</h2>
