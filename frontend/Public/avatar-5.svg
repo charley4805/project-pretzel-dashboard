@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Agent avatar 5">
+  <defs>
+    <radialGradient id="grad5" cx="50%" cy="20%" r="70%">
+      <stop offset="0%" stop-color="#FFC857" />
+      <stop offset="100%" stop-color="#452103" />
+    </radialGradient>
+  </defs>
+  <rect width="120" height="120" rx="24" fill="url(#grad5)" />
+  <circle cx="60" cy="38" r="18" fill="#141B41" />
+  <path d="M40 74c5-6 30-6 35 0" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round" />
+  <rect x="33" y="64" width="54" height="18" rx="9" fill="#177E89" opacity="0.9" />
+</svg>

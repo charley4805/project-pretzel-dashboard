@@ -28,7 +28,7 @@ export function AnalyticsKpiCard({
   const displayValue = isDecimal ? value.toFixed(1) : value.toLocaleString();
 
   return (
-    <div className="bg-[#111] border border-slate-800 rounded-xl p-4 shadow-sm flex flex-col justify-between h-32 hover:border-slate-700 group">
+    <div className="bg-pretzel-indigo border border-slate-800 rounded-xl p-4 shadow-sm flex flex-col justify-between h-32 hover:border-slate-700 group">
       <div className="flex justify-between items-start mb-1">
         <h4 className="text-slate-400 text-xs font-medium leading-snug">{title}</h4>
         <div className="p-1.5 bg-slate-800/50 rounded-md group-hover:bg-slate-800 shrink-0 ml-2">
@@ -59,3 +59,4 @@ export function AnalyticsKpiCard({
     </div>
   );
 }
+

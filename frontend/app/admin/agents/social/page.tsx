@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,7 +28,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { fetchSocialCampaigns } from '@/lib/api';
 
-// ─── Types ───────────────────────────────────────────────
+// --- Types -----------------------------------------------
 type Platform = 'twitter' | 'linkedin' | 'instagram' | 'facebook';
 type PostType = 'educational' | 'promotional' | 'engagement';
 type PostStatus = 'scheduled' | 'published' | 'draft' | 'publishing';
@@ -78,7 +78,7 @@ interface EngagementItem {
   flagged?: boolean;
 }
 
-// ─── Constants ───────────────────────────────────────────
+// --- Constants -------------------------------------------
 const PLATFORM_CONFIG: Record<Platform, { label: string; color: string; bg: string; icon: typeof Twitter }> = {
   twitter: { label: 'Twitter/X', color: 'text-sky-500', bg: 'bg-sky-500/10', icon: Twitter },
   linkedin: { label: 'LinkedIn', color: 'text-blue-400', bg: 'bg-blue-500/10', icon: Linkedin },
@@ -112,7 +112,7 @@ const SENTIMENT_CONFIG: Record<EngagementSentiment, { color: string; bg: string 
   negative: { color: 'text-red-400', bg: 'bg-red-100' },
 };
 
-// ─── Mock Data ───────────────────────────────────────────
+// --- Mock Data -------------------------------------------
 const today = new Date();
 const weekStart = startOfWeek(today, { weekStartsOn: 1 });
 
@@ -197,7 +197,7 @@ const defaultCampaigns: Campaign[] = [
   },
   {
     id: 'camp4', name: '#BuildInPublic March', status: 'completed',
-    description: '30 days of transparent building — sharing our development process and decisions',
+    description: '30 days of transparent building - sharing our development process and decisions',
     platforms: ['twitter', 'instagram'],
     reach: 62100, engagementRate: 15.4, clicks: 4850,
     startDate: 'Mar 1', endDate: 'Mar 31', progress: 100,
@@ -291,7 +291,7 @@ const ENGAGEMENT_FEED: EngagementItem[] = [
   },
 ];
 
-// ─── Analytics Data ──────────────────────────────────────
+// --- Analytics Data --------------------------------------
 const engagementData = [
   { day: 'Mon', likes: 4.2, comments: 2.1, shares: 1.3, clicks: 3.5 },
   { day: 'Tue', likes: 5.8, comments: 3.2, shares: 1.8, clicks: 4.1 },
@@ -337,7 +337,7 @@ const topPostsData = [
   { id: 'tp5', platform: 'instagram' as Platform, title: 'Feature: Dark Mode', reach: 6400, engagement: 5.4 },
 ];
 
-// ─── Animation Configs ───────────────────────────────────
+// --- Animation Configs -----------------------------------
 const tabTransition = {
   initial: { opacity: 0, y: 8 },
   animate: { opacity: 1, y: 0 },
@@ -354,7 +354,7 @@ const staggerItem = {
   animate: { opacity: 1, y: 0, transition: { duration: 0.25 } },
 };
 
-// ─── Sub-Components ──────────────────────────────────────
+// --- Sub-Components --------------------------------------
 
 function PlatformIcon({ platform, size = 16 }: { platform: Platform; size?: number }) {
   const config = PLATFORM_CONFIG[platform];
@@ -380,7 +380,7 @@ function TypeBadge({ type }: { type: PostType }) {
   );
 }
 
-// ─── Post Composer Modal ─────────────────────────────────
+// --- Post Composer Modal ---------------------------------
 function PostComposerModal({
   open,
   onClose,
@@ -451,7 +451,7 @@ function PostComposerModal({
                   onClick={() => setPostType(key)}
                   className={cn(
                     'px-3 py-1.5 rounded-md text-xs font-medium transition-all',
-                    postType === key ? cn(config.bg, config.color, 'ring-1 ring-offset-1') : 'bg-slate-800/50 text-slate-500 hover:bg-[#0a0a0a]'
+                    postType === key ? cn(config.bg, config.color, 'ring-1 ring-offset-1') : 'bg-slate-800/50 text-slate-500 hover:bg-pretzel-indigo'
                   )}
                 >
                   {config.label}
@@ -536,7 +536,7 @@ function PostComposerModal({
                 <div className="w-8 h-8 rounded-full bg-violet-500/100 flex items-center justify-center text-white text-xs font-bold">N</div>
                 <div>
                   <p className="text-sm font-semibold text-slate-100">NexusAI</p>
-                  <p className="text-xs text-slate-400">@nexusai · Just now</p>
+                  <p className="text-xs text-slate-400">@nexusai - Just now</p>
                 </div>
               </div>
               <p className="text-sm text-slate-300 whitespace-pre-wrap">
@@ -564,7 +564,7 @@ function PostComposerModal({
   );
 }
 
-// ─── Tab 1: Content Calendar ─────────────────────────────
+// --- Tab 1: Content Calendar -----------------------------
 function ContentCalendarTab() {
   const [composerOpen, setComposerOpen] = useState(false);
   const [editPost, setEditPost] = useState<CalendarPost | null>(null);
@@ -606,7 +606,7 @@ function ContentCalendarTab() {
                     <span className="text-[11px] font-medium text-slate-500 uppercase">{format(day, 'EEE')}</span>
                     <span className={cn(
                       'text-xs font-bold px-1.5 py-0.5 rounded-full',
-                      dayPosts.length > 0 ? 'bg-slate-600 text-white' : 'bg-[#0a0a0a] text-slate-500'
+                      dayPosts.length > 0 ? 'bg-slate-600 text-white' : 'bg-pretzel-indigo text-slate-500'
                     )}>
                       {dayPosts.length}
                     </span>
@@ -753,7 +753,7 @@ function ContentCalendarTab() {
   );
 }
 
-// ─── Tab 2: Posts List ───────────────────────────────────
+// --- Tab 2: Posts List -----------------------------------
 function PostsListTab() {
   const [composerOpen, setComposerOpen] = useState(false);
   const [editPost, setEditPost] = useState<CalendarPost | null>(null);
@@ -829,7 +829,7 @@ function PostsListTab() {
                         <span className="flex items-center gap-1 inline-flex"><Share2 size={10} className="text-violet-400" /> {post.shares}</span>
                       </div>
                     ) : (
-                      <span className="text-xs text-slate-400">—</span>
+                      <span className="text-xs text-slate-400">-</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
@@ -861,7 +861,7 @@ function PostsListTab() {
   );
 }
 
-// ─── Tab 3: Engagement Feed ──────────────────────────────
+// --- Tab 3: Engagement Feed ------------------------------
 function EngagementFeedTab() {
   const [filterType, setFilterType] = useState<string>('all');
   const filtered = filterType === 'all' ? ENGAGEMENT_FEED : ENGAGEMENT_FEED.filter(e => e.actionType === filterType);
@@ -1064,7 +1064,7 @@ function EngagementFeedTab() {
   );
 }
 
-// ─── Tab 4: Campaigns ────────────────────────────────────
+// --- Tab 4: Campaigns ------------------------------------
 function CampaignsTab({ campaigns }: { campaigns: any[] }) {
   const getStatusColor = (status: CampaignStatus) => {
     switch (status) {
@@ -1129,19 +1129,19 @@ function CampaignsTab({ campaigns }: { campaigns: any[] }) {
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-100">
-                    {campaign.reach > 0 ? `${(campaign.reach / 1000).toFixed(1)}K` : '—'}
+                    {campaign.reach > 0 ? `${(campaign.reach / 1000).toFixed(1)}K` : '-'}
                   </p>
                   <p className="text-[11px] text-slate-500">Reach</p>
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-slate-100">
-                    {campaign.engagementRate > 0 ? `${campaign.engagementRate}%` : '—'}
+                    {campaign.engagementRate > 0 ? `${campaign.engagementRate}%` : '-'}
                   </p>
                   <p className="text-[11px] text-slate-500">Engagement</p>
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-slate-100">
-                    {campaign.clicks > 0 ? `${(campaign.clicks / 1000).toFixed(1)}K` : '—'}
+                    {campaign.clicks > 0 ? `${(campaign.clicks / 1000).toFixed(1)}K` : '-'}
                   </p>
                   <p className="text-[11px] text-slate-500">Clicks</p>
                 </div>
@@ -1150,10 +1150,10 @@ function CampaignsTab({ campaigns }: { campaigns: any[] }) {
               {/* Progress */}
               <div className="mb-3">
                 <div className="flex justify-between text-xs mb-1">
-                  <span className="text-slate-500">{campaign.startDate} → {campaign.endDate}</span>
+                  <span className="text-slate-500">{campaign.startDate} ? {campaign.endDate}</span>
                   <span className="font-medium text-slate-300">{campaign.progress}%</span>
                 </div>
-                <div className="h-1.5 bg-[#0a0a0a] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-pretzel-indigo rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${campaign.progress}%` }}
@@ -1192,7 +1192,7 @@ function CampaignsTab({ campaigns }: { campaigns: any[] }) {
   );
 }
 
-// ─── Tab 5: Analytics ────────────────────────────────────
+// --- Tab 5: Analytics ------------------------------------
 function AnalyticsTab() {
   const [dateRange, setDateRange] = useState('7days');
 
@@ -1391,7 +1391,7 @@ function AnalyticsTab() {
   );
 }
 
-// ─── Main Page Component ─────────────────────────────────
+// --- Main Page Component ---------------------------------
 const TABS = [
   { key: 'calendar', label: 'Calendar', icon: CalendarDays, badge: null },
   { key: 'posts', label: 'Posts', icon: MessageCircle, badge: null },
@@ -1433,11 +1433,11 @@ export default function SocialHub() {
           <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Social Media Hub</h1>
           <p className="mt-1.5 text-[13px] text-slate-500 flex items-center gap-2">
             <span>4 agents</span>
-            <span className="text-slate-300">·</span>
+            <span className="text-slate-300">-</span>
             <span className="text-violet-600 font-medium">95 posts today</span>
-            <span className="text-slate-300">·</span>
+            <span className="text-slate-300">-</span>
             <span className="text-sky-600 font-medium">12.4K reach</span>
-            <span className="text-slate-300">·</span>
+            <span className="text-slate-300">-</span>
             <span className="text-emerald-600 font-medium">6.8% engagement</span>
           </p>
         </div>
@@ -1470,7 +1470,7 @@ export default function SocialHub() {
       </motion.div>
 
       {/* Tab Bar */}
-      <div className="border-b border-slate-800 sticky top-16 z-30 bg-[#0a0a0a]">
+      <div className="border-b border-slate-800 sticky top-16 z-30 bg-pretzel-indigo">
         <div className="flex gap-1">
           {TABS.map(tab => (
             <button
@@ -1516,3 +1516,4 @@ export default function SocialHub() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -51,9 +51,9 @@ import {
 } from 'recharts';
 import { fetchLeadsPipeline } from '@/lib/api';
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // TYPES
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 type PipelineStage = 'discovered' | 'qualified' | 'contacted' | 'responded' | 'meeting_scheduled' | 'converted';
 
@@ -113,9 +113,9 @@ interface OutreachEntry {
   agentName: string;
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // MOCK DATA
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 const STAGE_CONFIG: Record<PipelineStage, { label: string; color: string; bg: string; border: string }> = {
   discovered: { label: 'DISCOVERED', color: '#94a3b8', bg: '#141B41', border: '#452103' },
@@ -128,7 +128,7 @@ const STAGE_CONFIG: Record<PipelineStage, { label: string; color: string; bg: st
 
 const defaultLeads: LeadCard[] = [
   // DISCOVERED
-  { id: 'l1', name: 'Alex Thornton', handle: '@alex_t', company: 'TechStart Inc', role: 'Founder', source: 'Reddit r/SaaS', sourcePlatform: 'reddit', painPoint: 'Support team overwhelmed, looking for automation', score: 85, stage: 'discovered', agentId: 'lg-1', agentName: 'Scout', dateDiscovered: '2h ago', industry: 'SaaS', companySize: '10-50', location: 'San Francisco, CA', problemFit: 90, intentSignals: 75, profileFit: 88, accessibility: 82, notes: 'Found asking about alternatives to Zendesk. Mentioned their team is growing fast (20→50 people). Budget seems healthy — they have 3 tools already.', outreachHistory: [{ id: 'oh1', day: 'Day 1', action: 'Initial DM sent via Twitter', time: '3d ago', status: 'completed' }] },
+  { id: 'l1', name: 'Alex Thornton', handle: '@alex_t', company: 'TechStart Inc', role: 'Founder', source: 'Reddit r/SaaS', sourcePlatform: 'reddit', painPoint: 'Support team overwhelmed, looking for automation', score: 85, stage: 'discovered', agentId: 'lg-1', agentName: 'Scout', dateDiscovered: '2h ago', industry: 'SaaS', companySize: '10-50', location: 'San Francisco, CA', problemFit: 90, intentSignals: 75, profileFit: 88, accessibility: 82, notes: 'Found asking about alternatives to Zendesk. Mentioned their team is growing fast (20?50 people). Budget seems healthy - they have 3 tools already.', outreachHistory: [{ id: 'oh1', day: 'Day 1', action: 'Initial DM sent via Twitter', time: '3d ago', status: 'completed' }] },
   { id: 'l2', name: 'Priya Sharma', handle: 'priya@startup.io', company: 'StartupIO', role: 'CTO', source: 'IndieHackers', sourcePlatform: 'indiehackers', painPoint: 'Need better lead tracking from community', score: 72, stage: 'discovered', agentId: 'lg-2', agentName: 'Hunter', dateDiscovered: '3h ago', industry: 'B2B SaaS', companySize: '10-50', location: 'Bangalore, India', problemFit: 78, intentSignals: 65, profileFit: 80, accessibility: 70 },
   { id: 'l3', name: 'Marcus Chen', handle: '@marcuschen', company: 'ScaleUp Co', role: 'Head of Support', source: 'Twitter', sourcePlatform: 'twitter', painPoint: 'Customer churn at 15%, need retention help', score: 91, stage: 'discovered', agentId: 'lg-3', agentName: 'Tracker', dateDiscovered: '4h ago', industry: 'E-commerce', companySize: '50-200', location: 'New York, NY', problemFit: 95, intentSignals: 88, profileFit: 90, accessibility: 85 },
   { id: 'l4', name: 'Lisa Park', handle: 'lisa@techco.com', company: 'TechCo', role: 'VP Operations', source: 'ProductHunt', sourcePlatform: 'producthunt', painPoint: 'Scaling support for 10K+ users', score: 68, stage: 'discovered', agentId: 'lg-1', agentName: 'Scout', dateDiscovered: '5h ago', industry: 'Consumer App', companySize: '200-500', location: 'Seoul, South Korea', problemFit: 70, intentSignals: 60, profileFit: 75, accessibility: 65 },
@@ -158,21 +158,21 @@ const defaultLeads: LeadCard[] = [
   { id: 'l24', name: 'Michelle Park', handle: 'michelle@techfirm.com', company: 'TechFirm', role: 'VP Customer Success', source: 'Reddit r/SaaS', sourcePlatform: 'reddit', painPoint: 'Onboarding 500+ enterprise users monthly', score: 93, stage: 'meeting_scheduled', agentId: 'lg-1', agentName: 'Scout', dateDiscovered: '2d ago', industry: 'Enterprise SaaS', companySize: '500+', location: 'San Jose, CA', problemFit: 95, intentSignals: 90, profileFit: 92, accessibility: 90 },
   { id: 'l25', name: 'Daniel Lee', handle: '@daniellee', company: 'StartupXYZ', role: 'CEO', source: 'Twitter', sourcePlatform: 'twitter', painPoint: 'Support costs 20% of budget', score: 90, stage: 'meeting_scheduled', agentId: 'lg-2', agentName: 'Hunter', dateDiscovered: '3d ago', industry: 'Startup', companySize: '10-50', location: 'Vancouver, Canada', problemFit: 92, intentSignals: 85, profileFit: 90, accessibility: 88 },
   // CONVERTED
-  { id: 'l26', name: 'Amanda Lewis', handle: 'amanda@fintech.io', company: 'FinTech IO', role: 'Head of Operations', source: 'Reddit r/SaaS', sourcePlatform: 'reddit', painPoint: 'Support for financial products', score: 98, stage: 'converted', agentId: 'lg-1', agentName: 'Scout', dateDiscovered: '5d ago', industry: 'FinTech', companySize: '200-500', location: 'New York, NY', problemFit: 98, intentSignals: 98, profileFit: 95, accessibility: 95, notes: 'Signed Enterprise plan — $2.4K/mo. 45 seats. Implementation starting next week.', outreachHistory: [{ id: 'oh2', day: 'Day 1', action: 'Initial outreach via email', time: '7d ago', status: 'completed' }, { id: 'oh3', day: 'Day 3', action: 'Demo call scheduled', time: '5d ago', status: 'completed' }, { id: 'oh4', day: 'Day 5', action: 'Contract signed!', time: '2d ago', status: 'completed' }] },
-  { id: 'l27', name: 'Jason Patel', handle: '@jpatel', company: 'Patel Ventures', role: 'Founder', source: 'Twitter', sourcePlatform: 'twitter', painPoint: 'Solo founder needs support automation', score: 95, stage: 'converted', agentId: 'lg-2', agentName: 'Hunter', dateDiscovered: '1w ago', industry: 'Venture', companySize: '1-10', location: 'London, UK', problemFit: 95, intentSignals: 92, profileFit: 95, accessibility: 95, notes: 'Pro plan upgrade — $480/mo. Annual billing.', outreachHistory: [{ id: 'oh5', day: 'Day 1', action: 'Twitter DM sent', time: '10d ago', status: 'completed' }, { id: 'oh6', day: 'Day 4', action: 'Follow-up with case study', time: '7d ago', status: 'completed' }, { id: 'oh7', day: 'Day 7', action: 'Upgraded to Pro', time: '4d ago', status: 'completed' }] },
-  { id: 'l28', name: 'Laura Simmons', handle: 'laura@healthtech.co', company: 'HealthTech Co', role: 'COO', source: 'IndieHackers', sourcePlatform: 'indiehackers', painPoint: 'HIPAA-compliant support needed', score: 97, stage: 'converted', agentId: 'lg-3', agentName: 'Tracker', dateDiscovered: '1w ago', industry: 'HealthTech', companySize: '200-500', location: 'Nashville, TN', problemFit: 98, intentSignals: 95, profileFit: 95, accessibility: 92, notes: 'Team plan — 15 seats — $1.2K/mo. Compliance review passed.', outreachHistory: [{ id: 'oh8', day: 'Day 1', action: 'IndieHackers DM', time: '10d ago', status: 'completed' }, { id: 'oh9', day: 'Day 3', action: 'Security questionnaire completed', time: '8d ago', status: 'completed' }, { id: 'oh10', day: 'Day 6', action: 'Deal closed', time: '5d ago', status: 'completed' }] },
+  { id: 'l26', name: 'Amanda Lewis', handle: 'amanda@fintech.io', company: 'FinTech IO', role: 'Head of Operations', source: 'Reddit r/SaaS', sourcePlatform: 'reddit', painPoint: 'Support for financial products', score: 98, stage: 'converted', agentId: 'lg-1', agentName: 'Scout', dateDiscovered: '5d ago', industry: 'FinTech', companySize: '200-500', location: 'New York, NY', problemFit: 98, intentSignals: 98, profileFit: 95, accessibility: 95, notes: 'Signed Enterprise plan - $2.4K/mo. 45 seats. Implementation starting next week.', outreachHistory: [{ id: 'oh2', day: 'Day 1', action: 'Initial outreach via email', time: '7d ago', status: 'completed' }, { id: 'oh3', day: 'Day 3', action: 'Demo call scheduled', time: '5d ago', status: 'completed' }, { id: 'oh4', day: 'Day 5', action: 'Contract signed!', time: '2d ago', status: 'completed' }] },
+  { id: 'l27', name: 'Jason Patel', handle: '@jpatel', company: 'Patel Ventures', role: 'Founder', source: 'Twitter', sourcePlatform: 'twitter', painPoint: 'Solo founder needs support automation', score: 95, stage: 'converted', agentId: 'lg-2', agentName: 'Hunter', dateDiscovered: '1w ago', industry: 'Venture', companySize: '1-10', location: 'London, UK', problemFit: 95, intentSignals: 92, profileFit: 95, accessibility: 95, notes: 'Pro plan upgrade - $480/mo. Annual billing.', outreachHistory: [{ id: 'oh5', day: 'Day 1', action: 'Twitter DM sent', time: '10d ago', status: 'completed' }, { id: 'oh6', day: 'Day 4', action: 'Follow-up with case study', time: '7d ago', status: 'completed' }, { id: 'oh7', day: 'Day 7', action: 'Upgraded to Pro', time: '4d ago', status: 'completed' }] },
+  { id: 'l28', name: 'Laura Simmons', handle: 'laura@healthtech.co', company: 'HealthTech Co', role: 'COO', source: 'IndieHackers', sourcePlatform: 'indiehackers', painPoint: 'HIPAA-compliant support needed', score: 97, stage: 'converted', agentId: 'lg-3', agentName: 'Tracker', dateDiscovered: '1w ago', industry: 'HealthTech', companySize: '200-500', location: 'Nashville, TN', problemFit: 98, intentSignals: 95, profileFit: 95, accessibility: 92, notes: 'Team plan - 15 seats - $1.2K/mo. Compliance review passed.', outreachHistory: [{ id: 'oh8', day: 'Day 1', action: 'IndieHackers DM', time: '10d ago', status: 'completed' }, { id: 'oh9', day: 'Day 3', action: 'Security questionnaire completed', time: '8d ago', status: 'completed' }, { id: 'oh10', day: 'Day 6', action: 'Deal closed', time: '5d ago', status: 'completed' }] },
 ];
 
 const outreachHistory: OutreachEntry[] = [
   { id: 'o1', leadName: 'Nathan Brooks', leadHandle: 'nathan@corp.com', leadAvatar: 'NB', source: 'Reddit', channel: 'Email', messagePreview: 'Hi Nathan, saw your post about scaling support...', fullMessage: 'Hi Nathan, saw your post about scaling support for enterprise clients. We\'ve helped similar companies reduce ticket volume by 40% while improving CSAT. Would love to share how.', sentAt: '2d ago', status: 'Replied', response: 'Positive', stage: 'responded', agentId: 'lg-1', agentName: 'Scout' },
-  { id: 'o2', leadName: 'Christina Wu', leadHandle: '@christinawu', leadAvatar: 'CW', source: 'Twitter', channel: 'DM', messagePreview: 'Hey Christina, noticed you mentioned support pain...', fullMessage: 'Hey Christina, noticed you mentioned support pain points in your recent thread. We\'ve built something that might help — can I send over a quick demo link?', sentAt: '2d ago', status: 'Replied', response: 'Positive', stage: 'responded', agentId: 'lg-2', agentName: 'Hunter' },
+  { id: 'o2', leadName: 'Christina Wu', leadHandle: '@christinawu', leadAvatar: 'CW', source: 'Twitter', channel: 'DM', messagePreview: 'Hey Christina, noticed you mentioned support pain...', fullMessage: 'Hey Christina, noticed you mentioned support pain points in your recent thread. We\'ve built something that might help - can I send over a quick demo link?', sentAt: '2d ago', status: 'Replied', response: 'Positive', stage: 'responded', agentId: 'lg-2', agentName: 'Hunter' },
   { id: 'o3', leadName: 'Andrew Miller', leadHandle: 'andrew@saas.io', leadAvatar: 'AM', source: 'IndieHackers', channel: 'Email', messagePreview: 'Hi Andrew, loved your post on automation...', fullMessage: 'Hi Andrew, loved your post on automation! We\'re seeing a lot of IndieHackers struggle with the same thing. Happy to share our approach.', sentAt: '3d ago', status: 'Read', response: 'None', stage: 'contacted', agentId: 'lg-3', agentName: 'Tracker' },
   { id: 'o4', leadName: 'Diana Rossi', leadHandle: 'diana@italy.it', leadAvatar: 'DR', source: 'ProductHunt', channel: 'Email', messagePreview: 'Ciao Diana, saw your comment on our PH launch...', fullMessage: 'Ciao Diana, saw your comment on our ProductHunt launch! Would love to get your feedback on our EU-specific features.', sentAt: '3d ago', status: 'Replied', response: 'Neutral', stage: 'responded', agentId: 'lg-4', agentName: 'Miner' },
-  { id: 'o5', leadName: 'Brian Taylor', leadHandle: '@btaylor_dev', leadAvatar: 'BT', source: 'Reddit', channel: 'DM', messagePreview: 'Hey Brian, your post about manual outreach resonated...', fullMessage: 'Hey Brian, your post about manual outreach resonated with me. We automated 90% of our lead gen — want to see how?', sentAt: '4d ago', status: 'Read', response: 'None', stage: 'contacted', agentId: 'lg-1', agentName: 'Scout' },
+  { id: 'o5', leadName: 'Brian Taylor', leadHandle: '@btaylor_dev', leadAvatar: 'BT', source: 'Reddit', channel: 'DM', messagePreview: 'Hey Brian, your post about manual outreach resonated...', fullMessage: 'Hey Brian, your post about manual outreach resonated with me. We automated 90% of our lead gen - want to see how?', sentAt: '4d ago', status: 'Read', response: 'None', stage: 'contacted', agentId: 'lg-1', agentName: 'Scout' },
   { id: 'o6', leadName: 'Jennifer Walsh', leadHandle: 'jen@success.co', leadAvatar: 'JW', source: 'Reddit', channel: 'Email', messagePreview: 'Hi Jennifer, saw you asking about support alternatives...', fullMessage: 'Hi Jennifer, saw you asking about support alternatives to Zendesk. Our customers typically save 30% while getting better features.', sentAt: '1d ago', status: 'Replied', response: 'Positive', stage: 'converted', agentId: 'lg-1', agentName: 'Scout' },
-  { id: 'o7', leadName: 'Michael Torres', leadHandle: '@mtorres', leadAvatar: 'MT', source: 'Twitter', channel: 'DM', messagePreview: 'Hey Michael, thanks for the follow! Noticed you\'re...', fullMessage: 'Hey Michael, thanks for the follow! Noticed you\'re working on agency support — we have a template that might help.', sentAt: '2d ago', status: 'Replied', response: 'Positive', stage: 'responded', agentId: 'lg-2', agentName: 'Hunter' },
+  { id: 'o7', leadName: 'Michael Torres', leadHandle: '@mtorres', leadAvatar: 'MT', source: 'Twitter', channel: 'DM', messagePreview: 'Hey Michael, thanks for the follow! Noticed you\'re...', fullMessage: 'Hey Michael, thanks for the follow! Noticed you\'re working on agency support - we have a template that might help.', sentAt: '2d ago', status: 'Replied', response: 'Positive', stage: 'responded', agentId: 'lg-2', agentName: 'Hunter' },
   { id: 'o8', leadName: 'Sarah Johnson', leadHandle: 'sarah@agency.io', leadAvatar: 'SJ', source: 'IndieHackers', channel: 'Email', messagePreview: 'Hi Sarah, your question about integrations caught...', fullMessage: 'Hi Sarah, your question about integrations caught my eye. We have native integrations with 50+ tools including yours.', sentAt: '3d ago', status: 'Replied', response: 'Positive', stage: 'responded', agentId: 'lg-3', agentName: 'Tracker' },
-  { id: 'o9', leadName: 'Robert Chen', leadHandle: 'robert@enterprise.com', leadAvatar: 'RC', source: 'LinkedIn', channel: 'InMail', messagePreview: 'Hello Robert, saw your company\'s growth announcement...', fullMessage: 'Hello Robert, saw your company\'s growth announcement. Congrats! Many fast-growing companies hit support bottlenecks — we can help you get ahead of it.', sentAt: '4d ago', status: 'Delivered', response: 'None', stage: 'contacted', agentId: 'lg-4', agentName: 'Miner' },
+  { id: 'o9', leadName: 'Robert Chen', leadHandle: 'robert@enterprise.com', leadAvatar: 'RC', source: 'LinkedIn', channel: 'InMail', messagePreview: 'Hello Robert, saw your company\'s growth announcement...', fullMessage: 'Hello Robert, saw your company\'s growth announcement. Congrats! Many fast-growing companies hit support bottlenecks - we can help you get ahead of it.', sentAt: '4d ago', status: 'Delivered', response: 'None', stage: 'contacted', agentId: 'lg-4', agentName: 'Miner' },
   { id: 'o10', leadName: 'Amanda Lewis', leadHandle: 'amanda@fintech.io', leadAvatar: 'AL', source: 'Reddit', channel: 'Email', messagePreview: 'Hi Amanda, your comment about fintech support...', fullMessage: 'Hi Amanda, your comment about fintech support challenges really resonated. Our compliance-ready solution is built for exactly your use case.', sentAt: '5d ago', status: 'Replied', response: 'Positive', stage: 'converted', agentId: 'lg-1', agentName: 'Scout' },
 ];
 
@@ -187,9 +187,9 @@ const scanTargets: ScanTarget[] = [
   { id: 'st8', platform: 'StackOverflow', name: 'StackOverflow', url: 'stackoverflow.com/questions/tagged', keywords: 'customer support API, help desk integration, support webhook', frequency: 'Every 2 hours', active: false, lastScan: '4h ago', leadsToday: 0, avgScore: 72, sparkline: [{ value: 2 }, { value: 2 }, { value: 1 }, { value: 0 }, { value: 0 }, { value: 0 }, { value: 0 }] },
 ];
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // HELPERS
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function getScoreColor(score: number): string {
   if (score >= 80) return '#177E89';
@@ -219,9 +219,9 @@ function getStageOrder(): PipelineStage[] {
 
 const stageOrder = getStageOrder();
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // MINI SPARKLINE COMPONENT
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function MiniSparkline({ data, color }: { data: { value: number }[]; color: string }) {
   return (
@@ -241,9 +241,9 @@ function MiniSparkline({ data, color }: { data: { value: number }[]; color: stri
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // KANBAN BOARD
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function KanbanBoard({ leads, onCardClick }: { leads: LeadCard[]; onCardClick: (lead: LeadCard) => void }) {
   const [localLeads, setLocalLeads] = useState(leads);
@@ -382,9 +382,9 @@ function KanbanBoard({ leads, onCardClick }: { leads: LeadCard[]; onCardClick: (
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // SCAN TARGETS
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function ScanTargetsTab() {
   const [targets, setTargets] = useState(scanTargets);
@@ -502,9 +502,9 @@ function ScanTargetsTab() {
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // LEAD DETAIL SIDEBAR
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 interface SidebarTimelineEntry {
   id: string;
@@ -529,7 +529,7 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
   const timeline: SidebarTimelineEntry[] = lead.outreachHistory || [
     { id: 'tl1', day: 'Day 1', action: `Initial outreach via ${lead.source?.includes('Twitter') ? 'DM' : 'email'}`, time: '3d ago', status: 'completed' },
     { id: 'tl2', day: 'Day 2', action: 'Follow-up with case study link', time: '2d ago', status: 'completed' },
-    { id: 'tl3', day: 'Day 3', action: 'No response — scheduled bump', time: '1d ago', status: 'pending' },
+    { id: 'tl3', day: 'Day 3', action: 'No response - scheduled bump', time: '1d ago', status: 'pending' },
   ];
 
   return (
@@ -729,7 +729,7 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
               {timeline.map((entry, idx) => (
                 <div key={entry.id} className="flex gap-3 relative">
                   {idx < timeline.length - 1 && (
-                    <div className="absolute left-[7px] top-6 bottom-0 w-px bg-[#0a0a0a]" />
+                    <div className="absolute left-[7px] top-6 bottom-0 w-px bg-pretzel-indigo" />
                   )}
                   <div className="mt-0.5">
                     {entry.status === 'completed' ? (
@@ -783,9 +783,9 @@ function LeadDetailSidebar({ lead, onClose }: { lead: LeadCard; onClose: () => v
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // OUTREACH LOG
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function OutreachLogTab() {
   const getStatusBadge = (status: string) => {
@@ -822,7 +822,7 @@ function OutreachLogTab() {
           { value: '47', label: 'messages sent', trend: '+23%', trendColor: 'text-emerald-600' },
           { value: '68%', label: 'avg response rate', trend: '+12%', trendColor: 'text-emerald-600' },
           { value: '18h', label: 'avg response time', trend: '-4h', trendColor: 'text-emerald-600' },
-          { value: '14.9%', label: 'lead → customer', trend: '+3.2%', trendColor: 'text-emerald-600' },
+          { value: '14.9%', label: 'lead ? customer', trend: '+3.2%', trendColor: 'text-emerald-600' },
         ].map((stat, idx) => (
           <motion.div
             key={stat.label}
@@ -937,9 +937,9 @@ function OutreachLogTab() {
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // KPI PILLS
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 function KpiPills() {
   const pills = [
@@ -968,9 +968,9 @@ function KpiPills() {
   );
 }
 
-// ───────────────────────────────────────────
+// -------------------------------------------
 // MAIN PAGE
-// ───────────────────────────────────────────
+// -------------------------------------------
 
 export default function LeadGen() {
   const [activeTab, setActiveTab] = useState('pipeline');
@@ -986,7 +986,7 @@ export default function LeadGen() {
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Lead Generation</h1>
-          <p className="mt-1 text-[13px] text-slate-500">5 agents scanning · 8 active targets · Last scan: 2m ago</p>
+          <p className="mt-1 text-[13px] text-slate-500">5 agents scanning - 8 active targets - Last scan: 2m ago</p>
         </div>
         <KpiPills />
       </div>
@@ -1052,3 +1052,4 @@ export default function LeadGen() {
     </div>
   );
 }
+

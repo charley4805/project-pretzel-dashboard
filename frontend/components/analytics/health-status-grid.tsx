@@ -16,14 +16,14 @@ export function HealthStatusGrid() {
   }, []);
 
   return (
-    <div className="bg-[#111] border border-slate-800 rounded-xl p-5 shadow-sm">
+    <div className="bg-pretzel-indigo border border-slate-800 rounded-xl p-5 shadow-sm">
       <h3 className="text-sm font-medium text-slate-300 flex items-center gap-2 mb-4">
         <Activity size={16} className="text-emerald-400" /> Platform Health Pulse
       </h3>
       
       <div className="space-y-3">
         {healthData.map((service, idx) => (
-          <div key={idx} className="flex items-center justify-between p-3 bg-[#0a0a0a] border border-slate-800 rounded-md hover:bg-slate-900 transition">
+          <div key={idx} className="flex items-center justify-between p-3 bg-pretzel-indigo border border-slate-800 rounded-md hover:bg-slate-900 transition">
             <div className="flex items-center gap-3">
               {service.status === 'healthy' ? (
                 <CheckCircle2 size={16} className="text-emerald-500" />
@@ -48,3 +48,4 @@ export function HealthStatusGrid() {
     </div>
   );
 }
+

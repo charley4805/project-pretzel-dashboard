@@ -26,7 +26,7 @@ export function LiveFeed() {
   };
 
   return (
-    <div className="bg-[#111] border border-slate-800 rounded-xl p-5 shadow-sm overflow-hidden flex flex-col h-[500px]">
+    <div className="bg-pretzel-indigo border border-slate-800 rounded-xl p-5 shadow-sm overflow-hidden flex flex-col h-[500px]">
       <h3 className="text-sm font-medium text-slate-300 flex justify-between items-center mb-4">
         <span className="flex items-center gap-2">
           <Radio size={16} className="text-blue-400 animate-pulse" /> Live Activity Feed
@@ -38,7 +38,7 @@ export function LiveFeed() {
         <div className="absolute left-[11px] top-2 bottom-0 w-px bg-slate-800 pointer-events-none"></div>
         {events.map((event, idx) => (
           <div key={idx} className="relative z-10 flex gap-3 pb-2 last:pb-0">
-            <div className="mt-0.5 h-6 w-6 rounded-full bg-[#111] border border-slate-700 flex items-center justify-center z-10">
+            <div className="mt-0.5 h-6 w-6 rounded-full bg-pretzel-indigo border border-slate-700 flex items-center justify-center z-10">
               {getIconForEvent(event.type, event.severity)}
             </div>
             <div>
@@ -57,3 +57,4 @@ export function LiveFeed() {
     </div>
   );
 }
+

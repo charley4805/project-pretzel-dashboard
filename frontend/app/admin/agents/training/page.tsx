@@ -103,7 +103,7 @@ export default function AgentTraining() {
               <span className="status-dot status-dot-online" />
             </div>
             <h3 className="text-sm font-semibold text-white">{agent.name}</h3>
-            <p className="text-[11px] mt-0.5" style={{ color: '#94a3b8' }}>{agent.model} · temp {agent.temperature}</p>
+            <p className="text-[11px] mt-0.5" style={{ color: '#94a3b8' }}>{agent.model} - temp {agent.temperature}</p>
             <div className="flex items-center gap-3 mt-2 text-[11px]" style={{ color: '#94a3b8' }}>
               <span>{agent.trainingExamples} examples</span>
               <span>{agent.accuracy}% accuracy</span>

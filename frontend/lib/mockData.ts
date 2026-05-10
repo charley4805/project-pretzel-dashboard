@@ -60,21 +60,21 @@ export interface Campaign {
 }
 
 export const agents: Agent[] = [
-  { id: 'sa-1', name: 'Support Agent Alpha', type: 'support', status: 'online', avatar: '/avatar-1.jpg', handle: '@support-alpha', description: 'Handles billing & account inquiries' },
-  { id: 'sa-2', name: 'Support Agent Beta', type: 'support', status: 'online', avatar: '/avatar-2.jpg', handle: '@support-beta', description: 'Technical support & troubleshooting' },
-  { id: 'sa-3', name: 'Support Agent Gamma', type: 'support', status: 'online', avatar: '/avatar-3.jpg', handle: '@support-gamma', description: 'General inquiries & onboarding' },
-  { id: 'sa-4', name: 'Support Agent Delta', type: 'support', status: 'warning', avatar: '/avatar-4.jpg', handle: '@support-delta', description: 'Escalation handling & L2 support' },
-  { id: 'sa-5', name: 'Support Agent Epsilon', type: 'support', status: 'online', avatar: '/avatar-5.jpg', handle: '@support-epsilon', description: 'Enterprise & priority support' },
-  { id: 'sa-6', name: 'Support Agent Zeta', type: 'support', status: 'error', avatar: '/avatar-6.jpg', handle: '@support-zeta', description: 'After-hours support coverage' },
-  { id: 'ma-1', name: 'Social Agent Prime', type: 'social', status: 'online', avatar: '/avatar-1.jpg', handle: '@social-prime', description: 'LinkedIn content & engagement' },
-  { id: 'ma-2', name: 'Social Agent Duo', type: 'social', status: 'online', avatar: '/avatar-3.jpg', handle: '@social-duo', description: 'Twitter monitoring & replies' },
-  { id: 'ma-3', name: 'Social Agent Trio', type: 'social', status: 'warning', avatar: '/avatar-6.jpg', handle: '@social-trio', description: 'Instagram & visual content' },
-  { id: 'ma-4', name: 'Social Agent Quad', type: 'social', status: 'online', avatar: '/avatar-4.jpg', handle: '@social-quad', description: 'Community management & DMs' },
-  { id: 'lg-1', name: 'Lead Gen Scout', type: 'leadgen', status: 'online', avatar: '/avatar-2.jpg', handle: '@lead-scout', description: 'Reddit & forum prospecting' },
-  { id: 'lg-2', name: 'Lead Gen Hunter', type: 'leadgen', status: 'online', avatar: '/avatar-4.jpg', handle: '@lead-hunter', description: 'IndieHackers & ProductHunt' },
-  { id: 'lg-3', name: 'Lead Gen Tracker', type: 'leadgen', status: 'online', avatar: '/avatar-6.jpg', handle: '@lead-tracker', description: 'Twitter DM outreach' },
-  { id: 'lg-4', name: 'Lead Gen Miner', type: 'leadgen', status: 'online', avatar: '/avatar-5.jpg', handle: '@lead-miner', description: 'LinkedIn Sales Navigator' },
-  { id: 'lg-5', name: 'Lead Gen Sniper', type: 'leadgen', status: 'warning', avatar: '/avatar-1.jpg', handle: '@lead-sniper', description: 'Qualified lead verification' },
+  { id: 'sa-1', name: 'Support Agent Alpha', type: 'support', status: 'online', avatar: '/avatar-1\.svg', handle: '@support-alpha', description: 'Handles billing & account inquiries' },
+  { id: 'sa-2', name: 'Support Agent Beta', type: 'support', status: 'online', avatar: '/avatar-2\.svg', handle: '@support-beta', description: 'Technical support & troubleshooting' },
+  { id: 'sa-3', name: 'Support Agent Gamma', type: 'support', status: 'online', avatar: '/avatar-3\.svg', handle: '@support-gamma', description: 'General inquiries & onboarding' },
+  { id: 'sa-4', name: 'Support Agent Delta', type: 'support', status: 'warning', avatar: '/avatar-4\.svg', handle: '@support-delta', description: 'Escalation handling & L2 support' },
+  { id: 'sa-5', name: 'Support Agent Epsilon', type: 'support', status: 'online', avatar: '/avatar-5\.svg', handle: '@support-epsilon', description: 'Enterprise & priority support' },
+  { id: 'sa-6', name: 'Support Agent Zeta', type: 'support', status: 'error', avatar: '/avatar-6\.svg', handle: '@support-zeta', description: 'After-hours support coverage' },
+  { id: 'ma-1', name: 'Social Agent Prime', type: 'social', status: 'online', avatar: '/avatar-1\.svg', handle: '@social-prime', description: 'LinkedIn content & engagement' },
+  { id: 'ma-2', name: 'Social Agent Duo', type: 'social', status: 'online', avatar: '/avatar-3\.svg', handle: '@social-duo', description: 'Twitter monitoring & replies' },
+  { id: 'ma-3', name: 'Social Agent Trio', type: 'social', status: 'warning', avatar: '/avatar-6\.svg', handle: '@social-trio', description: 'Instagram & visual content' },
+  { id: 'ma-4', name: 'Social Agent Quad', type: 'social', status: 'online', avatar: '/avatar-4\.svg', handle: '@social-quad', description: 'Community management & DMs' },
+  { id: 'lg-1', name: 'Lead Gen Scout', type: 'leadgen', status: 'online', avatar: '/avatar-2\.svg', handle: '@lead-scout', description: 'Reddit & forum prospecting' },
+  { id: 'lg-2', name: 'Lead Gen Hunter', type: 'leadgen', status: 'online', avatar: '/avatar-4\.svg', handle: '@lead-hunter', description: 'IndieHackers & ProductHunt' },
+  { id: 'lg-3', name: 'Lead Gen Tracker', type: 'leadgen', status: 'online', avatar: '/avatar-6\.svg', handle: '@lead-tracker', description: 'Twitter DM outreach' },
+  { id: 'lg-4', name: 'Lead Gen Miner', type: 'leadgen', status: 'online', avatar: '/avatar-5\.svg', handle: '@lead-miner', description: 'LinkedIn Sales Navigator' },
+  { id: 'lg-5', name: 'Lead Gen Sniper', type: 'leadgen', status: 'warning', avatar: '/avatar-1\.svg', handle: '@lead-sniper', description: 'Qualified lead verification' },
 ];
 
 export const conversations: Conversation[] = [
@@ -236,3 +236,4 @@ export function getAgentTypeIconColor(type: AgentType): string {
     case 'leadgen': return '#10b981';
   }
 }
+

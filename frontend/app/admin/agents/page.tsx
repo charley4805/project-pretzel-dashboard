@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -21,7 +21,7 @@ import {
 } from '@/lib/mockData';
 import { fetchAgentsOverview } from '@/lib/api';
 
-/* ─── Animation Variants ─── */
+/* --- Animation Variants --- */
 const cardStagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.05 } },
@@ -42,7 +42,7 @@ const itemFade = {
   show: { opacity: 1, x: 0, transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] } },
 };
 
-/* ─── KPI Cards ─── */
+/* --- KPI Cards --- */
 const kpiCards = [
   { label: 'Agents Online', value: '12/15', icon: Zap, iconColor: '#177E89', iconBg: 'rgba(23,126,137,0.12)', trend: '+8%', trendUp: true, sparkline: sparklineData.activeAgents, nav: '/settings' },
   { label: 'Live Conversations', value: '47', icon: MessageCircle, iconColor: '#0ea5e9', iconBg: '#e0f2fe', trend: '+23%', trendUp: true, sparkline: sparklineData.conversations, nav: '/support' },
@@ -50,7 +50,7 @@ const kpiCards = [
   { label: 'CSAT Score', value: '94.2%', icon: ThumbsUp, iconColor: '#FFC857', iconBg: 'rgba(255,200,87,0.12)', trend: '+2.1%', trendUp: true, sparkline: sparklineData.satisfaction, nav: '/support' },
 ];
 
-/* ─── Agent Groups ─── */
+/* --- Agent Groups --- */
 interface AgentGroup {
   type: AgentType;
   label: string;
@@ -70,7 +70,7 @@ const agentGroups: AgentGroup[] = [
   { type: 'leadgen', label: 'Lead Gen Agents', icon: Target, iconColor: '#177E89', total: 5, active: 4, warning: 1, error: 0, avatarIndices: [2, 4, 6, 5], sparkline: agentGroupSparklines.leadgen },
 ];
 
-/* ─── Quick Actions ─── */
+/* --- Quick Actions --- */
 const quickActions = [
   { icon: PlusCircle, label: 'New Ticket', desc: 'Create manual support ticket' },
   { icon: PenSquare, label: 'Compose Post', desc: 'Write a social media post' },
@@ -80,7 +80,7 @@ const quickActions = [
   { icon: Settings, label: 'Configure', desc: 'Edit agent settings' },
 ];
 
-/* ─── System Health ─── */
+/* --- System Health --- */
 const healthServices = [
   { name: 'API Gateway', status: 'Online', icon: Server, color: '#34d399' },
   { name: 'Message Queue', status: 'Online', icon: Layers, color: '#34d399' },
@@ -97,7 +97,7 @@ const resources = [
   { label: 'Network', value: 78, color: '#fbbf24' },
 ];
 
-/* ─── Activity Feed Filter ─── */
+/* --- Activity Feed Filter --- */
 type ActivityFilter = 'all' | 'support' | 'social' | 'leadgen';
 
 const agentTypeColors: Record<AgentType, string> = {
@@ -132,7 +132,7 @@ export default function Overview() {
       {/* Subtitle */}
       <p className="text-sm text-slate-500 mb-6">Real-time overview of your agent fleet</p>
 
-      {/* ─── KPI Cards Row ─── */}
+      {/* --- KPI Cards Row --- */}
       <motion.div
         variants={cardStagger}
         initial="hidden"
@@ -190,7 +190,7 @@ export default function Overview() {
         ))}
       </motion.div>
 
-      {/* ─── Two Column Layout ─── */}
+      {/* --- Two Column Layout --- */}
       <div className="flex flex-col xl:flex-row gap-6">
         {/* LEFT COLUMN (65%) */}
         <div className="xl:w-[65%] space-y-6">
@@ -239,7 +239,7 @@ export default function Overview() {
                       {group.avatarIndices.map((ai) => (
                         <img
                           key={ai}
-                          src={`/avatar-${ai}.jpg`}
+                          src={`/avatar-${ai}\.svg`}
                           alt=""
                           className="w-7 h-7 rounded-full border-2 border-white object-cover"
                         />
@@ -363,9 +363,9 @@ export default function Overview() {
             className="space-y-4"
           >
             {([
-              { type: 'support', label: 'Support Agent Breakdown', icon: Headphones, iconColor: '#177E89', data: hourlyBreakdown.support, metrics: { h1: 'Handled: 84', h2: 'Success Rate: 91%', h3: 'Avg Time: 3.2m' }, actions: ['Resolved billing inquiry — 2m ago', 'Escalated technical issue to L2 — 5m ago', 'Closed duplicate ticket — 8m ago'] },
-              { type: 'social', label: 'Social Media Agent Breakdown', icon: Share2, iconColor: '#0ea5e9', data: hourlyBreakdown.social, metrics: { h1: 'Posts: 95', h2: 'Engagement: 6.8%', h3: 'Reach: 12.4K' }, actions: ['Published LinkedIn article — 1m ago', 'Replied to Twitter mention — 4m ago', 'Scheduled Instagram post — 12m ago'] },
-              { type: 'leadgen', label: 'Lead Gen Agent Breakdown', icon: Target, iconColor: '#177E89', data: hourlyBreakdown.leadgen, metrics: { h1: 'Scanned: 378', h2: 'Qualified: 47', h3: 'Conversion: 12.4%' }, actions: ['New lead from Reddit r/SaaS — 30s ago', 'Qualified prospect on IndieHackers — 3m ago', 'Outreach sent to ProductHunt user — 7m ago'] },
+              { type: 'support', label: 'Support Agent Breakdown', icon: Headphones, iconColor: '#177E89', data: hourlyBreakdown.support, metrics: { h1: 'Handled: 84', h2: 'Success Rate: 91%', h3: 'Avg Time: 3.2m' }, actions: ['Resolved billing inquiry - 2m ago', 'Escalated technical issue to L2 - 5m ago', 'Closed duplicate ticket - 8m ago'] },
+              { type: 'social', label: 'Social Media Agent Breakdown', icon: Share2, iconColor: '#0ea5e9', data: hourlyBreakdown.social, metrics: { h1: 'Posts: 95', h2: 'Engagement: 6.8%', h3: 'Reach: 12.4K' }, actions: ['Published LinkedIn article - 1m ago', 'Replied to Twitter mention - 4m ago', 'Scheduled Instagram post - 12m ago'] },
+              { type: 'leadgen', label: 'Lead Gen Agent Breakdown', icon: Target, iconColor: '#177E89', data: hourlyBreakdown.leadgen, metrics: { h1: 'Scanned: 378', h2: 'Qualified: 47', h3: 'Conversion: 12.4%' }, actions: ['New lead from Reddit r/SaaS - 30s ago', 'Qualified prospect on IndieHackers - 3m ago', 'Outreach sent to ProductHunt user - 7m ago'] },
             ] as const).map((section) => {
               const isExpanded = expandedBreakdown === section.type;
               return (
@@ -487,7 +487,7 @@ export default function Overview() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-100 leading-snug">
-                      <span className="font-semibold">{act.agentName}</span> — {act.action}
+                      <span className="font-semibold">{act.agentName}</span> - {act.action}
                     </p>
                     <p className="text-[13px] text-slate-500 mt-0.5 leading-snug">{act.detail}</p>
                     <div className="flex items-center gap-2 mt-1">
@@ -576,7 +576,7 @@ export default function Overview() {
                     <span className="text-slate-500">{res.label}</span>
                     <span className="font-semibold text-slate-300">{res.value}%</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-[#0a0a0a] overflow-hidden">
+                  <div className="h-1.5 rounded-full bg-pretzel-indigo overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${res.value}%` }}
@@ -594,3 +594,4 @@ export default function Overview() {
     </div>
   );
 }
+

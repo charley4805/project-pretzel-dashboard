@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-[#0a0a0a] text-slate-100">
+      <body className="bg-pretzel-walnut text-slate-100">
         <Sidebar />
         <main className="md:pl-56 min-h-screen overflow-y-auto">
           {/* Spacer for the mobile hamburger button */}
@@ -25,3 +25,4 @@ export default function RootLayout({
     </html>
   )
 }
+
