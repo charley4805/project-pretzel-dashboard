@@ -274,7 +274,7 @@ export default function Guardrails() {
       <AnimatePresence>
         {showAddModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={() => setShowAddModal(false)}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} transition={{ duration: 0.2 }} className="card-dark w-full max-w-md p-5" style={{ background: '#1c2658' }} onClick={(e) => e.stopPropagation()}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} transition={{ duration: 0.2 }} className="card-dark w-full max-w-md p-5" style={{ background: '#452103' }} onClick={(e) => e.stopPropagation()}>
               <h3 className="text-base font-bold text-white mb-3">New Guardrail</h3>
               <div className="space-y-2.5">
                 <div>
